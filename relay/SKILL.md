@@ -72,13 +72,20 @@ Append exactly one of these per turn.
 ```
 ### Round N · Reviewer · <timestamp>
 **Verdict:** Approved | Changes requested | Blocked
+**Basis:** behaviorally proven (<what I ran / observed>) | textual only (read, not run) | N/A — non-executable artifact
+**Prior fixes:** (when re-reviewing) <ref> — behaviorally proven | textually fixed | unverified
 **Findings & proposals:** (I propose; I do not edit the artifact)
 - [Blocker] <finding @ file:line> — Proposed fix: <concrete suggested edit, or "author's call">
 - [Should] <finding> — Proposed fix: <…>
 - [Nit] <finding> — Proposed fix: <…>
+- [Pass] <thing I checked and found sound — evidence it's checked, not assumed>
   (or "none — approved as-is")
+**Answers:** (respond to the Producer's "Re-review this" / open questions, point by point — or "none asked")
+- <their question> → <direct answer>
 **Commit:** <log hash if this log is tracked, else "none (comments only)"> — the Reviewer never edits the artifact
 ```
+
+**Basis is mandatory on every verdict.** An `Approved` can never silently mean "I read the diff and it looked fine." If correctness rides on runtime behavior and nothing was run, the strongest honest verdict is `textual only` — a flagged, weaker approval the operator sees. `Prior fixes:` is where the Reviewer says whether the Producer's claimed fixes are `textually fixed` (the code now reads correctly) or `behaviorally proven` (confirmed to actually run / pass) — the distinction that stops doc approval from outrunning implementation reality.
 
 **Verdict semantics.** `Changes requested` and `Blocked` keep the relay open for a Producer turn to dispose of the proposals; `Approved` **closes** it. So a Reviewer that wants its proposals actioned *in-thread* must set `Changes requested`, not `Approved` — any `[Nit]` left on an `Approved` verdict is the author's discretion, handled out-of-band after the relay closes.
 
@@ -86,14 +93,17 @@ Append exactly one of these per turn.
 ```
 ### Round N · Producer · <timestamp>
 **Decisions on proposals:** (operator-approved)
-- [Blocker] <quote/ref> — Implemented → <what I changed @ file:line> | Modified → <what & why> | Declined → <one-line rationale>
-- [Should] <quote/ref> — Implemented | Modified | Declined + why
+- [Blocker] <quote/ref> — Implemented → <what I changed @ file:line> · Proof: <cmd→result | "textual only" | "none"> | Modified → <what & why> · Proof: <…> | Declined → <one-line rationale>
+- [Should] <quote/ref> — Implemented | Modified | Declined + why · Proof: <…>
 **Did:** <further changes>
+**Verification:** ran <cmd> → <result> · skipped <X> (why) · impossible <Y> (why) — or "N/A — non-executable artifact"
 **Re-review this:** <what changed / where to look>
 **Commit:** <hash or "none (comments only)">
 ```
 
 (The Round 1 Producer block ships pre-stubbed in the template.)
+
+**The Producer's `Verification:` line is mandatory and one line.** `skipped` and `impossible` are first-class — "tests pass" with no command is theater, but "skipped the race test (no harness yet)" is honest and reviewable, and an omitted line is a visible blank. Per-finding `Proof:` says how each implemented fix was confirmed. The contract scales to the artifact: a pure doc or design answers `N/A — non-executable artifact` in one token and the overhead disappears exactly where the relay already excels.
 
 ## Guardrails
 
@@ -103,7 +113,9 @@ Append exactly one of these per turn.
 - **Smallest change that satisfies the finding.** A proposal — and the fix that implements it — is the narrowest change that resolves the finding; don't rewrite the artifact wholesale.
 - **Only the author writes.** The Reviewer never edits the artifact — it proposes, and the Producer (the original author), with the operator, implements. Every change flows through one consistent hand, and the independent check stays independent: the reviewer never grades its own edits.
 - **No proposal left undecided.** On its turn the Producer logs a disposition — Implemented / Modified / Declined (+ reason) — for every proposal before adding new work. A Declined Blocker is contested, not skipped (see below).
+- **Verify the finding before disposing of it.** The Producer independently checks each proposal against the source before implementing — a finding can be wrong, or worse than flagged. Real relays open the turn with "verified every claim against the repo before deciding"; that check is what makes a disposition trustworthy, not just polite.
 - **No ignored Blockers.** The Producer resolves or explicitly contests each one — never skips it.
+- **Evidence contract — state your proof every turn.** The Producer logs `Verification:` (what it ran / skipped / couldn't run); the Reviewer logs a verdict `Basis:` — `behaviorally proven` or `textual only` — and classes prior fixes `textually fixed` vs `behaviorally proven`. One line each, mandatory. It keeps a clean `Approved` from outrunning what was actually executed, and deflates to `N/A — non-executable artifact` for pure docs.
 - **Don't loop forever.** If the same Blocker is contested twice, escalate to the human rather than ping-pong. Honor the max round.
 - **Assume nothing is shared.** The two agents have separate memory; if a decision matters, it goes in the file.
 
@@ -146,6 +158,8 @@ The human's entire role collapses to two actions: *"start a relay"* and *"your t
 
 Write this verbatim to `relay-system/<date>/<slug>.md` when starting a relay, filling the `<…>` fields. Newest turns append at the **bottom**, above the marker; the header and ground rules stay pinned at the top.
 
+The **▶ TAKE YOUR TURN** block is embedded in the template so a non-Claude agent (Codex, Gemini) that never loaded this skill can act correctly **from the file alone** — the operator's whole job stays a one-line nudge ("take your turn on `<file>`"), never a pasted wall of instructions. This base skill stays **partially manual** (a human nudges each turn); automating the nudge itself is the job of the `xyz`/relay-automation add-on, not this portable skill.
+
 ```markdown
 # RELAY · <TITLE>
 <!--
@@ -156,6 +170,18 @@ Write this verbatim to `relay-system/<date>/<slug>.md` when starting a relay, fi
 NEXT: Producer
 STATUS: Open
 ROUND: 1 / 5
+
+## ▶ TAKE YOUR TURN — read this first (works for ANY agent: Claude, Codex, Gemini)
+The operator just said "take your turn on this file." Everything you need is **in this file** — don't wait for pasted instructions.
+1. **Read this whole file** (header, Setup, Ground rules, every turn in the Log).
+2. **Check it's your turn:** `NEXT` (top) names the role to act. Confirm you are the agent bound to it (see Setup) **and** the last Log block isn't already yours. If not → STOP and reply "wrong window — nudge the <other> window."
+3. **Do your role's work** on the artifact named in Setup (read the real files / the latest `git show <last commit>` diff; cite `file:line`):
+   - **Reviewer:** review vs the Definition of Done → graded findings (`[Blocker]`/`[Should]`/`[Nit]`/`[Pass]`), each with a concrete proposed fix → set a **Verdict** (Approved | Changes requested | Blocked). Do **not** edit the artifact; you only append findings here.
+   - **Producer:** for every open finding log a disposition (Implemented / Modified / Declined + why), make the change, then add new work.
+4. **Append ONE block** at the very bottom, directly **above** the marker line (`<!-- ↓↓↓ NEXT TURN ... -->`). Never edit earlier turns. Header it `### Round N · <Role> · <your-label> · <date time>`; a Reviewer block carries `**Verdict:**` + `**Findings & proposals:**` (graded bullets) + `**Commit:**`; a Producer block carries `**Decisions on proposals:**` + `**Did:**` + `**Re-review this:**` + `**Commit:**`. (Need the exact shape? Mirror the most recent block of the other role above.)
+5. **Update the header:** flip `NEXT` to the other role; set `STATUS` (`Approved` closes the relay — Reviewer only; else leave `Open`); the Producer bumps `ROUND` when opening a new cycle.
+6. **Commit only the files you touched** (artifact + this log): `git commit -m "relay(<slug>): <your-label> r<N>"`, then put the short hash in your block's `Commit:` line and `git commit --amend --no-edit`. Push if the team shares a remote.
+7. **Stop.** Tell the operator your one-line result (e.g. "Changes requested, 1 Blocker — Producer's turn").
 
 ## Setup
 - Artifact under review: <PATH or PR URL>
@@ -170,10 +196,11 @@ ROUND: 1 / 5
 3. One turn = one block appended at the very bottom, above the marker. Never edit earlier turns. Then update `NEXT`, `STATUS`, `ROUND` at the top. (Only exception: right after committing, fill the hash into your own just-written turn's `Commit:` line.)
 4. Stay tight. Requests and findings are bullets, not essays.
 5. **The Reviewer never edits the artifact.** It proposes graded findings, each with a concrete suggested fix where possible. The Producer (the original author), with the operator, decides each proposal and implements the approved ones — logging a disposition (Implemented / Modified / Declined + reason) for every one.
-6. Grade every finding:  `[Blocker]` must fix to ship · `[Should]` strong recommendation · `[Nit]` optional.
+6. Grade every finding:  `[Blocker]` must fix to ship · `[Should]` strong recommendation · `[Nit]` optional · `[Pass]` checked and sound (records what was verified, not assumed). Answer the Producer's "Re-review this" questions in an `Answers:` block.
 7. The Reviewer posts a Verdict every turn. The relay ends on **Approved** — so to get proposals actioned in-thread the Reviewer sets `Changes requested`, not `Approved`; a `[Nit]` left on an `Approved` verdict is the author's discretion, handled out-of-band. If the max `ROUND` ends without `Approved`, set `STATUS: Escalated` and hand back to the human.
 8. End your turn by committing it: `relay(<slug>): <role> r<N>`, then fill the hash into your `Commit:` line — so the other agent can `git diff` exactly what changed. If your turn touched no tracked files (comments-only, or this log is gitignored), write `Commit: none (comments only)`.
 9. **One window at a time, clean tree at every handoff.** Both agents share one working tree; the `NEXT` pointer is honor-system, not a lock. Never start a turn while the other window may still be editing, and never flip `NEXT` with uncommitted changes left in the tree — commit or stash first, so the next agent never inherits half-finished state.
+10. **Evidence contract — state your proof every turn.** The Producer logs a one-line `Verification:` (what it ran / skipped / couldn't run); the Reviewer logs a verdict `Basis:` — `behaviorally proven` (ran/observed) or `textual only` (read, not run) — and classes any prior fix `textually fixed` vs `behaviorally proven`. An `Approved` can't silently mean "looked fine on read": if correctness rides on runtime behavior and nothing ran, `textual only` is the strongest honest verdict. Scales to the artifact — a pure doc answers `N/A — non-executable artifact`.
 
 ## Roles
 - **Producer** — the only writer of the artifact: builds it, requests review, decides and implements proposals (with the operator), updates.
@@ -185,6 +212,7 @@ ROUND: 1 / 5
 ### Round 1 · Producer · <YYYY-MM-DD HH:MM TZ>
 **Did:** <what you built/changed — 1–3 bullets>
 **Review this:** <specific focus areas / what to scrutinize>
+**Verification:** ran <cmd> → <result> · skipped <X> (why) · impossible <Y> (why) — or "N/A — non-executable artifact"
 **Open questions:** <or "none">
 **Commit:** <hash or "none (comments only)">
 
