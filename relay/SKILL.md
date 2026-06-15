@@ -144,6 +144,18 @@ Record the mode in the file so each window knows it's live — set Setup's `Hand
 
 **Stays manual when** any window is a non-Claude tool (Codex, Gemini, …): they have their own schedulers or none and can't be driven this way, so cross-tool relays keep the human nudge. Hands-free is an accelerator for the all-Claude case — never the default, because the default has to stay tool-agnostic and human-locked.
 
+### Self-closing loops (avoid stray cron housekeeping)
+
+A `/loop`-created cron job is **per-session, in-memory, and auto-expires after 7 days** — far too long for a short review relay, and easy to forget. Make each loop **self-closing** so no one has to remember to clean it up:
+
+- **Bake a deadline / tick-budget into the loop**, not just a stop-on-`Approved`. The loop should end on the *first* of: `STATUS` terminal (`Approved`/`Closed`/`Escalated`), **a wall-clock deadline (e.g. 30 min)**, or N idle ticks. A deadline also kills the "idles forever because the peer window died" failure mode.
+- **The loop deletes its own job on stop.** On a stop decision the polling turn runs `CronList` → finds its job (match it by the relay-file path in the prompt, since the turn doesn't know its own ID at creation) → `CronDelete`s it, then ends. Without this the cron keeps firing (harmlessly idling) until the 7-day expiry or the session closes.
+- **If a tick-driven runner is involved** (e.g. a `poll.sh`-style guard), give it the deadline so it emits the stop decision itself (`--deadline <epoch>` / `--max-idle-ticks N`); then the one stop path (`DECISION: stop → CronDelete self`) covers Approved, expiry, and stall uniformly.
+
+**Cross-session caveat (load-bearing).** Cron jobs live in the session that created them. **You cannot stop another window's loop from yours** — `CronList`/`CronDelete` only see the current session. So every window's loop must self-close (deadline + self-delete), or be stopped *in its own window*; there is no central "kill all loops." This is why self-expiry matters more here than for a single-window loop.
+
+**Use cases:** short hands-free review relays (set a 30-min deadline — most relays finish in 2–4 rounds well under that); unattended overnight polls (longer deadline, but still bounded); any multi-window all-Claude relay where several loops run at once and manual cleanup of each would be error-prone.
+
 ## Framing
 
 Don't just silently edit files. Open each turn with a short conversational line to the human ("Taking the Reviewer turn — reviewing `evidence.py` against the DoD…") and close with the hand-off nudge. The structured block lives in the file; the human gets a human sentence.
