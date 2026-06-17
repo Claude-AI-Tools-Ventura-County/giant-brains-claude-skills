@@ -99,6 +99,12 @@ When the input is a whole doc rather than a single decision, one skill picks the
 
 [giantbrains](giantbrains/SKILL.md) is the suite's front door for docs. It triages in one message (which doc, what stage), then routes to at most three lenses — a draft gets frame/price/size, an in-progress plan gets a size-and-squeeze check, a retro gets the ledger audit and the outcome cut — runs them report-only, and dedupes the overlap into a single bottom-line-shaped verdict: one reversibility read, one do-next. It never edits the doc: writers ([phase-qa](phase-qa/SKILL.md) for phased plans, [record-decision](record-decision/SKILL.md) for bets, [linear](linear/SKILL.md) for scattered steps) are offered afterward as explicit opt-ins. And on a one-pager it refuses the battery and hands off to the single matching lens — running five lenses on one decision is ceremony, not hygiene.
 
+## Beyond the suite — the relay
+
+A standalone collaboration tool, not one of the ten decision skills: [relay](relay/SKILL.md) runs a turn-based review loop between two Claude Code agents — a **Producer** who builds and a **Reviewer** who critiques and proposes fixes the author applies — entirely inside one dated Markdown file, so a human stops copy-pasting output between two windows. The file is the shared bus, the change-log, and the decision record at once: graded findings (`Blocker` / `Should` / `Nit` / `Pass`), a mandatory disposition on every proposal, an **evidence contract** per turn (the Producer logs what it *ran / skipped / couldn't run*; the Reviewer logs whether its verdict is `behaviorally proven` or `textual only`), and a clean exit on **Approved**. The protocol is model-agnostic — run a different model in the Reviewer window (Codex, Gemini, another Claude tier) for genuinely independent eyes. See the worked [sample thread](relay/RELAY-sample.md).
+
+**Optional automation add-on.** Relay is human-locked by default (one "your turn" nudge per handoff). A fuller, `tick`-backed automation engine lives in a sibling repo: [xyz-3-agents-swarm · relay-system](https://github.com/Claude-AI-Tools-Ventura-County/xyz-3-agents-swarm/tree/main/relay-system/2026-06-14). It turns the manual, human-nudged relay into a hands-free, self-healing loop — `tick` coordination primitives enforce strict Producer/Reviewer turn-taking, auto-detect and recover stalled turns, and gate termination on an LLM-written `Approved` with a clean tree. It ships as a sibling self-extracting skill powered by `tick`, leaving the portable `/relay` protocol completely untouched and dependency-free.
+
 ## What they share
 
 - **Short, structured output.** Every skill leads with the one line that must survive skimming, then adds only the fields that change the call. Drop anything that doesn't; never pad the template. When the work is part of an ongoing phase or status thread, the compression skills also add a brief location marker so the user knows what was just done and where the next steps fit. `baseline-spec` follows the same one-shot, scannable shape as the four decision skills; `linear`'s output *is* the structure — one numbered list, nothing actionable outside it; `record-decision` writes the same scannable shape to a file instead of the chat; `auto-improve` is the lone exception — it *executes* a loop rather than emitting a verdict, but still leads with an honest headline number.
@@ -208,6 +214,9 @@ Abbreviated — skills and their entry points only. Repo meta (`AGENTS.md`, `CHA
 ├── phase-qa/SKILL.md             # Plan QA checklists + phase diff review
 ├── spike-360/SKILL.md            # Architecture premise check — classify authority before planning
 ├── snapshot/SKILL.md             # Session recovery
+├── relay/                        # Standalone — two-agent review relay (one file, no copy-paste)
+│   ├── SKILL.md
+│   └── RELAY-sample.md
 ├── utils/                        # Standalone tooling — not part of the suite
 │   ├── README.md
 │   ├── read-only/SKILL.md        # Pre-approve read-only permissions
