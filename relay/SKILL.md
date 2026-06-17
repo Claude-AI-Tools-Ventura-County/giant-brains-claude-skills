@@ -13,6 +13,8 @@ This skill does two things: **start** a relay (scaffold the dated file from the 
 
 **Honest caveat — independence is only as good as the second agent.** Two Claude sessions share a model and much of the same repo context, so they share blind spots: a same-model relay catches what a fresh pass with fresh framing catches, not what a truly independent reviewer would. For genuinely independent eyes, run a *different* model in the Reviewer window (e.g. Codex, or a different Claude tier). The file-based protocol is model-agnostic by design — any agent that can read and append the file can take a turn.
 
+**Composes with `phase-qa` for plan/spec-doc reviews.** When the artifact is a planning, spec, or roadmap doc (not code), build the Reviewer's checklist with the `phase-qa` skill first, and seed the relay's Definition of Done from it. Critically, give *completeness* its own dedicated turn with an explicit **omission-diff** instruction — "list every claim in the source doc that has no equivalent in the target; report the gap, don't summarize." A reviewer asked the easy direction (find overclaims / errors) will satisfice and miss silent *drops* — the classic failure when one doc is a compression or merge of another. The relay is the transport; `phase-qa` owns the rubric — keep them composed, not coupled.
+
 ## When to use
 
 - The user says "set up a relay", "start a relay", "run a producer/reviewer loop", "two-agent review", "have one agent review the other".
