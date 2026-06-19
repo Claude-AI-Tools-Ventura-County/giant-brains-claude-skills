@@ -7,7 +7,9 @@ description: Generate and run a relay thread file in `relay-system/<date>/<slug>
 
 Two agents, one file, no copy-paste.
 
-A relay is a turn-based review loop carried entirely inside a single Markdown file that both agents can read and append. One agent **builds** (Producer), the other **reviews and proposes** (Reviewer). They never message each other — they read the file, take their turn, and flip a pointer. The human's only job is to say "your turn" in the other window. The file is the shared bus, the change-log, and the decision record all at once.
+A relay is a turn-based review loop carried entirely inside a single Markdown file that both agents can read and append. One agent **builds** (Producer), the other **reviews and proposes** (Reviewer). They never message each other — they read the file, take their turn, and flip a pointer. The human serializes turns by nudging the next window — or, with CLI-driven mode, a single Claude session calls `agy` or `codex` as a subprocess and the human's role collapses to zero. The file is the shared bus, the change-log, and the decision record all at once.
+
+Three handoff modes, each a first-class option: **manual nudge** (portable, works with any tool), **hands-free poll** (all-Claude, two sessions), and **CLI-driven** (one session orchestrates, calls agy/Codex as subprocess). Manual is the default — the other two are opt-in.
 
 This skill does two things: **start** a relay (scaffold the dated file from the template in the Appendix) and **take a turn** in an existing one. The **Producer always starts it** — the same step that creates the dated folder and file also writes turn 1. The Reviewer never creates the file; it only reads and appends.
 
@@ -146,7 +148,7 @@ Record the mode in the file so each window knows it's live — set Setup's `Hand
 
 **Stop conditions.** A polling window stops when `STATUS` is `Approved` or `Escalated`, or after a bounded number of idle ticks with no change — then it escalates to the human rather than spinning forever. Honor the max `ROUND` exactly as in manual mode.
 
-**Stays manual when** any window is a non-Claude tool (Codex, Gemini, …): they have their own schedulers or none and can't be driven this way, so cross-tool relays keep the human nudge. Hands-free is an accelerator for the all-Claude case — never the default, because the default has to stay tool-agnostic and human-locked.
+**Stays manual when** you have no CLI runner for the Reviewer tool, or want the human as an explicit checkpoint between turns. For non-Claude tools that have a `-p` / `--print` mode (agy, Codex), see **CLI-driven handoff** below — that section covers fully automated single-session relays with no second window needed.
 
 ### Self-closing loops (avoid stray cron housekeeping)
 
@@ -159,6 +161,47 @@ A `/loop`-created cron job is **per-session, in-memory, and auto-expires after 7
 **Cross-session caveat (load-bearing).** Cron jobs live in the session that created them. **You cannot stop another window's loop from yours** — `CronList`/`CronDelete` only see the current session. So every window's loop must self-close (deadline + self-delete), or be stopped *in its own window*; there is no central "kill all loops." This is why self-expiry matters more here than for a single-window loop.
 
 **Use cases:** short hands-free review relays (set a 30-min deadline — most relays finish in 2–4 rounds well under that); unattended overnight polls (longer deadline, but still bounded); any multi-window all-Claude relay where several loops run at once and manual cleanup of each would be error-prone.
+
+## CLI-driven handoff (single-session, agy / Codex)
+
+A single Claude Code session can drive both roles — it takes the Producer turn itself, then calls `agy -p` or `codex` as a subprocess for the Reviewer turn, parses the output, and appends it to the relay file. No second window, no human nudge between rounds.
+
+**When to use.** You have `agy` or `codex` installed, want fully automated review from one session, and trust the output enough to proceed without a human checkpoint between turns. Manual is still the default — this is opt-in. Set `Handoff: cli-driven (agy)` or `cli-driven (codex)` in Setup so any agent reading the file knows which tool is driving the Reviewer.
+
+**How it works.**
+
+1. Producer takes its turn and writes its block normally.
+2. Producer reads the relay file + artifact and calls the CLI tool, passing both as the prompt:
+   ```bash
+   RELAY=$(cat relay-system/<date>/<slug>.md)
+   ARTIFACT=$(cat <artifact-path>)
+   RESULT=$(agy -p "You are the REVIEWER in a relay review. Read the relay thread and artifact, then take your Reviewer turn. Output ONLY the block to append (starting with '### Round N · Reviewer …'), nothing else.
+
+   === RELAY THREAD ===
+   $RELAY
+
+   === ARTIFACT ===
+   $ARTIFACT")
+   ```
+3. Assert non-empty output (see gotchas below), then append the result directly above the `<!-- ↓↓↓ NEXT TURN -->` marker.
+4. Update `NEXT` and `STATUS` in the header.
+5. Loop until `STATUS: Approved` or max round.
+
+The embedded **▶ TAKE YOUR TURN** block in the relay file is the Reviewer's full instruction set — pass the file verbatim and the tool knows what to do without extra scaffolding.
+
+### agy-specific gotchas (load-bearing)
+
+1. **Silent failure under Claude Code's Bash sandbox.** `agy -p` exits 0 with *empty* output when its backend network is blocked — it does NOT error. A sandboxed call reads as a successful empty turn. Always run agy with `dangerouslyDisableSandbox: true` **and** assert non-empty output before appending:
+   ```bash
+   if [ -z "$RESULT" ]; then echo "ERROR: agy empty — sandbox or auth issue"; exit 1; fi
+   ```
+2. **Timeout is a Go duration string, not seconds.** Use `--print-timeout 2m`, not `--print-timeout 120`.
+3. **No JSON or token output.** `agy` returns plain text only — no usage numbers, no structured output flag. The relay is cost-blind when agy is the Reviewer.
+
+### Codex-specific gotchas
+
+1. **Needs sandbox disabled.** Codex CLI requires keychain access and `chatgpt.com` network — both blocked under Claude Code's sandbox. Run with `dangerouslyDisableSandbox: true`.
+2. **Auth mode.** When using `auth_mode=chatgpt`, turns are billed via the ChatGPT subscription, not API credits.
 
 ## Framing
 
@@ -203,7 +246,7 @@ The operator just said "take your turn on this file." Everything you need is **i
 - Artifact under review: <PATH or PR URL>
 - Definition of Done: <ONE LINE — the bar the Reviewer checks against>
 - Producer: <name/agent>   ·   Reviewer: <name/agent>
-- Handoff: manual nudge   <!-- or "hands-free poll (all-Claude)" — see skill -->
+- Handoff: manual nudge   <!-- options: "manual nudge" · "hands-free poll (all-Claude)" · "cli-driven (agy)" · "cli-driven (codex)" — see skill -->
 - Started: <YYYY-MM-DD>
 
 ## Ground rules
