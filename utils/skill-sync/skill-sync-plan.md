@@ -30,7 +30,7 @@ Git does **not** preserve file modification times. When you `git checkout`, `git
 1. Hash both files.
 2. If hashes match → done. No sync needed.
 3. If hashes differ → compare mtime of both files.
-4. Copy the newer file over the older file (preserving mtime with cp -p).
+4. Copy the newer file to a temp path, then atomically rename over the older: `cp -p "$src" "$dest.tmp" && mv "$dest.tmp" "$dest"`.
 5. Log the action: which file won, timestamp, size.
 ```
 
@@ -44,9 +44,12 @@ Location: `utils/skill-sync/skill-sync.sh`
 
 Responsibilities:
 - Read file pairs from a config file
+- Check `git status --porcelain` on each file's repo; skip and warn if either working tree is dirty
 - Implement the hash-then-mtime logic above
+- Use temp-file + atomic rename for writes: `cp -p "$src" "$dest.tmp" && mv "$dest.tmp" "$dest"`
+- Create missing destination directories with `mkdir -p "$(dirname "$dest")"` before copying
 - Write a log entry to `utils/skill-sync/skill-sync.log`
-- Exit 0 on success, non-zero on any error (missing file, permission issue)
+- Exit 0 on success, non-zero on any error (missing file, permission issue, symlink detected)
 
 ### 2. Config File: `skill-sync.conf`
 
@@ -91,7 +94,10 @@ Gitignored — runtime output, not tracked state.
 | Both files missing | Log error, exit non-zero |
 | Permission denied | Log error, exit non-zero |
 | Git resets mtime after pull | Hash check catches this — identical content = no-op |
-| File open/being actively edited | `cp -p` on macOS is atomic enough for a text file; acceptable risk |
+| Both repos edited since last sync (e.g. git pull on one, local uncommitted edit on other) | LWW picks newer mtime — git-pulled file may win even if local edit is the desired change. Mitigation: check `git status --porcelain` on both repos before syncing; if either is dirty, log a warning and skip that pair. |
+| File open/being actively edited | Temp-file + atomic rename (`cp -p src dest.tmp && mv dest.tmp dest`) eliminates partial-read risk |
+| Symlink at source or dest path | Log error, exit non-zero — script operates on regular files only |
+| Binary file in config (non-text) | Allowed; hash+mtime logic is content-agnostic. Large files increase cp time but don't break the algorithm. |
 | Disk full | `cp` will fail; log error, exit non-zero |
 
 ---
@@ -101,6 +107,7 @@ Gitignored — runtime output, not tracked state.
 - **Three-way merge:** If both files differ in content AND were both edited since the last sync, LWW simply overwrites the older one. The newer edit wins; the older edit is lost. This is acceptable for a skill file where one person is the primary editor.
 - **Git commit/push:** The script only syncs the working tree. Committing the synced file to git is a manual step.
 - **Remote/cloud sync:** Mac-local only, between two paths on the same filesystem.
+- **User notification:** The sync runs silently in the background. The log file and `git status` are the sole signals that a sync occurred — no GUI alert, Notification Center entry, or terminal output is produced.
 
 ---
 
@@ -111,8 +118,9 @@ Gitignored — runtime output, not tracked state.
 3. Dry-run manually: `bash skill-sync.sh --dry-run`
 4. Confirm correct winner is selected on a test edit
 5. Install launchd plist: `launchctl load ~/Library/LaunchAgents/com.local.skill-sync.plist`
-6. Verify first automated run via log file
-7. Add `skill-sync.log` to `.gitignore`
+6. Confirm launchd job is registered and firing: `launchctl list | grep skill-sync` (should show a PID or last-exit 0); then tail `skill-sync.log` to verify a run entry appears within 2 minutes
+7. Verify first automated run via log file
+8. Add `skill-sync.log` to `.gitignore`
 
 ---
 
@@ -120,4 +128,5 @@ Gitignored — runtime output, not tracked state.
 
 1. **What are the two full repo paths?** The script needs them in `skill-sync.conf`.
 2. **Is `swe/SKILL.md` the only file to sync, or are there others now or soon?** Affects whether the config-file abstraction is worth it.
-3. **Should the script handle a missing `swe/` directory in the destination?** (`mkdir -p` before copying)
+
+*(Question 3 — missing destination directory — resolved: `mkdir -p` is now in-scope, specified in script responsibilities above.)*

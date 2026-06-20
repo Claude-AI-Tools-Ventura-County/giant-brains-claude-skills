@@ -6,3 +6,6 @@
 
 # Personal session recovery artifact — may contain pasted chat content, never commit
 /snapshot.md
+
+# Skill sync runtime log — not tracked state
+/utils/skill-sync/skill-sync.log
