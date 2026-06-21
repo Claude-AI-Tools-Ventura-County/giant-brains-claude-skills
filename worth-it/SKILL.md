@@ -51,18 +51,20 @@ Each test is a lens on the change. A plan passes a test by answering it with a *
 - [ ] The population is sized — "every API request," "the 15% of users who open settings," "the 4 people who run the deploy."
 - [ ] The frequency is named — once ever, every release, every incident, every page load. Magnitude without frequency overstates a rare win.
 - [ ] A benefit that reaches almost no one is flagged even when its per-event impact is large.
+- [ ] **Small population, high frequency still clears.** Reach is population *times* frequency — a daily-friction win for the 3 people who touch that code every day can outrank a one-time win for thousands. Don't kill an operator or contributor refactor just because few people see it; weigh how often they hit it.
 
 ### 3. Confidence — measured or asserted?
 
 - [ ] The payoff is tagged **measured** (there is a number), **proxied** (a reasonable stand-in exists), or **asserted** (someone believes it).
 - [ ] An *asserted* benefit on a **Costly or One-way door** build is the headline finding — the verdict becomes **Not yet, measure first**, and the cheapest measurement is named. (On an Easy, reversible build, just try it — measuring would cost more than the build.)
+- [ ] **Mandatory work skips the measure-first gate.** When the driver is compliance, security, a contract, or competitive table-stakes (constituency #5), the benefit *is* the penalty avoided — the fine, the breach, the lost deal — not a number to capture. Verdict: **Worth it — required**, not *measure first*. Scope can still be questioned; the *whether* cannot.
 - [ ] Predicted and observed are kept separate — "this will cut load 40%" is a hypothesis to test, never evidence the build is worth it. (Borrows swe's Proof discipline: don't launder a projection as a result.)
 
 ### 4. Price — at what cost, instead of what?
 
 - [ ] Build cost is sized (defer the detailed sizing to **blast-radius**; this test only requires the plan *carry* a number).
 - [ ] **Carrying cost** is named — the permanent maintenance, the new failure modes, the thing on-call now has to know. Build cost is one-time; carrying cost is forever.
-- [ ] **Reversibility** is read on the shared scale — **Easy / Costly / One-way door** (defer the read to **blast-radius**) — because it sets how far an *asserted* benefit is allowed to ride: an Easy build can be tried on a hunch, a One-way door cannot.
+- [ ] **Reversibility** is read on the shared scale — **Easy / Costly / One-way door** (defer the read to **blast-radius**; if it hasn't run, gut-check it: can you undo this in an afternoon, a sprint, or never?) — because it sets how far an *asserted* benefit is allowed to ride: an Easy build can be tried on a hunch, a One-way door cannot.
 - [ ] The **counterfactual** is stated — what the same effort would buy if spent on the next item instead. Worth is relative, not absolute.
 - [ ] The **do-nothing cost** is stated — what the status quo actually costs over the next N months. If it is lower than the build, the honest verdict is *not worth it*.
 
@@ -94,14 +96,17 @@ Lead with the verdict in one line; the load-bearing reason rides with it. Then t
 | Needle | [front(s) moved + size; any front moved backward] |
 | Reach | [population x frequency] |
 | Confidence | [measured / proxied / asserted] |
-| Price | [build cost + carrying cost + what the effort displaces + do-nothing cost] |
-| Reversibility | [Easy / Costly / One-way door — defers to blast-radius] |
+| Price | [build cost + carrying cost + what the effort displaces] |
+| Do-nothing | [what the status quo costs over the next N months — the counterweight the build must beat] |
+| Reversibility | [Easy / Costly / One-way door — defers to blast-radius, or gut-check: undo in an afternoon / a sprint / never] |
+
+Keep every scorecard cell to one or two sentences — a cell that swells into a paragraph or a bulleted list breaks the table and buries the read.
 
 **Cheaper version:** [the 20% slice that captures most of the needle, or "none — it's all-or-nothing because ___"].
 
 **Do next:** [the single move — usually "ship the cheap slice," "measure X before committing," or "build it, the net is clearly positive"].
 
-Verdict guide: **Worth it** (net benefit clearly clears cost; both fronts non-negative or the backward one is named and accepted) · **Marginal** (clears only in a cheaper form, or only if an assumption holds — say which) · **Not worth it** (do-nothing cost is lower, reach is near-zero, or the carrying cost outlives the win) · **Not yet, measure first** (the benefit is asserted on a Costly or One-way build — the value can't be judged until it's measured; an Easy build just gets tried instead).
+Verdict guide: **Worth it** (net benefit clearly clears cost; both fronts non-negative or the backward one is named and accepted) · **Marginal** (not worth it *as written*, but worth a cheaper slice, or worth it only if a named assumption holds — say which; never read it as "barely worth building as-is") · **Not worth it** (do-nothing cost is lower, reach is near-zero, or the carrying cost outlives the win) · **Not yet, measure first** (the benefit is asserted on a Costly or One-way build — the value can't be judged until it's measured; an Easy build just gets tried instead).
 
 ## Principles
 
@@ -136,7 +141,9 @@ Output:
 > | Needle | UX forward (users miss fewer updates) — but maintainability **backward**: a new subsystem (storage, real-time, preferences) to own and page on, forever. |
 > | Reach | Unknown — no data on how many users miss updates today, or whether they'd check a bell over the email they already get. |
 > | Confidence | **Asserted.** "Meaningfully improve the UX" has no number behind it; the email channel already covers the stated problem. |
-> | Price | ~3 weeks build + indefinite carrying cost; displaces the billing-bug backlog. Do-nothing cost: users keep getting emails — modest, not zero. |
+> | Price | ~3 weeks build + indefinite carrying cost; displaces the billing-bug backlog. |
+> | Do-nothing | Users keep getting the existing emails — modest ongoing cost, not zero. The build must beat *that*, not zero. |
+> | Reversibility | Costly — once support flows and user habits depend on the bell, ripping it out is its own project. |
 >
 > **Cheaper version:** A single "what's new since you left" panel on login surfaces the 2-3 missed items at ~2 days, no new subsystem, no real-time, no preferences.
 >
