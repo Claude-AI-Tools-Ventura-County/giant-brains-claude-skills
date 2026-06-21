@@ -22,6 +22,7 @@ A suite of skills for [Claude Code](https://claude.com/claude-code) that bring h
 ## When to reach for it
 
 - **You're about to commit to a plan or migration** and want to pressure-test the framing before you start — [take-a-step-back](take-a-step-back/SKILL.md).
+- **You're unsure a feature or refactor is worth building** and want the payoff priced against the cost before you spend the effort — [worth-it](worth-it/SKILL.md).
 - **A deadline is squeezing you** and you need to name which of speed, cost, or quality you're actually trading away — [iron-triangle](iron-triangle/SKILL.md).
 - **You're eyeing a refactor or schema change** and need to know how far it ripples and how hard it is to undo — [blast-radius](blast-radius/SKILL.md).
 - **An agent handed you a wall of options** and you just need the call — [bottom-line](bottom-line/SKILL.md).
@@ -211,6 +212,8 @@ Abbreviated — skills and their entry points only. Repo meta (`AGENTS.md`, `CHA
 ├── loose-ends/SKILL.md           # The sweep — before "done"
 ├── record-decision/SKILL.md      # The ledger — record → revisit
 ├── giantbrains/SKILL.md          # The router — one door to the suite
+├── swe/SKILL.md                  # Governance lens — does the plan embody engineering standards (repo extra)
+├── worth-it/SKILL.md             # Value lens — is the payoff worth the cost (repo extra)
 ├── phase-qa/SKILL.md             # Plan QA checklists + phase diff review
 ├── spike-360/SKILL.md            # Architecture premise check — classify authority before planning
 ├── snapshot/SKILL.md             # Session recovery
