@@ -37,7 +37,7 @@ The two fronts an operator usually names first are #1 and #3. The skill's job is
 
 ## The four tests
 
-Each test is a lens on the change. A plan passes a test by answering it with a *fact*, not a hope.
+Each test is a lens on the change. A plan passes a test by answering it with a *fact*, not a hope. When the fact is missing, don't invent one — mark the field **Unknown** and let the uncertainty carry into the verdict: a Costly or One-way change with Unknown impact, reach, or confidence is **Not yet, measure first** by default, while an Easy, reversible one can still be tried on a thin read.
 
 ### 1. Needle — which front moves, and by how much?
 
@@ -83,9 +83,11 @@ The most valuable output is rarely yes/no — it is **"the full thing isn't wort
 
 Reach for worth-it the moment the open question is *value* — should this be built — rather than risk, craft, or framing.
 
+**Used standalone?** When those siblings aren't installed or haven't run yet, estimate cost, carrying cost, and reversibility directly from the plan and label the read *rough*. worth-it still works alone — it just leans on its own gut-check instead of their output.
+
 ## Output format
 
-Lead with the verdict in one line; the load-bearing reason rides with it. Then the scorecard, then the lever and the next move. A clear call gets two lines, not a manufactured analysis.
+Lead with the verdict in one line; the load-bearing reason rides with it. Then the scorecard, then the lever and the next move. **Skip the scorecard entirely when the call is obvious** — a cheap, reversible change that moves a front forward with no real downside earns a one- or two-line "Worth it" and nothing more. The full scorecard is for the ambiguous, costly, irreversible, or politically loaded calls; forcing it on an easy one is the regression, not the diligence.
 
 **Verdict:** **Worth it** · **Marginal** · **Not worth it** · **Not yet, measure first** — [one sentence: the reason that carries the call].
 
@@ -112,15 +114,11 @@ Verdict guide: **Worth it** (net benefit clearly clears cost; both fronts non-ne
 
 **Score the benefit, not just the cost.** The whole reason this skill exists is that the suite already prices cost five ways and never scores payoff. Refuse to let "it'll be better" pass as a benefit.
 
-**Unmeasured benefit is discounted, not assumed.** A confident assertion is not a measurement. On an Easy, reversible build, proceed anyway; on a Costly or One-way door, the honest verdict is *measure first*.
-
 **Carrying cost is forever; build cost is once.** The permanent maintenance, the new failure mode, the thing on-call must now know — these outlast the build and often outweigh it. Price the liability, not just the labor.
 
 **Net the fronts; don't OR them.** A UX win that taxes maintainability has to clear *both* — or name which front it sacrifices and why that's acceptable. A change that moves one needle forward and another backward by the same amount is a wash dressed as progress.
 
 **The do-nothing baseline is a real option.** The status quo has a cost; sometimes it's lower than the fix. "Solving a non-problem" is the most common way a plausible plan is not worth it.
-
-**Reach for the cheaper version before the verdict.** The best result is usually not no — it's the 20% slice that moves the needle for a tenth of the cost. Scope is the release valve.
 
 **Don't manufacture doubt.** A change that is clearly worth it and cheap gets "ship it" in two lines. The lens prices value honestly in both directions — it is not a bias toward caution any more than toward building.
 
