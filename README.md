@@ -223,6 +223,9 @@ Abbreviated — skills and their entry points only. Repo meta (`AGENTS.md`, `CHA
 ├── utils/                        # Standalone tooling — not part of the suite
 │   ├── README.md
 │   ├── read-only/SKILL.md        # Pre-approve read-only permissions
+│   ├── shakedown/                # Harden a script-calling skill against path-discovery bugs
+│   │   ├── SKILL.md
+│   │   └── scripts/              # lib.sh (shared core) + audit.sh + harness.sh
 │   └── claude-code-dotfiles-fork/   # Kit: sync ~/.claude across machines (INSTALL.md + templates/)
 └── README.md
 ```

@@ -7,6 +7,7 @@ Each skill subfolder is a normal skill (a directory containing `SKILL.md`) and i
 ## Skills
 
 - **read-only** -- Add a curated set of read-only permission rules (file reads, directory listings, grep/glob search, git inspection, system/environment checks) to a Claude Code `settings.json` allowlist, so safe reads stop triggering permission prompts. Uses exact-match rules where flags can mutate (`git branch -d`, `find -delete`) and excludes trivially write-capable commands (`echo`, `sed`, `tee`, `xargs`).
+- **shakedown** (v1.0) -- Test and harden any other script-calling skill against CWD-sensitive path-discovery bugs (the `.sh` that runs in one session but comes back "not found" in another). Ships a static path audit (`scripts/audit.sh` over the shared `scripts/lib.sh` core) and a live harness (`scripts/harness.sh`) that runs the documented command across a foreign-CWD / nested / spaces-in-path / project-vs-user-install / stripped-exec-bit matrix, then re-runs a `{SKILL}`-anchored fix to prove it survives. Read-only against the target; writes only a graded report under `SHAKEDOWN/` (proposing a patch, not applying it). ASCII output, bash-3.2 compatible, dogfooded. See [shakedown/IMPROVEMENTS.md](shakedown/IMPROVEMENTS.md) for build status.
 
 ## Docs & kits
 
