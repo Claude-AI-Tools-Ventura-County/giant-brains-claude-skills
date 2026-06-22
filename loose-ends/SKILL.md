@@ -1,6 +1,11 @@
 ---
 name: loose-ends
-description: Post-work completeness sweep -- enumerate what was forgotten before finished work is declared done. The work must already exist (a diff, a draft, a session of changes); the skill diffs what was delivered against what was asked, then sweeps for dropped requirements, sibling surfaces still stating the pre-change truth (docs, READMEs, changelogs, configs, counts, install scripts), verification claimed but never run after the last edit, and leftover scaffolding (debug prints, .skip'd tests, TODOs, hardcoded test values). Trigger when the user asks "what did I forget", "did I forget anything", "anything I missed", "is this actually done", "ready to ship/commit/PR?", or is about to declare a multi-file or multi-requirement task complete; also self-trigger before reporting substantial multi-step work finished. Strictly post-work -- if the question is "what am I missing" about a plan, decision, or approach BEFORE the work exists, do NOT fire; route to take-a-step-back. Do not fire for QA-gating the phases of a phased plan doc (phase-qa) or for line-by-line correctness review of code that is present (/code-review) -- this skill hunts what is absent, not what is wrong.
+description: |
+  Post-work completeness sweep: check what was forgotten before declaring existing work done. Use only after work exists: a diff, draft, or completed change session. Compare what was delivered against what was requested, then look for dropped requirements, sibling surfaces still saying the old truth (docs, READMEs, changelogs, configs, counts, install scripts), verification claimed but not rerun after the last edit, and leftover scaffolding such as debug prints, skipped tests, TODOs, or hardcoded test values.
+
+  Trigger when the user asks “what did I forget,” “did I miss anything,” “is this done,” “ready to ship/PR?”, or is about to call a multi-file or multi-requirement task complete. Also self-trigger before reporting substantial multi-step work finished.
+
+  Do not trigger before work exists; if the question is about a plan, decision, or approach, route to take-a-step-back. Do not use for phased-plan QA (phase-qa) or line-by-line code review (/code-review). This skill hunts what is absent, not what is wrong.
 ---
 
 # Loose Ends

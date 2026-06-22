@@ -1,20 +1,11 @@
 ---
 name: bottom-line
-description: >-
-  Distill long, verbose, or repetitive output — especially from Claude or other
-  AI agents laying out options, tradeoffs, and recommendations — into a short,
-  deduplicated "bottom line" summary that surfaces the real decision, a clear
-  recommendation, and any choice that would be hard to reverse later. Trigger
-  when the content is decision- or tradeoff-oriented: the user pastes or points
-  back to a wall of text and asks for the "bottom line", a "TL;DR" / "tldr",
-  the "gist" or "takeaway", to "cut to the chase", to "summarize this cleanly",
-  says something is "too long" / "too verbose" / "too repetitive", or asks
-  "what do I actually need to decide here" or "is there anything here I might
-  regret". Also self-trigger when prior agent output is long-winded, hedged, or
-  repeats the same points multiple ways and a decision needs pulling out cleanly
-  — even if the user never says the exact words "bottom line". Do NOT trigger
-  when the user wants procedural steps, commands, or an execution sequence —
-  that is /linear's job, not this skill's.
+description: |
+  Distill long, verbose, or repetitive output—especially from Claude or other AI agents comparing options, tradeoffs, and recommendations—into a short, deduplicated bottom-line summary. Surface the real decision, a clear recommendation, and any choice that would be hard to reverse later. 
+
+  Trigger when content is decision- or tradeoff-oriented and the user asks for the bottom line, TLDR, gist, takeaway, to cut to the chase, summarize cleanly, says it is too long/verbose/repetitive, or asks what they actually need to decide or might regret. Also self-trigger when prior agent output is long-winded, hedged, or repetitive and a decision needs to be pulled out clearly, even without those exact words. 
+
+  Do not trigger when the user wants procedural steps, commands, or an execution sequence; that is /linear's job, not this skill's. 
 ---
 
 # Bottom Line
