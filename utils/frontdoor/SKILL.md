@@ -14,7 +14,9 @@ description: >
   access gates, prerequisites, first-run success, doc-vs-code drift, and
   accidentally committed secrets (API keys, tokens, private keys) in the tree or
   git history — honestly separating friction an AI agent can absorb from friction
-  that needs a human.
+  that needs a human. Can also save the audit as a persistent FRONTDOOR.md
+  dashboard — a re-runnable health board whose every finding carries a
+  deterministic check — and refresh that board on later runs.
 ---
 
 # Front Door
@@ -86,6 +88,31 @@ Lead with the verdict. Then the source-of-truth map (the thing most audits skip)
 - **Heavy lifts** — real project. (Cross-platform install; reduce a multi-account auth flow; restructure docs/ navigation.)
 
 *Add only if you couldn't verify something —* **Couldn't check:** [what, and why it matters].
+
+## Dashboard mode — the persistent FRONTDOOR.md board
+
+The report above is a point-in-time read. For a repo you'll re-check over time, the skill can also emit a **persistent dashboard file** — `FRONTDOOR.md` — that turns the same findings into a board you *refresh by re-running checks* instead of re-auditing by hand. Every status on the board is verified by a command in its checks block, so nothing is merely asserted. The shipped [`FRONTDOOR.md`](FRONTDOOR.md) in this skill's folder is the worked example; copy its shape.
+
+**Offer it once, after the first audit.** When you finish the conversational report and the repo has **no** `FRONTDOOR.md` yet, offer a single time: *"Want me to save this as a persistent FRONTDOOR.md dashboard at your repo root? Each finding becomes a re-runnable check, so next time you refresh the board with one command instead of re-auditing from scratch."* Generate the file only if the user accepts. If a `FRONTDOOR.md` already exists, don't re-offer — **refresh** it instead (see below).
+
+**Where it goes.** Default to `<repo-root>/FRONTDOOR.md` — a sibling of `README.md`, so its relative links and checks all resolve from the repo root. Only write it elsewhere if the user asks.
+
+**Structure** — mirror the example, in this order:
+
+1. **Title + one-paragraph charter** — what the board is, and when to refresh it (which onboarding docs / structure changes invalidate it).
+2. **Metadata table** — `Last audited` (date **and which tree**: HEAD vs a dirty working copy), `Method`, `Verdict` (✅ Smooth / ⚠️ Bumpy / 🚧 Blocked + one line), and an *optional* `Remediation plan` pointer to a deeper fix doc (omit the row if there's none).
+3. **Health at a glance** — one row per inspection dimension (`One front door`, `🔑 Leaked secrets`, `First success works`, `Doc ↔ code drift`, `Agent front door`, `Recent features documented`, …), each scored ✅ / ⚠️ / 🚧 with a one-liner. These are the seven *What to inspect* points, graded. (Here 🚧 marks a dimension that has open findings; reserve the *verdict's* 🚧 for a true wall.)
+4. **Findings** — a table with `ID` (`FD-01`, `FD-02`, … — **stable across refreshes**), `Area`, `Sev` (🔴 high / 🟠 med / 🟡 low, tracking the Path-walk Blocked/Bumpy weight), `Status` (⬜ OPEN / ✅ FIXED), and `Fix`. Every row maps to exactly one check below. The quick/medium/heavy *Fix order* grouping can live in the optional remediation doc.
+5. **Verified baselines (keep green)** — the ✅ facts that must not regress (secrets clean, one front door, first success passes), each with its check.
+6. **Deterministic checks — re-run to refresh** — a single `bash` block, run from the repo root, with the invariant stated at the top: **empty output = all green; any printed line names an OPEN finding.**
+
+**The checks block is the whole point — author it carefully:**
+- One check per finding ID **and** per baseline. Label each printed line with its ID: `echo "FD-02 OPEN: README test count != validate.sh"`.
+- Each check prints **only when the finding is still open**, so a fully-green board produces *silence*: `grep -q '12/12' AGENTS.md && echo "FD-03 OPEN: ..."`.
+- Keep checks **read-only and deterministic** — `grep` / `test` / `sed` / `git grep`. No mutations, and no network except the secrets baseline; if a check needs `git`, note it. Derive moving numbers from the source of truth instead of hardcoding them: `ACTUAL=$(bash validate.sh | sed -nE 's/^passed: ([0-9]+) .*/\1/p')`.
+- The leaked-secret baseline check stays in this block, and a hit forces the 🚧 verdict — same stop-everything rule as the conversational report.
+
+**Refreshing an existing board.** Re-run the checks block. Any printed line → that finding stays ⬜ OPEN; silence on a line's ID → flip it to ✅ FIXED. Then update `Last audited`, re-derive the `Verdict` and the at-a-glance colors, and add new `FD-##` rows (each with its check) for anything the re-walk surfaced. Keep IDs stable — never renumber a fixed finding.
 
 ## Evidence discipline
 
