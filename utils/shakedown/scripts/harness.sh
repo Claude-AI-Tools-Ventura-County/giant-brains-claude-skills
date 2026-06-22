@@ -56,6 +56,12 @@ matrix() { # <cmd-template>
   inst="$(stage "$BASE/proj/.claude/skills/$name")";            row "project install" "$BASE/proj"    "$inst" "$HOME"          "$tmpl"
   mkdir -p "$BASE/fakehome"; inst="$(stage "$BASE/fakehome/.claude/skills/$name")"; mkdir -p "$BASE/ucwd"
                                                         row "user install"      "$BASE/ucwd"          "$inst" "$BASE/fakehome" "$tmpl"
+  # symlinked install: the skill dir referenced by the command is a SYMLINK to the real copy
+  # (e.g. ~/.claude/skills/shakedown -> repo/utils/shakedown). A locator using `find` without -L,
+  # or self-location that breaks across a symlink, fails exactly here — the gap that let shakedown
+  # pass its own audit. ln -sfn so the symlink is fresh on both Run A and Run B passes.
+  inst="$(stage "$BASE/symreal/$name")"; ln -sfn "$inst" "$BASE/sym-$name"; mkdir -p "$BASE/symcwd"
+                                                        row "symlinked install" "$BASE/symcwd"        "$BASE/sym-$name" "$HOME" "$tmpl"
   inst="$(stage "$BASE/noexec/$name")"; chmod -x "$inst"/scripts/*.sh 2>/dev/null || true
                                                         row "stripped exec bit" "$inst"               "$inst" "$HOME"          "$tmpl"
 }

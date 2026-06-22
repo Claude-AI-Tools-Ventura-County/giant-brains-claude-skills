@@ -19,13 +19,19 @@ Two layers, both **read-only** against the target:
 
 ## Locate this skill, then call its scripts by absolute path
 
-This skill practices what it checks. When it triggers, Claude Code provides this skill's directory — run the bundled scripts by that **absolute** path, never by a CWD-relative path. If the directory isn't obvious, discover it once — preferring the install roots, anchoring the project root to the repo top (not the CWD), and requiring a real match so an empty result can't collapse to `.` (`dirname ""` is `.` — the exact bug this skill hunts):
+This skill practices what it checks. When it triggers, Claude Code provides this skill's directory — run the bundled scripts by that **absolute** path, never by a CWD-relative path. If the directory isn't obvious, discover it once — preferring the install roots, traversing symlinked installs (`find -L`), anchoring the project root to the repo top (not the CWD), and requiring a real match so an empty result can't collapse to `.` (`dirname ""` is `.` — the exact bug this skill hunts):
 
 ```bash
 SK=""
-for root in "$HOME/.claude/skills" "$(git rev-parse --show-toplevel 2>/dev/null)/.claude/skills"; do
+# Search the user-install root, the project-level .claude/skills, and this skill's
+# canonical in-repo home (utils/). `find -L` so a SYMLINKED install (the common case,
+# e.g. ~/.claude/skills/shakedown -> .../utils/shakedown) is actually traversed —
+# bare `find` will not descend a symlinked dir and the locator comes back empty.
+for root in "$HOME/.claude/skills" \
+            "$(git rev-parse --show-toplevel 2>/dev/null)/.claude/skills" \
+            "$(git rev-parse --show-toplevel 2>/dev/null)/utils"; do
   [ -d "$root" ] || continue
-  hit=$(find "$root" -path '*shakedown/SKILL.md' 2>/dev/null | head -n1)
+  hit=$(find -L "$root" -path '*shakedown/SKILL.md' 2>/dev/null | head -n1)
   [ -n "$hit" ] && { SK=$(dirname "$hit"); break; }
 done
 [ -n "$SK" ] || { echo "shakedown: skill dir not found — pass it by absolute path" >&2; exit 1; }
