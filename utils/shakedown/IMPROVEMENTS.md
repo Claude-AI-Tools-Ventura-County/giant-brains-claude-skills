@@ -17,7 +17,7 @@ or delete it once shipped.
 | `scripts/lib.sh` | **Done** — `sev_emoji` to `sev_label` (ASCII), matching the report markers. |
 | `scripts/audit.sh` | **Done** — static audit; sources lib.sh; bash-3.2 safe; dogfood passes. |
 | `scripts/harness.sh` | **Done** — live scenario matrix; sources lib.sh; bash-3.2 safe; dogfood passes. |
-| README / CHANGELOG / install symlink | **Not done** — see Remaining work. |
+| README / CHANGELOG / install symlink | **Done** — shipped as v1.0 (README layout + utils table, CHANGELOG entry, symlinked into `~/.claude/skills/`). |
 
 ## What `lib.sh` already provides (reuse, never reinvent)
 
@@ -54,9 +54,9 @@ Against a fixture whose `SKILL.md` documents `bash scripts/foo.sh` (CWD-relative
 ## Remaining work
 
 - [ ] 1. Decide the audit-on-meta-skill noise: accept the documented "examples are flagged" caveat, or teach `find_script_calls` to skip tokens inside fenced example blocks. Low priority — the caveat is printed.
-- [ ] 2. README: add `utils/shakedown` to the layout tree and the utils table (note it now ships `scripts/`).
-- [ ] 3. CHANGELOG: add a shakedown entry (repo extra, like the other utils tooling).
-- [ ] 4. Install: symlink it live like the other utils skills — `ln -s "$PWD/utils/shakedown" "$HOME/.claude/skills/shakedown"`.
+- [x] 2. README: added `utils/shakedown` to the layout tree and the utils table. (shipped v1.0, commit `0b44a71`)
+- [x] 3. CHANGELOG: added the shakedown v1.0 entry (repo extra). (shipped)
+- [x] 4. Install: symlinked into `~/.claude/skills/shakedown`. (shipped)
 - [ ] 5. Optional: a `test/` fixture plus a one-line self-test so a regression in lib.sh or the scripts is caught before shipping.
 
 ## Appendix — relay review findings (2026-06-21)
