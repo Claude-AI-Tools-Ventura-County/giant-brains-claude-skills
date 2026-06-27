@@ -2,9 +2,9 @@
 
 <img width="1941" height="1058" alt="giant-brains-02" src="https://github.com/user-attachments/assets/d5a0e02b-eec2-4026-b83e-cf725def5942" />
 
-Ten Claude Code skills that catch you at the moment of a decision, again when you're improving something, and once more before you call it done — and force a short, honest answer you can act on in seconds.
+A suite of Claude Code skills that catch you at the moment of a decision, again when you're improving something, and once more before you call it done — and force a short, honest answer you can act on in seconds. A ten-skill decision-and-improvement core, plus a widening set for debugging, docs, repo, and session hygiene.
 
-**New here?** Jump to [Install](#install) — a symlink loop puts all ten in Claude Code in under a minute.
+**New here?** Jump to [Install](#install) — a symlink loop puts the whole suite in Claude Code in under a minute.
 
 ## About
 
@@ -21,15 +21,15 @@ A suite of skills for [Claude Code](https://claude.com/claude-code) that bring h
 
 ## When to reach for it
 
-- **You're about to commit to a plan or migration** and want to pressure-test the framing before you start — [take-a-step-back](take-a-step-back/SKILL.md).
+- **You're about to commit to a plan or migration** and want to pressure-test the framing before you start — [take-a-step-back](tier-2/take-a-step-back/SKILL.md).
 - **You're unsure a feature or refactor is worth building** and want the payoff priced against the cost before you spend the effort — [worth-it](worth-it/SKILL.md).
-- **A deadline is squeezing you** and you need to name which of speed, cost, or quality you're actually trading away — [iron-triangle](iron-triangle/SKILL.md).
-- **You're eyeing a refactor or schema change** and need to know how far it ripples and how hard it is to undo — [blast-radius](blast-radius/SKILL.md).
-- **An agent handed you a wall of options** and you just need the call — [bottom-line](bottom-line/SKILL.md).
-- **An agent gave you scattered steps or a verbose completion message** and you need the execution sequence — [linear](linear/SKILL.md).
-- **You told an agent "make this faster"** but can't tell whether it actually did — [baseline-spec](baseline-spec/SKILL.md) to define what "better" means, then [auto-improve](auto-improve/SKILL.md) to prove it.
-- **The work feels finished** and you want what's missing enumerated — or cleared — before you say "done" — [loose-ends](loose-ends/SKILL.md).
-- **You just made a call that's expensive to unwind** and want the bet written down before it evaporates — [record-decision](record-decision/SKILL.md).
+- **A deadline is squeezing you** and you need to name which of speed, cost, or quality you're actually trading away — [iron-triangle](tier-2/iron-triangle/SKILL.md).
+- **You're eyeing a refactor or schema change** and need to know how far it ripples and how hard it is to undo — [blast-radius](tier-2/blast-radius/SKILL.md).
+- **An agent handed you a wall of options** and you just need the call — [bottom-line](tier-1/bottom-line/SKILL.md).
+- **An agent gave you scattered steps or a verbose completion message** and you need the execution sequence — [linear](tier-1/linear/SKILL.md).
+- **You told an agent "make this faster"** but can't tell whether it actually did — [baseline-spec](tier-3/baseline-spec/SKILL.md) to define what "better" means, then [auto-improve](tier-2/auto-improve/SKILL.md) to prove it.
+- **The work feels finished** and you want what's missing enumerated — or cleared — before you say "done" — [loose-ends](tier-1/loose-ends/SKILL.md).
+- **You just made a call that's expensive to unwind** and want the bet written down before it evaporates — [record-decision](tier-3/record-decision/SKILL.md).
 - **You have a whole plan doc, not one decision,** and want it stress-tested before work starts — [giantbrains](giantbrains/SKILL.md) triages once, runs the right two or three lenses, and returns one combined verdict.
 
 ## Act I — Deciding well (decision hygiene)
@@ -38,10 +38,10 @@ Four skills that fire around a decision, each answering a different question at 
 
 | Skill | The operator's question | Its job |
 |---|---|---|
-| [take-a-step-back](take-a-step-back/SKILL.md) | "Am I making the best decision possible?" | **Frame** — challenge the plan and the problem before committing |
-| [iron-triangle](iron-triangle/SKILL.md) | "Which of speed, cost, or quality am I trading away?" | **Price** — make the implicit tradeoff explicit |
-| [blast-radius](blast-radius/SKILL.md) | "How big is the path I chose, what breaks, how hard to undo?" | **Size** — measure cost and reversibility of a chosen path |
-| [bottom-line](bottom-line/SKILL.md) | "There's too much here — what's the call?" | **Cut** — compress overload and analysis paralysis into a decision, with a brief anchor to where the work sits |
+| [take-a-step-back](tier-2/take-a-step-back/SKILL.md) | "Am I making the best decision possible?" | **Frame** — challenge the plan and the problem before committing |
+| [iron-triangle](tier-2/iron-triangle/SKILL.md) | "Which of speed, cost, or quality am I trading away?" | **Price** — make the implicit tradeoff explicit |
+| [blast-radius](tier-2/blast-radius/SKILL.md) | "How big is the path I chose, what breaks, how hard to undo?" | **Size** — measure cost and reversibility of a chosen path |
+| [bottom-line](tier-1/bottom-line/SKILL.md) | "There's too much here — what's the call?" | **Cut** — compress overload and analysis paralysis into a decision, with a brief anchor to where the work sits |
 
 They **chain** along the life of a decision: **frame** it (should I, and is this the right problem?), **price** the tradeoff (which corner gives?), **size** the chosen path (how big, what breaks?), then **cut** to the bottom line when the analysis balloons. The same situation can touch all four precisely because they answer different questions at different moments.
 
@@ -51,9 +51,9 @@ Once the call is made, one skill turns it into motion.
 
 | Skill | The operator's question | Its job |
 |---|---|---|
-| [linear](linear/SKILL.md) | "The steps are scattered — what's the execution order?" | **Sequence** — extract and order procedural steps into one top-to-bottom plan |
+| [linear](tier-1/linear/SKILL.md) | "The steps are scattered — what's the execution order?" | **Sequence** — extract and order procedural steps into one top-to-bottom plan |
 
-[linear](linear/SKILL.md) is not a decision skill — it fires once a call exists and the *doing* is scattered. It's the natural handoff from `bottom-line` (decision made → ordered plan), but it earns its keep anywhere steps hide in prose: a verbose how-to from an agent mid-project, or a completion message at the tail end whose remaining work is smeared across "what I didn't do," "open items," and "next steps." Whenever someone must execute three or more steps, linear collapses them into one numbered, top-to-bottom plan — branches as sub-bullets, verification inline, a brief "where are we now?" context anchor up top when needed, and nothing actionable after the list.
+[linear](tier-1/linear/SKILL.md) is not a decision skill — it fires once a call exists and the *doing* is scattered. It's the natural handoff from `bottom-line` (decision made → ordered plan), but it earns its keep anywhere steps hide in prose: a verbose how-to from an agent mid-project, or a completion message at the tail end whose remaining work is smeared across "what I didn't do," "open items," and "next steps." Whenever someone must execute three or more steps, linear collapses them into one numbered, top-to-bottom plan — branches as sub-bullets, verification inline, a brief "where are we now?" context anchor up top when needed, and nothing actionable after the list.
 
 ## Act II — Improving verifiably (measure, then optimize)
 
@@ -61,12 +61,12 @@ Once you've decided to make something concretely better, a second pair carries i
 
 | Skill | The operator's question | Its job |
 |---|---|---|
-| [baseline-spec](baseline-spec/SKILL.md) | "What does 'better' even mean, and how would I know?" | **Define** — turn "make it better" into a metric, oracle, budget, and baseline |
-| [auto-improve](auto-improve/SKILL.md) | "Now make it better — provably, not just plausibly." | **Improve** — run a bounded, self-verifying loop, or honestly report no gain |
+| [baseline-spec](tier-3/baseline-spec/SKILL.md) | "What does 'better' even mean, and how would I know?" | **Define** — turn "make it better" into a metric, oracle, budget, and baseline |
+| [auto-improve](tier-2/auto-improve/SKILL.md) | "Now make it better — provably, not just plausibly." | **Improve** — run a bounded, self-verifying loop, or honestly report no gain |
 
-These **chain** too: **define** the measurable contract, then **improve** against it. The routing is deliberately one-directional — a cold-start request like *"optimize this"* belongs to [baseline-spec](baseline-spec/SKILL.md) (the **definer**), which fires first; [auto-improve](auto-improve/SKILL.md) (the **executor**) defers any undefined request back to it and only runs once a metric, an un-gameable oracle, and a budget already exist. baseline-spec refuses to optimize a goal it can't measure — exactly the Act I instinct of *refuse rather than fake it* — and hands off to auto-improve once the three pillars are locked. auto-improve is the suite's one **executional** skill: instead of emitting a verdict, it runs a ratcheted mutate-measure-keep-or-revert search and returns either a verified, numbered win or a clean "no real improvement found." See its [README](auto-improve/README.md) and [operator FAQ](auto-improve/FAQS.md).
+These **chain** too: **define** the measurable contract, then **improve** against it. The routing is deliberately one-directional — a cold-start request like *"optimize this"* belongs to [baseline-spec](tier-3/baseline-spec/SKILL.md) (the **definer**), which fires first; [auto-improve](tier-2/auto-improve/SKILL.md) (the **executor**) defers any undefined request back to it and only runs once a metric, an un-gameable oracle, and a budget already exist. baseline-spec refuses to optimize a goal it can't measure — exactly the Act I instinct of *refuse rather than fake it* — and hands off to auto-improve once the three pillars are locked. auto-improve is the suite's one **executional** skill: instead of emitting a verdict, it runs a ratcheted mutate-measure-keep-or-revert search and returns either a verified, numbered win or a clean "no real improvement found." See its [README](tier-2/auto-improve/README.md) and [operator FAQ](tier-2/auto-improve/FAQS.md).
 
-The two acts join end to end: decide *whether and what* (Act I), sequence the work ([linear](linear/SKILL.md)), then *prove the improvement* (Act II) — and sweep the loose ends before calling it done.
+The two acts join end to end: decide *whether and what* (Act I), sequence the work ([linear](tier-1/linear/SKILL.md)), then *prove the improvement* (Act II) — and sweep the loose ends before calling it done.
 
 ## The sweep — declaring done honestly
 
@@ -74,9 +74,9 @@ Work rarely ends where the request did. One skill fires at the last moment — a
 
 | Skill | The operator's question | Its job |
 |---|---|---|
-| [loose-ends](loose-ends/SKILL.md) | "What did I forget?" | **Sweep** — diff the delivered work against the original ask, enumerate what's absent, or clear it to ship |
+| [loose-ends](tier-1/loose-ends/SKILL.md) | "What did I forget?" | **Sweep** — diff the delivered work against the original ask, enumerate what's absent, or clear it to ship |
 
-[loose-ends](loose-ends/SKILL.md) is Act I's mirror image: the decision skills guard the moment *before committing*; this one guards the moment *before declaring done*. It reconstructs the contract (the original request, including the throwaway clauses), inventories what was actually delivered, and sweeps for the classic forgettables — the requirement that fell out mid-session, the sibling surface still stating the pre-change truth (a README count, a docs table, an install loop), the "tests pass" that was true three edits ago, the debug print left in the handler. Findings come back blocking-first, each with an evidenced address and a one-line close-out — and "swept clean, ship it" is a first-class verdict, not a failure to find. It is strictly post-work: "what am I missing?" asked *before* the work exists belongs to [take-a-step-back](take-a-step-back/SKILL.md), gating the phases of a plan doc belongs to [phase-qa](phase-qa/SKILL.md), and bugs in code that *is* present belong to a code review — this skill hunts the absent, not the wrong.
+[loose-ends](tier-1/loose-ends/SKILL.md) is Act I's mirror image: the decision skills guard the moment *before committing*; this one guards the moment *before declaring done*. It reconstructs the contract (the original request, including the throwaway clauses), inventories what was actually delivered, and sweeps for the classic forgettables — the requirement that fell out mid-session, the sibling surface still stating the pre-change truth (a README count, a docs table, an install loop), the "tests pass" that was true three edits ago, the debug print left in the handler. Findings come back blocking-first, each with an evidenced address and a one-line close-out — and "swept clean, ship it" is a first-class verdict, not a failure to find. It is strictly post-work: "what am I missing?" asked *before* the work exists belongs to [take-a-step-back](tier-2/take-a-step-back/SKILL.md), gating the phases of a plan doc belongs to [phase-qa](tier-3/phase-qa/SKILL.md), and bugs in code that *is* present belong to a code review — this skill hunts the absent, not the wrong.
 
 ## The ledger — remembering why
 
@@ -84,9 +84,9 @@ Every skill above produces a sharp one-shot verdict — and then the verdict eva
 
 | Skill | The operator's question | Its job |
 |---|---|---|
-| [record-decision](record-decision/SKILL.md) | "We made the call — what did we bet on, and when will we know we were right?" | **Record** — write the bet to the repo at commit time, close the loop when reality reports back |
+| [record-decision](tier-3/record-decision/SKILL.md) | "We made the call — what did we bet on, and when will we know we were right?" | **Record** — write the bet to the repo at commit time, close the loop when reality reports back |
 
-[record-decision](record-decision/SKILL.md) is the suite's memory. At commit time it writes the decision to a dated file — the call, the fragile assumption it rides on, the expected signal with a by-when, the reversibility read, and a revisit trigger — then keeps the record *and* the project docs current as findings arrive. It's mostly a receiver: take-a-step-back's fragile assumption becomes the bet, blast-radius's verdict becomes the reversibility line, baseline-spec's metric becomes the expected signal. The records carry machine-readable frontmatter, so "find every Costly decision not yet Validated" is one query, and a date-based revisit trigger can become a `/schedule` appointment instead of a hope.
+[record-decision](tier-3/record-decision/SKILL.md) is the suite's memory. At commit time it writes the decision to a dated file — the call, the fragile assumption it rides on, the expected signal with a by-when, the reversibility read, and a revisit trigger — then keeps the record *and* the project docs current as findings arrive. It's mostly a receiver: take-a-step-back's fragile assumption becomes the bet, blast-radius's verdict becomes the reversibility line, baseline-spec's metric becomes the expected signal. The records carry machine-readable frontmatter, so "find every Costly decision not yet Validated" is one query, and a date-based revisit trigger can become a `/schedule` appointment instead of a hope.
 
 It is deliberately **not** Claude's memory (`MEMORY.md` / `CLAUDE.md`): memory is operator-private and about *how Claude should work with you*; decision records live in git, address the whole team — humans and future agents — and answer *why the system is shaped this way*. The skill file carries the full comparison.
 
@@ -98,11 +98,31 @@ When the input is a whole doc rather than a single decision, one skill picks the
 |---|---|---|
 | [giantbrains](giantbrains/SKILL.md) | "Stress-test this whole plan — which lenses should run?" | **Route** — triage once, run the 2–3 stage-matched lenses report-only, synthesize one verdict |
 
-[giantbrains](giantbrains/SKILL.md) is the suite's front door for docs. It triages in one message (which doc, what stage), then routes to at most three lenses — a draft gets frame/price/size, an in-progress plan gets a size-and-squeeze check, a retro gets the ledger audit and the outcome cut — runs them report-only, and dedupes the overlap into a single bottom-line-shaped verdict: one reversibility read, one do-next. It never edits the doc: writers ([phase-qa](phase-qa/SKILL.md) for phased plans, [record-decision](record-decision/SKILL.md) for bets, [linear](linear/SKILL.md) for scattered steps) are offered afterward as explicit opt-ins. And on a one-pager it refuses the battery and hands off to the single matching lens — running five lenses on one decision is ceremony, not hygiene.
+[giantbrains](giantbrains/SKILL.md) is the suite's front door for docs. It triages in one message (which doc, what stage), then routes to at most three lenses — a draft gets frame/price/size, an in-progress plan gets a size-and-squeeze check, a retro gets the ledger audit and the outcome cut — runs them report-only, and dedupes the overlap into a single bottom-line-shaped verdict: one reversibility read, one do-next. It never edits the doc: writers ([phase-qa](tier-3/phase-qa/SKILL.md) for phased plans, [record-decision](tier-3/record-decision/SKILL.md) for bets, [linear](tier-1/linear/SKILL.md) for scattered steps) are offered afterward as explicit opt-ins. And on a one-pager it refuses the battery and hands off to the single matching lens — running five lenses on one decision is ceremony, not hygiene.
+
+## More in the suite
+
+The core above is the decision-and-improvement throughline. Around it sit skills that apply the same *make-the-implicit-explicit, refuse-rather-than-fake-it* discipline to other moments — planning, debugging, and keeping a repo honest.
+
+| Skill | When it fires | Its job |
+|---|---|---|
+| [worth-it](worth-it/SKILL.md) | "Is this feature/refactor even worth building?" | **Price the payoff** against the cost across every constituency a change serves, versus doing nothing |
+| [spike-360](tier-3/spike-360/SKILL.md) | A change might introduce, move, or replace a source of truth | **Interrogate authority** before planning anything that touches authoritative state |
+| [swe](tier-3/swe/SKILL.md) | Authoring or reviewing a v1.x build doc / spec / RFC | **Governance lens** — minimal scope, designed for diagnosis, verifiable before code |
+| [phase-qa](tier-3/phase-qa/SKILL.md) | A phased plan needs checks baked in, or completed phases reviewed | **Plan QA** — append phase-appropriate checklists, then diff-review the finished phases |
+| [debug-mantra](tier-1/debug-mantra/SKILL.md) | A bug, a stack trace, a "where is this coming from?" | **Debugging discipline** — reproduce, trace the fail path, falsify the hypothesis, cross-reference |
+| [rabbit-hole](tier-2/rabbit-hole/SKILL.md) | An agent keeps surfacing one-more-thing on a simple task | **Stop the drip** — one end-to-end triage that puts every issue on the table at once |
+| [ponytail](tier-1/ponytail-refined/SKILL.md) | Over-engineering, bloat, "what's the simplest version?" | **Force the laziest solution** that works — YAGNI, stdlib before deps, one line before fifty |
+| [honest](tier-2/honest/SKILL.md) | "What's the real state of this repo?" before a stakeholder update | **Ground-truth read** — how mature the codebase really is and what you can safely claim |
+| [front-door](tier-2/frontdoor/SKILL.md) | Auditing onboarding — "can a new user install this?" | **Walk the front door** — does clone-to-working actually work, and is a secret leaked? |
+| [readme-audit](tier-2/readme/SKILL.md) | "Is the README accurate / clear / still matching the code?" | **Audit the README** as artifact and as map — then follow its links as a doc-hygiene litmus |
+| [snapshot](tier-1/snapshot/SKILL.md) | "Save this session" before signing off or a crash | **Checkpoint the session** to an additive `snapshot.md` you can resume from later |
+
+Standalone tooling that isn't part of the suite (read-only permission presets, skill path-hardening, gh/git auth repair, a dotfiles-sync kit) lives under [utils/](utils/README.md).
 
 ## Beyond the suite — the relay
 
-A standalone collaboration tool, not one of the ten decision skills: [relay](relay/SKILL.md) runs a turn-based review loop between two Claude Code agents — a **Producer** who builds and a **Reviewer** who critiques and proposes fixes the author applies — entirely inside one dated Markdown file, so a human stops copy-pasting output between two windows. The file is the shared bus, the change-log, and the decision record at once: graded findings (`Blocker` / `Should` / `Nit` / `Pass`), a mandatory disposition on every proposal, an **evidence contract** per turn (the Producer logs what it *ran / skipped / couldn't run*; the Reviewer logs whether its verdict is `behaviorally proven` or `textual only`), and a clean exit on **Approved**. The protocol is model-agnostic — run a different model in the Reviewer window (Codex, Gemini, another Claude tier) for genuinely independent eyes. See the worked [sample thread](relay/RELAY-sample.md).
+A standalone collaboration tool, not one of the ten decision skills: [relay](tier-1/relay/SKILL.md) runs a turn-based review loop between two Claude Code agents — a **Producer** who builds and a **Reviewer** who critiques and proposes fixes the author applies — entirely inside one dated Markdown file, so a human stops copy-pasting output between two windows. The file is the shared bus, the change-log, and the decision record at once: graded findings (`Blocker` / `Should` / `Nit` / `Pass`), a mandatory disposition on every proposal, an **evidence contract** per turn (the Producer logs what it *ran / skipped / couldn't run*; the Reviewer logs whether its verdict is `behaviorally proven` or `textual only`), and a clean exit on **Approved**. The protocol is model-agnostic — run a different model in the Reviewer window (Codex, Gemini, another Claude tier) for genuinely independent eyes. See the worked [sample thread](tier-1/relay/RELAY-sample.md).
 
 **Optional automation add-on.** Relay is human-locked by default (one "your turn" nudge per handoff). A fuller, `tick`-backed automation engine lives in a sibling repo: [xyz-3-agents-swarm · relay-system](https://github.com/Claude-AI-Tools-Ventura-County/xyz-3-agents-swarm/tree/main/relay-system/2026-06-14). It turns the manual, human-nudged relay into a hands-free, self-healing loop — `tick` coordination primitives enforce strict Producer/Reviewer turn-taking, auto-detect and recover stalled turns, and gate termination on an LLM-written `Approved` with a clean tree. It ships as a sibling self-extracting skill powered by `tick`, leaving the portable `/relay` protocol completely untouched and dependency-free.
 
@@ -160,8 +180,10 @@ The web app and desktop app share one flow: enable code execution, then upload e
 1. **Enable execution.** Open **Settings > Capabilities** and turn on **Code execution and file creation**. (Available on Free, Pro, Max, Team, and Enterprise plans. On Team/Enterprise, an owner must first enable it under **Organization settings > Skills**.)
 2. **Zip each skill folder** — one ZIP per skill, each with a `SKILL.md` at its root. Run from the repo root:
    ```bash
-   for s in take-a-step-back iron-triangle blast-radius bottom-line linear baseline-spec auto-improve loose-ends record-decision giantbrains; do
-     (cd "$s" && zip -rX "../$s.zip" . -x '.*')
+   ROOT="$PWD"
+   for d in tier-1/*/ tier-2/*/ tier-3/*/ giantbrains/ worth-it/; do
+     [ -f "$d/SKILL.md" ] || continue
+     (cd "$d" && zip -rX "$ROOT/$(basename "$d").zip" . -x '.*')
    done
    ```
 3. **Upload.** In Claude, go to **Customize > Skills**, click **+ > + Create skill > Upload a skill**, and select one ZIP. Repeat for each skill.
@@ -175,8 +197,9 @@ Put each skill directory where Claude Code looks for skills — **personal (all 
 
 ```bash
 mkdir -p "$HOME/.claude/skills"
-for s in blast-radius bottom-line linear iron-triangle take-a-step-back baseline-spec auto-improve loose-ends record-decision giantbrains; do
-  ln -s "$PWD/$s" "$HOME/.claude/skills/$s"
+for d in "$PWD"/tier-1/*/ "$PWD"/tier-2/*/ "$PWD"/tier-3/*/ "$PWD"/giantbrains/ "$PWD"/worth-it/; do
+  [ -f "$d/SKILL.md" ] || continue
+  ln -s "${d%/}" "$HOME/.claude/skills/$(basename "$d")"
 done
 ```
 
@@ -197,36 +220,49 @@ Lessons baked into these files. Keep them if you add more skills:
 
 Abbreviated — skills and their entry points only. Repo meta (`AGENTS.md`, `CHANGELOG.md`, `CLAUDE.md`, `LICENSE`) and the dotfiles-sync kit's inner files (`INSTALL.md`, `HANDOFF.md`, `templates/`) are omitted; see [utils/README.md](utils/README.md) for the kit's contents.
 
+The `tier-*/` folders are the repo's own grouping; the thematic sections above (Act I/II, the bridge, the sweep, the ledger) are the better map to *what each skill does*.
+
 ```
 .
-├── take-a-step-back/SKILL.md     # Act I — decision hygiene
-├── iron-triangle/SKILL.md
-├── blast-radius/SKILL.md
-├── bottom-line/SKILL.md
-├── linear/SKILL.md               # The bridge — decide → do
-├── baseline-spec/SKILL.md        # Act II — measure, then optimize
-├── auto-improve/
-│   ├── SKILL.md
-│   ├── README.md
-│   └── FAQS.md
-├── loose-ends/SKILL.md           # The sweep — before "done"
-├── record-decision/SKILL.md      # The ledger — record → revisit
-├── giantbrains/SKILL.md          # The router — one door to the suite
-├── swe/SKILL.md                  # Governance lens — does the plan embody engineering standards (repo extra)
-├── worth-it/SKILL.md             # Value lens — is the payoff worth the cost (repo extra)
-├── phase-qa/SKILL.md             # Plan QA checklists + phase diff review
-├── spike-360/SKILL.md            # Architecture premise check — classify authority before planning
-├── snapshot/SKILL.md             # Session recovery
-├── relay/                        # Standalone — two-agent review relay (one file, no copy-paste)
-│   ├── SKILL.md
-│   └── RELAY-sample.md
-├── utils/                        # Standalone tooling — not part of the suite
-│   ├── README.md
-│   ├── read-only/SKILL.md        # Pre-approve read-only permissions
-│   ├── shakedown/                # Harden a script-calling skill against path-discovery bugs
+├── tier-1/
+│   ├── bottom-line/SKILL.md        # Act I — cut to the call
+│   ├── debug-mantra/SKILL.md       # Four-step debugging discipline
+│   ├── linear/SKILL.md             # The bridge — decide → do
+│   ├── loose-ends/SKILL.md         # The sweep — before "done"
+│   ├── ponytail-refined/SKILL.md   # Force the laziest solution that works
+│   ├── relay/                      # Two-agent review relay (one file, no copy-paste)
 │   │   ├── SKILL.md
-│   │   └── scripts/              # lib.sh (shared core) + audit.sh + harness.sh
-│   └── claude-code-dotfiles-fork/   # Kit: sync ~/.claude across machines (INSTALL.md + templates/)
+│   │   └── RELAY-sample.md
+│   └── snapshot/SKILL.md           # Session recovery
+├── tier-2/
+│   ├── auto-improve/               # Act II — the executor (self-verifying loop)
+│   │   ├── SKILL.md
+│   │   ├── README.md
+│   │   └── FAQS.md
+│   ├── blast-radius/SKILL.md       # Act I — size cost & reversibility
+│   ├── frontdoor/SKILL.md          # Audit onboarding — clone → working
+│   ├── honest/SKILL.md             # Ground-truth read of the repo
+│   ├── iron-triangle/SKILL.md      # Act I — price the tradeoff
+│   ├── rabbit-hole/SKILL.md        # Stop the one-more-thing drip; triage once
+│   ├── readme/SKILL.md             # Audit the README + doc-hygiene litmus
+│   └── take-a-step-back/SKILL.md   # Act I — frame the decision
+├── tier-3/
+│   ├── baseline-spec/SKILL.md      # Act II — the definer (metric/oracle/budget)
+│   ├── phase-qa/SKILL.md           # Plan QA checklists + phase diff review
+│   ├── record-decision/SKILL.md    # The ledger — record → revisit
+│   ├── spike-360/SKILL.md          # Classify authority before planning
+│   └── swe/SKILL.md                # Engineering-governance lens for build docs
+├── giantbrains/SKILL.md            # The router — one door to the suite
+├── worth-it/SKILL.md               # Value lens — is the payoff worth the cost
+├── utils/                          # Standalone tooling — not part of the suite
+│   ├── README.md
+│   ├── github-auth-debug/SKILL.md  # Fix the gh-vs-git auth split on macOS
+│   ├── read-only/SKILL.md          # Pre-approve read-only permissions
+│   ├── shakedown/                  # Harden a script-calling skill against path-discovery bugs
+│   │   ├── SKILL.md
+│   │   └── scripts/
+│   ├── skill-sync/                 # Keep installed skills in sync with this repo
+│   └── claude-code-dotfiles-fork/  # Kit: sync ~/.claude across machines (INSTALL.md + templates/)
 └── README.md
 ```
 
