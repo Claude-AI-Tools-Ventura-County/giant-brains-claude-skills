@@ -1,6 +1,6 @@
 ---
 name: swe
-description: Apply an opinionated software-engineering governance lens to a build/spec/PRD document — especially a "build v1.x" doc — so the plan enforces minimal scope, designs for diagnosis, accounts for blast radius, and is verifiable before anyone writes code. Use this when authoring or reviewing a v1.x build plan, implementation spec, architecture doc, RFC, or AGENTS.md/CLAUDE.md, or when the user says "review this build doc," "apply our SWE standards," "make this plan production-grade," "gate this spec," "is this plan ready to build," "bake in our engineering philosophy," or pastes a plan and asks whether it embodies good engineering discipline. Also self-trigger before drafting a v1.x build document so the standards shape it from the first draft instead of being bolted on after. This is the standard (the rubric), not the pipeline — it supplies the engineering invariants a plan is checked against.
+description: Apply an opinionated software-engineering governance lens to a build/spec/PRD document — especially a "build v1.x" doc — so the plan enforces minimal scope, designs for diagnosis, accounts for blast radius, and is verifiable before anyone writes code. Use this when authoring or reviewing a v1.x build plan, implementation spec, architecture doc, RFC, or AGENTS.md/CLAUDE.md, or when the user says "write a project plan," "write a plan," "review this build doc," "apply our SWE standards," "make this plan production-grade," "gate this spec," "is this plan ready to build," "bake in our engineering philosophy," or pastes a plan and asks whether it embodies good engineering discipline. Also self-trigger before drafting a v1.x build document or any project plan so the standards shape it from the first draft instead of being bolted on after. This is the standard (the rubric), not the pipeline — it supplies the engineering invariants a plan is checked against.
 ---
 
 # SWE
@@ -18,7 +18,7 @@ Each pillar is a lens on the document. A v1.x doc that satisfies a pillar contai
 The plan's default answer to "add a thing" is *no*. Scope, dependencies, and abstractions are all liabilities until justified in the doc.
 
 - [ ] Every new component answers "does this need to exist?" (YAGNI) — speculative scope is cut or deferred, not built.
-- [ ] Sourcing ladder is honored before any new dependency: stdlib → native platform feature → already-installed dep → one line of our own. A new dep names what it buys that the rung above does not.
+- [ ] Sourcing ladder is honored to minimize mechanism, not requirements: stdlib → native platform feature → already-installed dep → one line of our own. A new dep names what it buys that the rung above does not. (Security and observability requirements are never simplified away, only implemented via the laziest viable mechanism).
 - [ ] No premature abstraction — the plugin layer / framework / generic engine is justified by ≥2 concrete present uses, not one hypothetical future one.
 - [ ] Bias is stated: delete > add, boring > clever, shortest diff that works. A complexity cap is named (e.g. stdlib-only, ~600-line ceiling) where it applies.
 
@@ -28,7 +28,7 @@ The plan's default answer to "add a thing" is *no*. Scope, dependencies, and abs
 
 A build doc that provisions zero observability is a debugging session deferred to production. Bake the diagnosis path into v1.x, not v1.next.
 
-- [ ] Instrumentation is in scope, not assumed: structured logs, a per-request/per-run correlation id, and the trace path (logs → stack → source) are part of the build, not a follow-up.
+- [ ] Instrumentation is right-sized but explicit: a single actionable error log is better than an unread ELK stack, but silent failures are blocked. The plan names the exact log, metric, or alert that fires when it breaks.
 - [ ] Every iterate/retry loop has a **stop condition** (e.g. 5-failure hard stop, 10-total cap). An unbounded "retry until it works" is a defect in the plan.
 - [ ] Failures are made reproducible: the plan names how a failure is repro'd, and treats intermittent failure as a *signal* (concurrency / ordering / env / TOCTOU), not noise to retry away.
 - [ ] State changes are auditable — append-only event log over in-place mutation where the history matters.
@@ -65,7 +65,7 @@ Non-negotiable conventions a v1.x doc must satisfy regardless of pillar. These a
 
 - [ ] **FSM threshold** — model an explicit state machine only past ~4 states; below that a flag or enum is leaner. Past it, an ad-hoc tangle of booleans is the defect.
 - [ ] **Single write path** — one writer per piece of state. Multiple write paths to the same table/file are a race waiting to happen; name the single path.
-- [ ] **Append-only event log** for anything whose history or audit matters (JSONL or equivalent), over destructive in-place updates.
+- [ ] **Append-only event log** only when audit or history is an explicit business requirement (JSONL or equivalent); otherwise, simple in-place updates are the default.
 - [ ] **UTC-only** time handling end to end; local time only at the display edge. "Nightly," "daily," "expires in 24h" all imply a timezone — pin it.
 - [ ] **Crash-safe / idempotent jobs** — cron and background work are resumable and safe to run twice. A job that corrupts state on a mid-run crash is unshipped.
 - [ ] **Checklist standard** — actionable items use the `- [ ]` hyphen prefix in GitHub-flavored Markdown, never bare `[ ]` in tables or lists.
@@ -88,6 +88,59 @@ Reach for `swe` the moment there is a build/spec document to hold to a standard 
 **Author mode** — you are writing the v1.x doc. Use the four pillars and house invariants as the doc's skeleton: each feature passes Minimal before it earns a section; each risky step ships with its Blast block; each task ships with its Proof criterion. The lens is the gate, not a later edit.
 
 **Review mode** — you are handed a v1.x doc. Walk the four pillars then the invariants. For each gap, emit one finding keyed to the doc location (`§section`, or `file:line` for code-adjacent specs), tagged by severity, with the *cheapest* fix first. Close with a verdict. Do not rewrite the doc unless asked — surface the checkable gaps and let the author act.
+
+## Project plan scaffold (Author mode)
+
+When the ask is "write a project plan" / "write a plan" (authoring, not reviewing), build the doc against the four pillars **and** lay it out in the fixed structure below. The structure is load-bearing, not decoration: the status table forces an honest "where are we" at a glance, the Table of contents keeps a long plan navigable, observable checklist items *are* the Proof done-criteria, and the per-phase QA checklist is the grader pass made mechanical. Implied is unbuilt — so every field below is written down, not assumed.
+
+Required order, top to bottom: **frontmatter → status table → table of contents → phases (each with observable todos) → per-phase QA checklist**.
+
+````markdown
+---
+title: <Project> — Build Plan
+status: Not started | In progress | Blocked | Shipped
+owner: <name>
+created: <YYYY-MM-DD>   # UTC
+updated: <YYYY-MM-DD>   # UTC — bump every time the plan changes
+reversibility: Easy | Costly | One-way door — <one line of why>
+---
+
+# <Project> — Build Plan
+
+| Most recently completed phase | What's next |
+| --- | --- |
+| — (not started) | Phase 1: <name> |
+
+## Table of contents
+- [Phase 1: <name>](#phase-1-name)
+- [Phase 2: <name>](#phase-2-name)
+- [Phase 3: <name>](#phase-3-name)
+
+## Phase 1: <name>
+**Goal:** <one observable outcome this phase delivers — not "work on X">
+
+- [ ] <observable todo: names a checkable output or artifact>
+- [ ] <observable todo>
+- [ ] <observable todo>
+
+### Phase 1 — QA checklist
+- [ ] Every todo above produced its checkable output (no orphan tasks)
+- [ ] Tests written **and run** — point to the execution artifact, not an assertion
+- [ ] Diagnosable: logs + correlation id present; every loop has a stop condition
+- [ ] Blast: each risky step names undo-class + shield + tripwire (or explicit "none")
+- [ ] Status table and `updated:` date refreshed before this phase is marked done
+
+## Phase 2: <name>
+...
+````
+
+Filling it:
+
+- **Frontmatter** — the at-a-glance contract. Keep `status`, `updated`, and `reversibility` honest; a stale `updated` date is the first sign the plan drifted from reality.
+- **Status table** — exactly two columns, one row. It is the single source of truth for "where are we"; update it as the *last* step of finishing a phase, never before. Don't expand it into a multi-row log — that's what phases are for.
+- **Phases** — split by observable milestone, not by calendar. Apply the Minimal pillar to phase count too: only as many phases as the work earns. Each phase has one `**Goal:**` line stating the outcome it delivers.
+- **Observable todos** — every `- [ ]` names a checkable output, not an activity. "Add retry cap of 5 to the reconciler loop" passes; "improve reliability" fails. Use the `- [ ]` hyphen prefix (house Checklist standard), never bare `[ ]`.
+- **Per-phase QA checklist** — closes each phase against the four pillars. It is Proof's editor/grader separation per phase: the boxes are checked by running things, not by the author asserting done. A phase isn't complete until its QA checklist is.
 
 ## Output format (Review mode)
 

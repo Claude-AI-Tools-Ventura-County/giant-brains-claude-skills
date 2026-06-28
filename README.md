@@ -112,7 +112,7 @@ The core above is the decision-and-improvement throughline. Around it sit skills
 | [phase-qa](tier-3/phase-qa/SKILL.md) | A phased plan needs checks baked in, or completed phases reviewed | **Plan QA** — append phase-appropriate checklists, then diff-review the finished phases |
 | [debug-mantra](tier-1/debug-mantra/SKILL.md) | A bug, a stack trace, a "where is this coming from?" | **Debugging discipline** — reproduce, trace the fail path, falsify the hypothesis, cross-reference |
 | [rabbit-hole](tier-2/rabbit-hole/SKILL.md) | An agent keeps surfacing one-more-thing on a simple task | **Stop the drip** — one end-to-end triage that puts every issue on the table at once |
-| [ponytail](tier-1/ponytail-refined/SKILL.md) | Over-engineering, bloat, "what's the simplest version?" | **Force the laziest solution** that works — YAGNI, stdlib before deps, one line before fifty |
+| [ponytail](tier-1/ponytail-refined/SKILL.md) | Over-engineering, bloat, "what's the simplest version?" | **Force the laziest implementation** that works — YAGNI on code and abstractions, not on explicit feature requirements |
 | [honest](tier-2/honest/SKILL.md) | "What's the real state of this repo?" before a stakeholder update | **Ground-truth read** — how mature the codebase really is and what you can safely claim |
 | [front-door](tier-2/frontdoor/SKILL.md) | Auditing onboarding — "can a new user install this?" | **Walk the front door** — does clone-to-working actually work, and is a secret leaked? |
 | [readme-audit](tier-2/readme/SKILL.md) | "Is the README accurate / clear / still matching the code?" | **Audit the README** as artifact and as map — then follow its links as a doc-hygiene litmus |
@@ -229,7 +229,7 @@ The `tier-*/` folders are the repo's own grouping; the thematic sections above (
 │   ├── debug-mantra/SKILL.md       # Four-step debugging discipline
 │   ├── linear/SKILL.md             # The bridge — decide → do
 │   ├── loose-ends/SKILL.md         # The sweep — before "done"
-│   ├── ponytail-refined/SKILL.md   # Force the laziest solution that works
+│   ├── ponytail-refined/SKILL.md   # Force the laziest implementation that works
 │   ├── relay/                      # Two-agent review relay (one file, no copy-paste)
 │   │   ├── SKILL.md
 │   │   └── RELAY-sample.md
