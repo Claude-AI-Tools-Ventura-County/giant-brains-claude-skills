@@ -54,6 +54,7 @@ Editor and grader are different roles. The plan must define "done" in terms some
 - [ ] Every task has a **measurable done-criterion** — a checkable output or metric, not "works" / "improved" / "robust."
 - [ ] Tests are specified *and the plan requires they actually run* — "tests pass" means an execution artifact, not an assertion.
 - [ ] **No orphan tasks**: every step maps to a success criterion, and every success criterion is covered by a step.
+- [ ] **Closed loop**: For medium/large efforts, backend/data work must explicitly connect to a user-facing UI plane or final consumer. Fetching data without surfacing it to the user is an incomplete loop.
 - [ ] **Observed vs. predicted is kept separate** — the doc never launders a projection ("this will reduce load 40%") as evidence. Predictions are labeled as such.
 
 *Planning translation:* PlanProof's editor/grader separation at document scale. The grader reads only what's written, not what the author meant.
