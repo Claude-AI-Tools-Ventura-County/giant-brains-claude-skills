@@ -14,12 +14,17 @@ DANGEROUS_SINGLE = {
     'rm', 'sudo', 'curl', 'wget', 'nc', 'gh',
     'eval', 'env', 'printenv', 'mv', 'cp', 'chmod', 'chown',
 }
-DANGEROUS_PAIR = {
-    ('git', 'push'),
-    ('npm', 'install'), ('npm', 'i'), ('npm', 'ci'),
-    ('pnpm', 'install'), ('pnpm', 'add'),
-    ('yarn', 'add'),
-    ('pip', 'install'), ('pip3', 'install'),
+# Destructive subcommand verbs per tool. Checked against every NON-option word after
+# the tool name, so option-prefixed forms like `git -C path push` or
+# `npm --prefix app install` are caught the same as bare `git push` / `npm install` —
+# a first-two-token check would miss them and hand out a broad wildcard.
+DANGEROUS_VERBS = {
+    'git': {'push'},
+    'npm': {'install', 'i', 'ci'},
+    'pnpm': {'install', 'add'},
+    'yarn': {'add'},
+    'pip': {'install'},
+    'pip3': {'install'},
 }
 
 # Commands that take a meaningful subcommand — propose a two-word prefix
@@ -73,6 +78,26 @@ def check_rule_match(tool_name, cmd, rule):
 
 def is_allowed(tool_name, cmd, allowed_rules):
     cmd_str = cmd if cmd else ""
+
+    # A blanket tool grant ("Bash") or an exact whole-line rule covers everything,
+    # compound lines included.
+    if tool_name in allowed_rules:
+        return True
+    if f"{tool_name}({cmd_str})" in allowed_rules:
+        return True
+
+    # A compound Bash line is only silenced when EVERY segment is independently
+    # covered. Claude evaluates the whole line, so a prefix rule that matches just the
+    # first segment (e.g. `Bash(cd:*)` vs `cd app && npm run build`) does NOT silence
+    # the prompt — matching the full line with startswith would wrongly hide it.
+    if tool_name == "Bash":
+        segments = split_compound(cmd_str)
+        if len(segments) > 1:
+            return all(
+                any(check_rule_match("Bash", seg.strip(), rule) for rule in allowed_rules)
+                for seg in segments
+            )
+
     for rule in allowed_rules:
         if check_rule_match(tool_name, cmd_str, rule):
             return True
@@ -108,6 +133,7 @@ def analyze_bash_command(cmd):
         'is_compound': False,
         'has_env_vars': False,
         'is_dangerous': False,
+        'needs_exact_match': False,
         'segments': [],
         'proposed_rules': [],
         'recommendation': ''
@@ -141,10 +167,14 @@ def analyze_bash_command(cmd):
         btoks = base_cmd.split()
         dangerous = False
         if btoks:
-            if btoks[0] in DANGEROUS_SINGLE:
+            tool = btoks[0]
+            if tool in DANGEROUS_SINGLE:
                 dangerous = True
-            elif len(btoks) >= 2 and (btoks[0], btoks[1]) in DANGEROUS_PAIR:
-                dangerous = True
+            elif tool in DANGEROUS_VERBS:
+                # any NON-option word matching a destructive verb, so leading options
+                # (`git -C path push`, `npm --prefix app install`) don't hide the verb
+                if any(w in DANGEROUS_VERBS[tool] for w in btoks[1:] if not w.startswith('-')):
+                    dangerous = True
 
         # Reading dotenv files can leak secrets — always exact-match, never a wildcard.
         if base_cmd.startswith('cat .env'):
@@ -153,16 +183,32 @@ def analyze_bash_command(cmd):
         if dangerous:
             result['is_dangerous'] = True
             
-        result['segments'].append({'cmd': part, 'dangerous': dangerous, 'env_vars': env_vars_present})
+        # Options before the subcommand verb (e.g. `git --no-pager log`) can't be safely
+        # generalized: a `Bash(git --no-pager:*)` wildcard would also cover destructive
+        # siblings like `git --no-pager push`. Propose the exact command and flag it.
+        opt_before_verb = (
+            not dangerous
+            and len(btoks) > 1
+            and btoks[0] in SUBCOMMAND_TOOLS
+            and btoks[1].startswith('-')
+        )
+        if opt_before_verb:
+            result['needs_exact_match'] = True
+
+        result['segments'].append({
+            'cmd': part,
+            'dangerous': dangerous,
+            'env_vars': env_vars_present,
+            'exact': dangerous or opt_before_verb,
+        })
         
-        if dangerous:
+        if dangerous or opt_before_verb:
             result['proposed_rules'].append(f"Bash({part})")
-        else:
-            if btoks:
-                prefix = btoks[0]
-                if len(btoks) > 1 and prefix in SUBCOMMAND_TOOLS:
-                    prefix = f"{prefix} {btoks[1]}"
-                result['proposed_rules'].append(f"Bash({prefix}:*)")
+        elif btoks:
+            prefix = btoks[0]
+            if len(btoks) > 1 and prefix in SUBCOMMAND_TOOLS:
+                prefix = f"{prefix} {btoks[1]}"
+            result['proposed_rules'].append(f"Bash({prefix}:*)")
                 
     if result['has_env_vars'] and result['is_compound']:
         result['recommendation'] = "WRAPPER SCRIPT REQUIRED: Env vars defeat prefix matching on compound pipelines. Recommend writing these to e.g. `bin/qa.sh` and allowing `Bash(bash bin/qa.sh:*)` instead of raw prefixes."

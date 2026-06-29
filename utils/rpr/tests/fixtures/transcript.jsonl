@@ -10,5 +10,8 @@
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"FOO=bar BAZ=qux ./run.sh | tee log.txt"}}]}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"npm init -y"}}]}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"pip3 install requests"}}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"git -C repo push"}}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"npm --prefix app install"}}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"git --no-pager log"}}]}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"mcp__github__create_issue","input":{"title":"Bug","body":"repro steps"}}]}}
 {"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","name":"Bash","input":{"command":"git status"}}]}}

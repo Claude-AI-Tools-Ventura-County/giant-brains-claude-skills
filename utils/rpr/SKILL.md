@@ -42,7 +42,8 @@ The script returns a JSON report containing the commands that were not covered b
 Review the report carefully:
 - **Compound Commands**: If the script flags a command as compound, warn the user that a partial coverage rule won't silence the prompt because Claude checks the entire line.
 - **Environment Variables**: If the script recommends a wrapper script, **do not propose a wildcard rule**. Instead, offer to generate the recommended `bin/qa.sh` (or similar) wrapper script that encapsulates the complex pipeline.
-- **Dangerous Commands**: If the script marks a command as dangerous (e.g., `rm`, `sudo`, `npm i`), it will propose an *exact match* rule instead of a wildcard. Present this trade-off to the user clearly. You may propose skipping it entirely. Never propose a `:*` wildcard for these commands.
+- **Dangerous Commands**: If the script marks a command as dangerous (e.g., `rm`, `sudo`, `npm i`), it will propose an *exact match* rule instead of a wildcard. Present this trade-off to the user clearly. You may propose skipping it entirely. Never propose a `:*` wildcard for these commands. Danger is detected by verb, not position, so option-prefixed forms like `git -C path push` or `npm --prefix app install` are still caught.
+- **Option-Prefixed Subcommands**: When `needs_exact_match` is set — a subcommand-style command carries options *before* its verb (e.g. `git --no-pager log`) — the script proposes the *exact command* rather than a wildcard. A `:*` prefix built from an option (`Bash(git --no-pager:*)`) could silently cover destructive siblings (`git --no-pager push`), so present these as exact-match only, like dangerous commands.
 
 ## Step 3: Present Preview
 

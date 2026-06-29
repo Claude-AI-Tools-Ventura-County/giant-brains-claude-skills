@@ -89,8 +89,8 @@ def test_scan(sandbox):
     check("scan: git log filtered (project-local allow)", "git log --oneline -5" not in by_cmd)
 
     # Non-Bash/non-mcp tool calls and malformed/garbage lines are ignored.
-    check("scan: count is exactly the 7 unique un-allowed calls",
-          report.get("analyzed_count") == 7 and len(results) == 7,
+    check("scan: count is exactly the 10 unique un-allowed calls",
+          report.get("analyzed_count") == 10 and len(results) == 10,
           f"analyzed_count={report.get('analyzed_count')} len={len(results)}")
 
     # Dedup: two identical `git status` calls collapse to one.
@@ -143,6 +143,34 @@ def test_scan(sandbox):
     check("scan: mcp tool -> bare tool-name rule",
           r.get("analysis", {}).get("proposed_rules") == ["mcp__github__create_issue"],
           str(r.get("analysis", {}).get("proposed_rules")))
+
+    # Fix 1: a compound line whose FIRST segment is covered (Bash(cd:*) is in the
+    # project-local allowlist) must still surface — the npm half isn't covered, so
+    # Claude would still prompt. The old whole-line startswith check wrongly hid it.
+    check("scan: compound surfaced despite Bash(cd:*) on first segment (Fix 1)",
+          "cd app && npm run build" in by_cmd,
+          "compound was dropped — startswith over-matched the allow rule")
+
+    # Fix 2: destructive verbs are caught even behind leading options (no broad wildcard).
+    a = by_cmd.get("git -C repo push", {}).get("analysis", {})
+    check("scan: git -C repo push IS dangerous, exact match (Fix 2)",
+          a.get("is_dangerous") is True
+          and a.get("proposed_rules") == ["Bash(git -C repo push)"],
+          str(a.get("proposed_rules")))
+
+    a = by_cmd.get("npm --prefix app install", {}).get("analysis", {})
+    check("scan: npm --prefix app install IS dangerous, exact match (Fix 2)",
+          a.get("is_dangerous") is True
+          and a.get("proposed_rules") == ["Bash(npm --prefix app install)"],
+          str(a.get("proposed_rules")))
+
+    # Fix 2: an option-prefixed SAFE subcommand can't be safely wildcarded
+    # (`Bash(git --no-pager:*)` would also cover `git --no-pager push`) -> exact match.
+    a = by_cmd.get("git --no-pager log", {}).get("analysis", {})
+    check("scan: git --no-pager log -> exact match + needs_exact_match (Fix 2)",
+          a.get("is_dangerous") is False and a.get("needs_exact_match") is True
+          and a.get("proposed_rules") == ["Bash(git --no-pager log)"],
+          str(a.get("proposed_rules")))
 
 
 def _ensure(path):
