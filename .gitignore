@@ -1,5 +1,9 @@
 .DS_Store
 
+# Python bytecode cache — generated when bundled .py scripts run, not tracked state
+__pycache__/
+*.pyc
+
 # Local Claude Code session config — machine-specific, never commit
 /.claude/
 /relay-system/

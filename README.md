@@ -118,7 +118,7 @@ The core above is the decision-and-improvement throughline. Around it sit skills
 | [readme-audit](repo-health/readme/SKILL.md) | "Is the README accurate / clear / still matching the code?" | **Audit the README** as artifact and as map — then follow its links as a doc-hygiene litmus |
 | [snapshot](repo-health/snapshot/SKILL.md) | "Save this session" before signing off or a crash | **Checkpoint the session** to an additive `snapshot.md` you can resume from later |
 
-Standalone tooling that isn't part of the suite (read-only permission presets, skill path-hardening, gh/git auth repair, a dotfiles-sync kit) lives under [utils/](utils/README.md).
+Standalone tooling that isn't part of the suite (read-only permission presets, recent-prompt allowlisting, skill path-hardening, gh/git auth repair, a dotfiles-sync kit) lives under [utils/](utils/README.md).
 
 ## Beyond the suite — the relay
 
@@ -261,6 +261,11 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 │   ├── README.md
 │   ├── github-auth-debug/SKILL.md  # Fix the gh-vs-git auth split on macOS
 │   ├── read-only/SKILL.md          # Pre-approve read-only permissions
+│   ├── rpr/                        # React to recent permission prompts → narrow allowlist rules
+│   │   ├── SKILL.md
+│   │   ├── scan.py
+│   │   ├── write_rules.py
+│   │   └── tests/
 │   ├── shakedown/                  # Harden a script-calling skill against path-discovery bugs
 │   │   ├── SKILL.md
 │   │   └── scripts/
