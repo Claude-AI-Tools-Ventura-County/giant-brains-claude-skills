@@ -1,0 +1,12 @@
+{
+  "// vscode-repo-tint": "manual",
+  "workbench.colorCustomizations": {
+    "editor.background": "#211c26",
+    "sideBar.background": "#1a161d",
+    "activityBar.background": "#1a161d",
+    "panel.background": "#1a161d",
+    "tab.activeBackground": "#211c26",
+    "titleBar.activeBackground": "#383041",
+    "statusBar.background": "#383041"
+  }
+}
