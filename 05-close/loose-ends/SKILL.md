@@ -1,9 +1,9 @@
 ---
 name: loose-ends
 description: |
-  Post-work completeness sweep: check what was forgotten before declaring existing work done. Use only after work exists: a diff, draft, or completed change session. Compare what was delivered against what was requested, then look for dropped requirements, sibling surfaces still saying the old truth (docs, READMEs, changelogs, configs, counts, install scripts), verification claimed but not rerun after the last edit, and leftover scaffolding such as debug prints, skipped tests, TODOs, or hardcoded test values.
+  Post-work completeness sweep and execution (alias: close-loop). Check what was forgotten before declaring work done, and actively execute the final steps. Use only after work exists: a diff, draft, or completed change session. Compare what was delivered against what was requested, then look for dropped requirements, unrun verification, and leftover scaffolding. Actively offer to fix these gaps, run linters, sync docs, and stage/commit/push the work to git.
 
-  Trigger when the user asks “what did I forget,” “did I miss anything,” “is this done,” “ready to ship/PR?”, or is about to call a multi-file or multi-requirement task complete. Also self-trigger before reporting substantial multi-step work finished.
+  Trigger when the user asks "close loop", "close-loop", “what did I forget,” “did I miss anything,” “is this done,” “ready to ship/PR?”, or is about to call a multi-file or multi-requirement task complete. Also self-trigger before reporting substantial multi-step work finished.
 
   Do not trigger before work exists; if the question is about a plan, decision, or approach, route to take-a-step-back. Do not use for phased-plan QA (phase-qa) or line-by-line code review (/code-review). This skill hunts what is absent, not what is wrong.
 ---
@@ -12,13 +12,13 @@ description: |
 
 Sweep the gap between what was asked and what was delivered — before "done" is said out loud.
 
-This is the suite's post-work counterpart to take-a-step-back. The decision skills guard the moment *before committing*; this one guards the moment *before declaring done*. Work rarely ends where the request did: a requirement falls out mid-session, a README still states the old count, a "tests pass" was true three edits ago, a debug print is still in the handler. The skill's job is to enumerate those absences with evidence — or to clear the work to ship in one line.
+This is the suite's post-work counterpart to take-a-step-back. The decision skills guard the moment *before committing*; this one guards the moment *before declaring done*. Work rarely ends where the request did: a requirement falls out mid-session, a README still states the old count, a "tests pass" was true three edits ago, a debug print is still in the handler. The skill's job is to enumerate those absences with evidence — and to actively offer to execute the final closure steps (e.g., committing, pushing, syncing docs).
 
 ## Core idea
 
-Answer one question: *what did I forget?*
+Answer one question: *what did I forget, and how do we close the loop?*
 
-The scope is the **delta between the contract and the delivery** — things that should exist and don't. It is explicitly not a review of what *does* exist: code that is present but wrong belongs to /code-review; prose that is present but verbose belongs to bottom-line. This skill hunts the absent, not the broken.
+The scope is the **delta between the contract and the delivery** — things that should exist and don't. This skill hunts the absent (dropped requirements, unrun tests) and actively offers to execute the final closure steps: syncing documentation, fixing lint errors, and committing/pushing the final result to git.
 
 ## How this differs from its siblings
 
@@ -29,18 +29,20 @@ The scope is the **delta between the contract and the delivery** — things that
 
 ## Method — reconstruct, inventory, cross off
 
-1. **Reconstruct the contract.** Re-read the original request — and any plan doc, ticket, or acceptance list it pointed at. List every named deliverable, *including the throwaway clauses* ("oh, and make sure it doesn't time out"). Those are the ones that get dropped.
+1. **Reconstruct the contract.** Re-read the original request — and any plan doc, ticket, or acceptance list it pointed at. List every named deliverable, *including the throwaway clauses*.
 2. **Inventory the delivery.** `git diff` / `git status` for code; the artifact itself for prose or config. What actually changed, in which files?
 3. **Cross off and sweep.** Match each contract item against the inventory, then run the sweep list below over the changed surface only.
+4. **Offer Execution.** Propose to actively fix the gaps, run the missing tests, sync the docs, and commit/push.
 
 ## What to sweep for
 
-- **Dropped requirements** — named in the ask, absent from the diff.
-- **Stale sibling surfaces** — the README, changelog, docs page, config, install script, CI job, or count that mirrors the changed thing and still states the pre-change truth. Grep for the old name, the old number, the old path.
-- **Unrun verification** — every "tests pass" / "build works" / "verified" claimed during the session: was the command actually run *after the last edit*? Stale verification is unverified.
-- **Leftover scaffolding** — TODO/FIXME, debug prints, `debugger`, `.only`/`.skip`, commented-out blocks, hardcoded test values — scanned in the changed files only.
-- **Unhandled edges** — for newly written code only: the empty, null, and error paths the happy-path session never exercised.
-- **Cleanup and comms** — files created and abandoned, the down-migration for the up-migration, the version bump, the person or channel that needs telling.
+- **Dropped requirements** — named in the ask, absent from the diff (e.g., a sync script was written but never executed).
+- **Git Handoff** — are there uncommitted changes? Offer to auto-generate a conventional commit summarizing the session, then `git commit` and `git push`.
+- **Formatting & Lockfiles** — offer to run the linter/formatter to catch mid-session sloppiness. Check if `package.json` changed but the lockfile wasn't regenerated.
+- **Stale sibling surfaces (Auto-Sync)** — the README, changelog, `.env.example`, or docs that mirror the changed thing. Offer to actively apply the diffs to these files.
+- **Unrun verification** — every "tests pass" or "build works" claimed: was it run *after the last edit*? Offer to run it now.
+- **Leftover scaffolding** — TODO/FIXME, debug prints, commented-out blocks, scratch test files. Offer to delete them.
+- **Cleanup and comms** — files created and abandoned, the version bump, the person or channel that needs telling.
 
 ## Output format
 
@@ -54,6 +56,10 @@ Lead with the verdict — the one line that survives skimming:
 1. **[The missing thing]** *(blocks done | worth closing)* — where it should live, the evidence it's absent, and the one-line close-out.
 
 Order blocking-first. *Blocks done* means the original ask is not met without it; *worth closing* means "done" survives, but the operator should ship with it open consciously, not accidentally.
+
+**Next Steps / Close Loop:**
+- Offer to execute the specific fixes for the loose ends (e.g., "I can run the backfill script and delete the debug prints for you.").
+- Offer to format, commit, and push the work with a generated commit message.
 
 **Also checked:** [Optional, one line — the sweep classes that came back clean, so a short list isn't mistaken for a short look.]
 
@@ -93,6 +99,8 @@ Output:
 > 2. **Large-export safety** *(blocks done)* — the handler builds the whole CSV in memory; nothing in the diff addresses the timeout clause. Close out: stream rows, or cap with a row-count warning.
 > 3. **`docs/api.md`** *(worth closing)* — still lists the endpoint table without `/export`. Close out: one row.
 > 4. **Debug print** *(worth closing)* — `console.log("rows", rows.length)` left in the handler. Close out: delete the line.
+>
+> **Close Loop:** Shall I stream the CSV rows to fix the timeout, delete the debug print, and then commit & push this as `feat: add date-filtered CSV exports`?
 >
 > **Also checked:** tests added and run after the last edit (green); no `.only`/`.skip`; changelog entry present.
 

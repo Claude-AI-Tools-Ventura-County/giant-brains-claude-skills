@@ -28,7 +28,7 @@ A suite of skills for [Claude Code](https://claude.com/claude-code) that bring h
 - **An agent handed you a wall of options** and you just need the call — [bottom-line](01-decide/bottom-line/SKILL.md).
 - **An agent gave you scattered steps or a verbose completion message** and you need the execution sequence — [linear](02-plan/linear/SKILL.md).
 - **You told an agent "make this faster"** but can't tell whether it actually did — [baseline-spec](03-improve/baseline-spec/SKILL.md) to define what "better" means, then [auto-improve](03-improve/auto-improve/SKILL.md) to prove it.
-- **The work feels finished** and you want what's missing enumerated — or cleared — before you say "done" — [loose-ends](05-close/loose-ends/SKILL.md).
+- **The work feels finished** and you want what's missing enumerated, executed, and committed before you say "done" ("close the loop") — [loose-ends](05-close/loose-ends/SKILL.md).
 - **You just made a call that's expensive to unwind** and want the bet written down before it evaporates — [record-decision](05-close/record-decision/SKILL.md).
 - **You have a whole plan doc, not one decision,** and want it stress-tested before work starts — [giantbrains](giantbrains/SKILL.md) triages once, runs the right two or three lenses, and returns one combined verdict.
 
@@ -74,9 +74,9 @@ Work rarely ends where the request did. One skill fires at the last moment — a
 
 | Skill | The operator's question | Its job |
 |---|---|---|
-| [loose-ends](05-close/loose-ends/SKILL.md) | "What did I forget?" | **Sweep** — diff the delivered work against the original ask, enumerate what's absent, or clear it to ship |
+| [loose-ends](05-close/loose-ends/SKILL.md) | "What did I forget?" / "Close loop" | **Sweep & Execute** — diff work against the ask, enumerate what's absent, execute the final fixes, and commit/push |
 
-[loose-ends](05-close/loose-ends/SKILL.md) is Act I's mirror image: the decision skills guard the moment *before committing*; this one guards the moment *before declaring done*. It reconstructs the contract (the original request, including the throwaway clauses), inventories what was actually delivered, and sweeps for the classic forgettables — the requirement that fell out mid-session, the sibling surface still stating the pre-change truth (a README count, a docs table, an install loop), the "tests pass" that was true three edits ago, the debug print left in the handler. Findings come back blocking-first, each with an evidenced address and a one-line close-out — and "swept clean, ship it" is a first-class verdict, not a failure to find. It is strictly post-work: "what am I missing?" asked *before* the work exists belongs to [take-a-step-back](01-decide/take-a-step-back/SKILL.md), gating the phases of a plan doc belongs to [phase-qa](02-plan/phase-qa/SKILL.md), and bugs in code that *is* present belong to a code review — this skill hunts the absent, not the wrong.
+[loose-ends](05-close/loose-ends/SKILL.md) (alias "close-loop") is Act I's mirror image: the decision skills guard the moment *before committing*; this one guards the moment *before declaring done*. It reconstructs the contract (the original request, including the throwaway clauses), inventories what was actually delivered, and sweeps for the classic forgettables — the dropped requirement, the unrun test, the stale README, the leftover debug print. Crucially, it then actively offers to **close the loop**: executing the missing steps, running the linter, auto-syncing the docs, and generating the final git commit and push. Findings come back blocking-first, each with an evidenced address and an offer to execute the fix. It is strictly post-work: "what am I missing?" asked *before* the work exists belongs to [take-a-step-back](01-decide/take-a-step-back/SKILL.md), gating the phases of a plan doc belongs to [phase-qa](02-plan/phase-qa/SKILL.md), and bugs in code that *is* present belong to a code review — this skill hunts the absent, not the wrong.
 
 ## The ledger — remembering why
 
