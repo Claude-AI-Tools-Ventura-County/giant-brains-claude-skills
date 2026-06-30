@@ -118,7 +118,7 @@ The core above is the decision-and-improvement throughline. Around it sit skills
 | [readme-audit](repo-health/readme/SKILL.md) | "Is the README accurate / clear / still matching the code?" | **Audit the README** as artifact and as map — then follow its links as a doc-hygiene litmus |
 | [snapshot](repo-health/snapshot/SKILL.md) | "Save this session" before signing off or a crash | **Checkpoint the session** to an additive `snapshot.md` you can resume from later |
 
-Standalone tooling that isn't part of the suite (read-only permission presets, recent-prompt allowlisting, skill path-hardening, gh/git auth repair, a dotfiles-sync kit) lives under [utils/](utils/README.md).
+Standalone tooling that isn't part of the suite (read-only permission presets, recent-prompt allowlisting, skill path-hardening, gh/git auth repair, per-repo VS Code window tinting, a dotfiles-sync kit) lives under [utils/](utils/README.md).
 
 ## Beyond the suite — the relay
 
@@ -270,6 +270,9 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 │   │   ├── SKILL.md
 │   │   └── scripts/
 │   ├── skill-sync/                 # Keep installed skills in sync with this repo
+│   ├── vscode-color/               # Give each repo a stable, distinct VS Code background tint
+│   │   ├── SKILL.md
+│   │   └── vscode-color.py
 │   └── claude-code-dotfiles-fork/  # Kit: sync ~/.claude across machines (INSTALL.md + templates/)
 └── README.md
 ```
