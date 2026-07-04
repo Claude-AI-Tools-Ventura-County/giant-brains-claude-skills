@@ -7,11 +7,11 @@ description: Draw an interactive system architecture diagram for a repo — firs
 
 Produce two deliverables for the target repo:
 
-1. `diagrams/system-diagram.json` — the diagram spec (schema below)
-2. `diagrams/system-diagram.html` — a self-contained interactive xyflow-style
+1. `ARCHITECTURE/system-diagram.json` — the diagram spec (schema below)
+2. `ARCHITECTURE/system-diagram.html` — a self-contained interactive xyflow-style
    diagram built from that JSON (no network, no dependencies)
 
-Ask the user for a different output path only if `diagrams/` is inappropriate
+Ask the user for a different output path only if `ARCHITECTURE/` is inappropriate
 for the repo; otherwise just create it.
 
 ## Step 1 — Gather architecture knowledge (in this order, STOP when sufficient)
@@ -50,7 +50,7 @@ their owning service. Every edge must be justified by something you found in
 Step 1 (a doc claim, a graph edge, an import/call you saw) — no decorative
 arrows.
 
-Schema (`diagrams/system-diagram.json`):
+Schema (`ARCHITECTURE/system-diagram.json`):
 
 ```json
 {
@@ -88,11 +88,11 @@ Run the bundled builder (resolve the path relative to THIS skill directory,
 not the CWD):
 
 ```bash
-bash "<this-skill-dir>/assets/build-diagram.sh" diagrams/system-diagram.json
+bash "<this-skill-dir>/assets/build-diagram.sh" ARCHITECTURE/system-diagram.json
 ```
 
 It inlines `assets/renderer.js` and the JSON into `assets/template.html`,
-producing `diagrams/system-diagram.html`. If `bash`/`python3` is unavailable,
+producing `ARCHITECTURE/system-diagram.html`. If `bash`/`python3` is unavailable,
 do the substitution yourself: copy the template and replace `__TITLE__`,
 `__RENDERER_JS__` (contents of renderer.js), and `__DIAGRAM_JSON__` (the spec).
 
