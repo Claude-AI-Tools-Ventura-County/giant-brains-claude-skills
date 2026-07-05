@@ -40,9 +40,17 @@ The scope is the **delta between the contract and the delivery** — things that
 - **Git Handoff** — are there uncommitted changes? Offer to auto-generate a conventional commit summarizing the session, then `git commit` and `git push`.
 - **Formatting & Lockfiles** — offer to run the linter/formatter to catch mid-session sloppiness. Check if `package.json` changed but the lockfile wasn't regenerated.
 - **Stale sibling surfaces (Auto-Sync)** — the README, changelog, `.env.example`, or docs that mirror the changed thing. Offer to actively apply the diffs to these files.
+- **Custom End Sequence** — check for a `loose-ends-sequence.md` manifest and add any matching commands to the sweep list. See the dedicated section below for strict parsing rules.
 - **Unrun verification** — every "tests pass" or "build works" claimed: was it run *after the last edit*? Offer to run it now.
 - **Leftover scaffolding** — TODO/FIXME, debug prints, commented-out blocks, scratch test files. Offer to delete them.
 - **Cleanup and comms** — files created and abandoned, the version bump, the person or channel that needs telling.
+
+## Custom End Sequence
+
+Agents must strictly follow these rules when sweeping for custom end sequences:
+- **Precedence:** Check `./.claude/loose-ends-sequence.md` (project-local) first. If it exists, use it and *do not* read the global file. Only if local is absent, fall back to `~/.claude/loose-ends-sequence.md` (global).
+- **Format:** The manifest must use Markdown headings to define repo matchers (e.g., `### /path/to/repo` for global, or `### *` for local). Commands must be listed as standard Markdown bullets (`- cmd`) directly beneath the matcher. Ignore code blocks or prose.
+- **Path Resolution:** If a bullet contains a relative path, resolve it relative to the directory containing the manifest file (not CWD) before offering to run it.
 
 ## Output format
 
@@ -58,6 +66,7 @@ Lead with the verdict — the one line that survives skimming:
 Order blocking-first. *Blocks done* means the original ask is not met without it; *worth closing* means "done" survives, but the operator should ship with it open consciously, not accidentally.
 
 **Next Steps / Close Loop:**
+- If a Custom End Sequence matched, explicitly echo the path of the sequence file used and the exact resolved commands you are offering to run.
 - Offer to execute the specific fixes for the loose ends (e.g., "I can run the backfill script and delete the debug prints for you.").
 - Offer to format, commit, and push the work with a generated commit message.
 
