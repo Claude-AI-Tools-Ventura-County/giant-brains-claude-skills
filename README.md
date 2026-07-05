@@ -118,7 +118,7 @@ The core above is the decision-and-improvement throughline. Around it sit skills
 | [readme-audit](repo-health/readme/SKILL.md) | "Is the README accurate / clear / still matching the code?" | **Audit the README** as artifact and as map — then follow its links as a doc-hygiene litmus |
 | [snapshot](repo-health/snapshot/SKILL.md) | "Save this session" before signing off or a crash | **Checkpoint the session** to an additive `snapshot.md` you can resume from later |
 
-Standalone tooling that isn't part of the suite (read-only permission presets, recent-prompt allowlisting, skill path-hardening, gh/git auth repair, architecture-diagram generation, per-repo VS Code window tinting, a dotfiles-sync kit) lives under [utils/](utils/README.md).
+Standalone tooling that isn't part of the suite (read-only permission presets, recent-prompt allowlisting, skill path-hardening, gh/git auth repair, architecture-diagram generation, per-repo VS Code window tinting, a daily Obsidian habit FSM, a dotfiles-sync kit) lives under [utils/](utils/README.md).
 
 ## Beyond the suite — the relay
 
@@ -260,6 +260,11 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 ├── utils/                          # Standalone tooling — not part of the suite
 │   ├── README.md
 │   ├── github-auth-debug/SKILL.md  # Fix the gh-vs-git auth split on macOS
+│   ├── obsidian-habit/             # Daily one-tactic-a-day Obsidian habit FSM (adopt/decline/defer)
+│   │   ├── SKILL.md
+│   │   ├── scripts/                # habit.py (FSM), archive_stale_notes.py, streak_update.py
+│   │   ├── references/tactics.md
+│   │   └── templates/Today.md
 │   ├── read-only/SKILL.md          # Pre-approve read-only permissions
 │   ├── rpr/                        # React to recent permission prompts → narrow allowlist rules
 │   │   ├── SKILL.md
