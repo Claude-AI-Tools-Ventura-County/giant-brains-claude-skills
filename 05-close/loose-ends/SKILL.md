@@ -38,6 +38,7 @@ The scope is the **delta between the contract and the delivery** — things that
 
 - **Dropped requirements** — named in the ask, absent from the diff (e.g., a sync script was written but never executed).
 - **Git Handoff** — are there uncommitted changes? Offer to auto-generate a conventional commit summarizing the session, then `git commit` and `git push`.
+- **Worktree lifecycle** — is this session running inside a throwaway `git worktree`? If so, the worktree is scaffolding that outlives the task: once its branch is merged, a stale worktree is exactly the leftover this skill hunts. Offer to tear it down — but only after the branch is merged and clean. See the dedicated section below.
 - **Formatting & Lockfiles** — offer to run the linter/formatter to catch mid-session sloppiness. Check if `package.json` changed but the lockfile wasn't regenerated.
 - **Stale sibling surfaces (Auto-Sync)** — the README, changelog, `.env.example`, or docs that mirror the changed thing. Offer to actively apply the diffs to these files.
 - **Custom End Sequence** — check for a `loose-ends-sequence.md` manifest and add any matching commands to the sweep list. See the dedicated section below for strict parsing rules.
@@ -51,6 +52,17 @@ Agents must strictly follow these rules when sweeping for custom end sequences:
 - **Precedence:** Check `./.claude/loose-ends-sequence.md` (project-local) first. If it exists, use it and *do not* read the global file. Only if local is absent, fall back to `~/.claude/loose-ends-sequence.md` (global).
 - **Format:** The manifest must use Markdown headings to define repo matchers (e.g., `### /path/to/repo` for global, or `### *` for local). Commands must be listed as standard Markdown bullets (`- cmd`) directly beneath the matcher. Ignore code blocks or prose.
 - **Path Resolution:** If a bullet contains a relative path, resolve it relative to the directory containing the manifest file (not CWD) before offering to run it.
+
+## Worktree lifecycle
+
+A task run inside a dedicated `git worktree` leaves a closure step a plain branch doesn't: once the branch is merged, the worktree is scaffolding that outlives the task — exactly the "created and abandoned" leftover this skill hunts. Detect it and offer teardown; never run teardown unprompted. This class is scoped to *detecting the stale worktree and tearing it down* — getting the branch merged (push, PR, review) stays with **Git Handoff** and the operator's own workflow, so this skill assumes no PR policy.
+
+- **Detect.** Run `git worktree list`. If the current checkout is a linked worktree (not the primary one) *and* its branch isn't the default branch, treat this as a worktree-scoped task. If `git worktree list` shows only one entry, skip this whole class silently — there's nothing to tear down.
+- **Teardown, after merge — never before.** Once the branch is merged (or the user explicitly abandons it), the worktree is dead scaffolding. Offer `git worktree remove <path>` and, if the branch is fully merged to a named branch, `git branch -d`. Three guardrails, because a wrong teardown is destructive and irreversible:
+  - **Merged and clean only.** Never offer teardown while the branch has unmerged commits or uncommitted changes. Report that unmerged/dirty state as its own loose end instead — it's the thing blocking "done," not the worktree.
+  - **Remove from outside the target.** `git worktree remove` refuses to delete a worktree that's currently checked out, and deleting your own CWD strands the session. Offer the command to run from the *primary* worktree (or any checkout that isn't the target), not from inside the worktree being removed.
+  - **Detached HEAD has no branch.** A detached-HEAD worktree has no branch to delete — offer `git worktree remove` alone and skip `git branch -d` (there's no branch name to pass).
+- **Report the address.** Name the worktree path and branch in the finding, so the operator can tear it down by hand if they decline the offer.
 
 ## Output format
 
@@ -69,6 +81,7 @@ Order blocking-first. *Blocks done* means the original ask is not met without it
 - If a Custom End Sequence matched, explicitly echo the path of the sequence file used and the exact resolved commands you are offering to run.
 - Offer to execute the specific fixes for the loose ends (e.g., "I can run the backfill script and delete the debug prints for you.").
 - Offer to format, commit, and push the work with a generated commit message.
+- If the work lives in a dedicated worktree, offer to tear it down once its branch is merged and clean — running `git worktree remove` from outside the target worktree. Echo the worktree path and branch either way; if it's unmerged or dirty, report that as the loose end instead of offering teardown.
 
 **Also checked:** [Optional, one line — the sweep classes that came back clean, so a short list isn't mistaken for a short look.]
 
