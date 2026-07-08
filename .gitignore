@@ -13,3 +13,7 @@ __pycache__/
 
 # Skill sync runtime log — not tracked state
 /utils/skill-sync/skill-sync.log
+
+# Aider Studio (auto-added)
+REPO_MAP.md
+.aider/
