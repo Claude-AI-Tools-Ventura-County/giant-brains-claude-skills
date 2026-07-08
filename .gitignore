@@ -11,8 +11,9 @@ __pycache__/
 # Personal session recovery artifact — may contain pasted chat content, never commit
 /snapshot.md
 
-# Skill sync runtime log — not tracked state
+# Skill sync runtime log and machine-local config (absolute local paths) — not tracked state
 /utils/skill-sync/skill-sync.log
+/utils/skill-sync/skill-sync.conf
 
 # Aider Studio (auto-added)
 REPO_MAP.md
