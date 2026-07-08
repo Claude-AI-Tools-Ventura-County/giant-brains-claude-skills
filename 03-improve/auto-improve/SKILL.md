@@ -83,3 +83,11 @@ Run the loop **only** when all three hold. If any fails, stop and say which one 
 ## What success looks like
 
 The operator gets one of two honest outcomes: a change that is **repeatably, verifiably better** against a correctness gate that's hard to cheat — reported with its real number and spread — or a clear **"no real improvement found within budget."** What they never get is a faster-looking number backed by a gamed oracle or hidden in measurement noise. And when the problem was never measurable to begin with, the skill said so before burning a single iteration.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

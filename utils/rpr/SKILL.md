@@ -85,3 +85,11 @@ It prints how many rules were newly added versus already present.
 After writing, confirm the changes.
 Provide the user with a one-line undo instruction:
 "To undo these changes, simply remove the rules from `.claude/settings.local.json`."
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

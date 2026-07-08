@@ -111,3 +111,11 @@ After a manual override the script writes a top-of-file marker key, `"// vscode-
 - **Global VS Code theming.** This writes per-repo *workspace* settings only; for a user-wide theme, the user wants their User `settings.json` or a theme extension, not this.
 - **A non-git folder.** The deterministic color is keyed off the git slug; outside a repo the script exits 2. (A repo with no remote still works via the `local/<folder>` fallback.)
 - **One window, no confusion.** If the user only ever has one VS Code window open, a per-repo tint solves a problem they don't have — say so rather than tinting reflexively.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-30 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

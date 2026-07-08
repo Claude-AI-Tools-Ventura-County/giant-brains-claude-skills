@@ -81,3 +81,11 @@ When the plan is being written into a `.md` file (doc, spec, runbook) rather tha
 - Could someone execute this top-to-bottom without reading anything else? If no, a detail is missing — add it to the step, not to surrounding prose.
 - Is any step stated twice, or does any instruction appear outside the list? If yes, consolidate.
 - Is every "if/unless/depending on" expressed as a sub-bullet under its parent step?
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

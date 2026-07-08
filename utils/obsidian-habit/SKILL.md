@@ -105,3 +105,11 @@ with format instructions the first time the archive script runs.
 - `references/tactics.md` — full detail + manual steps for tactics 1, 2, 4 (not
   scriptable generically: plugin installs, OS shortcuts, Slack/cron wiring).
   Read this before presenting those tactics' setup steps.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-07-04 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

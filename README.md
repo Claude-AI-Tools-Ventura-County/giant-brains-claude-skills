@@ -215,6 +215,7 @@ Lessons baked into these files. Keep them if you add more skills:
 - **Triggers live in the `description`.** That is the surface Claude matches against — keep it concrete and observable ("about to recommend a migration"), never circular ("fire when the change is major", which the skill can only know *after* running).
 - **Examples calibrate behavior.** Include at least one counter-example where the skill correctly does *not* escalate — a small change, a cheap reversible call — or it will skew toward alarm.
 - **Brevity is the product.** Each skill's output should be just enough meat that a human operator will actually read it.
+- **End with a `## Review History` table.** Every `SKILL.md` closes with an append-only `| Date | Reviewer | Outcome | Notes |` table below the body (never in the YAML frontmatter, which the loader parses and a stray key risks breaking). Add a row whenever the skill is substantively reviewed or audited; never edit or delete a past row — the trail is only honest if it's append-only. A new skill starts with one seed row (`Outcome: Seeded`, sourced from its first commit) rather than an empty table, so the mechanism is in place even before its first real review.
 
 ## Layout
 

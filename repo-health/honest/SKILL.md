@@ -184,3 +184,11 @@ Open with one plain sentence before launching the scan — never drop straight i
 ## What success looks like
 
 The operator can hand the technical half to an engineer and the positioning half to sales, and **neither one catches the document lying.** Every maturity word traces to a grade; every external claim traces to a Confirmed or Likely feature; and the things that can't yet be defended are named plainly rather than quietly rounded up.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

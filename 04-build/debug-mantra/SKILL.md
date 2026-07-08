@@ -77,3 +77,11 @@ Maintain a running **ledger** of every experiment in this session. Each entry: w
 - If you catch yourself proposing a fix without a reliable repro, stop and return to step 1.
 - If you catch yourself building on an unverified observation ("it's obviously X", "that's clearly one Y") — especially one drawn from a screenshot, a rendered view, or memory — stop and inspect the raw artifact first. The impression is hypothesis-zero, not ground truth, and a single direct look at the real object usually settles it faster than any search of the code that might explain it.
 - The mantra is a constraint **you** carry through the session — not advice to deliver back to the user.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

@@ -97,3 +97,11 @@ Pick the tier of the **most severe** signal present.
 ## What success looks like
 
 The operator scans the response and within seconds knows whether this is a quick tweak, a bounded project, or a big commitment to treat with caution — and if it is expensive or hard to reverse, they can't miss it. If they read only the TL;DR, they still got the warning.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

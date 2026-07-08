@@ -145,3 +145,11 @@ A short, accurate, single-purpose README whose every link resolves and whose one
 ## What success looks like
 
 The reader knows in one line whether an operator can trust and use the README, sees each discrepancy with its exact location and a concrete fix, learns from the link graph whether the *whole* doc set is maintained, and can clear the quick wins — or let this skill apply the mechanical ones — in the next ten minutes.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

@@ -120,3 +120,11 @@ Do **not**, as part of a snapshot: stage, commit, stash, reset, checkout, or oth
 - If the most recent substantive response is the *same one* already captured in the previous snapshot (nothing new since), write a lightweight entry — metadata only, with "No new substantive response since the snapshot at <time>" in place of the verbatim block — rather than re-dumping an identical copy.
 - After reading the existing file, check its length. If it exceeds ~2,000 lines, mention once in the confirmation that you can archive older entries to `snapshot-archive.md` — but only do it if asked. Additive means additive.
 - Multiple snapshots in one session are fine and expected; each gets its own timestamped entry.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

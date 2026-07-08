@@ -160,3 +160,11 @@ Output:
 ## What success looks like
 
 The operator sees, before spending the effort, whether the payoff is real and big enough — the subsystem whose benefit was never measured, the refactor that only halts decay, the feature whose cheap 20% would have done the job. The best outcome is not a verdict at all but a *reframe of the build*: smaller, measured, and worth it — instead of large, assumed, and shipped on faith.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

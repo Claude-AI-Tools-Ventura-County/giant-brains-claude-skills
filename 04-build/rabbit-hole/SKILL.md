@@ -144,3 +144,11 @@ Output:
 ## What success looks like
 
 The user goes from "it keeps interrupting me" to "okay, I can see the whole thing and decide." There's exactly one list, sorted by what matters to the task they actually asked for, with the noise named and set aside — and then the agent gets back to work instead of finding a fourth thing.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

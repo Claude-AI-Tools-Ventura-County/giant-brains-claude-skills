@@ -129,3 +129,11 @@ A choice with no real bet gets no file. "We went with the linter's default quote
 - Did every project doc that states the old approach get updated or listed? Stale docs that contradict the record are worse than no record.
 - Is the Updates section append-only and dated? No edits above the line.
 - Do the frontmatter scalars (status, reversibility, revisit) still agree with the body? A record that disagrees with its own frontmatter breaks every script that trusts it.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

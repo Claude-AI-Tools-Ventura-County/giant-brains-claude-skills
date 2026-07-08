@@ -177,3 +177,11 @@ Output:
 ## What success looks like
 
 The user should feel slightly interrupted, newly clear-eyed, and more deliberate — not buried in analysis, and not ambushed. The framing line makes the interruption feel like a colleague's "hold on—", not a form appearing. A good result makes the hidden assumption, the real downside, or the missing alternative immediately visible.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |
