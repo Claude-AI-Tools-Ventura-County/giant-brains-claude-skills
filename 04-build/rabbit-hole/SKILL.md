@@ -141,6 +141,31 @@ Output:
 >
 > **Proposing to proceed on:** The number, plus the one contradicting sentence so the doc stays consistent. Say go. The style pass is a separate task if you want it later.
 
+## Example 4 — simulated output with made-up project data
+
+Input (simulated): "Please just hook up the Export CSV button on the orders page. This was supposed to be quick."
+
+Output:
+
+> *Let me stop the drip and put everything I found on the table once, against the quick button hookup you actually asked for.*
+>
+> **Task (as scoped):** Hook up the Export CSV button on the orders page.
+>
+> **Triage:**
+> - **Blocking:**
+>   - The button currently calls no handler, so clicking it does nothing.
+>   - The export endpoint rejects requests without the `orders:export` permission check the page is supposed to send, so the feature would look broken for allowed users.
+> - **In scope, optional:**
+>   - Add a loading state on the button during export so repeated clicks do not queue duplicate downloads.
+> - **Out of scope / dropped:**
+>   - Reworking the whole orders toolbar layout — unrelated to wiring the action.
+>   - Replacing CSV with XLSX export — different feature, parked.
+>   - Cleaning up two nearby lint warnings — real, but not part of this button task.
+>
+> **Recommendation:** Do the two blocking items and skip the rest for now; the loading state is reasonable, but not required to make the button work.
+>
+> **Proposing to proceed on:** Wire the click handler and send the required permission-aware export request, as one small change. Say go and I'll stick to exactly that set.
+
 ## What success looks like
 
 The user goes from "it keeps interrupting me" to "okay, I can see the whole thing and decide." There's exactly one list, sorted by what matters to the task they actually asked for, with the noise named and set aside — and then the agent gets back to work instead of finding a fourth thing.
