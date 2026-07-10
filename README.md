@@ -111,7 +111,7 @@ The core above is the decision-and-improvement throughline. Around it sit skills
 | [swe](02-plan/swe/SKILL.md) | Authoring or reviewing a v1.x build doc / spec / RFC | **Governance lens** — minimal scope, designed for diagnosis, verifiable before code |
 | [phase-qa](02-plan/phase-qa/SKILL.md) | A phased plan needs checks baked in, or completed phases reviewed | **Plan QA** — append phase-appropriate checklists, then diff-review the finished phases |
 | [debug-mantra](04-build/debug-mantra/SKILL.md) | A bug, a stack trace, a "where is this coming from?" | **Debugging discipline** — reproduce, trace the fail path, falsify the hypothesis, cross-reference |
-| [rabbit-hole](04-build/rabbit-hole/SKILL.md) | An agent keeps surfacing one-more-thing on a simple task | **Stop the drip** — one end-to-end triage that puts every issue on the table at once |
+| [rabbit-hole](04-build/rabbit-hole/SKILL.md) | An agent keeps surfacing one-more-thing on a simple task | **Stop the drip** — one end-to-end triage that puts every issue on the table at once. Optional [always-on guard](#beta--the-always-on-rabbit-hole-guard) *(beta)* |
 | [ponytail](04-build/ponytail-refined/SKILL.md) | Over-engineering, bloat, "what's the simplest version?" | **Force the laziest implementation** that works — YAGNI on code and abstractions, not on explicit feature requirements |
 | [honest](repo-health/honest/SKILL.md) | "What's the real state of this repo?" before a stakeholder update | **Ground-truth read** — how mature the codebase really is and what you can safely claim |
 | [front-door](repo-health/frontdoor/SKILL.md) | Auditing onboarding — "can a new user install this?" | **Walk the front door** — does clone-to-working actually work, and is a secret leaked? |
@@ -125,6 +125,35 @@ Standalone tooling that isn't part of the suite (read-only permission presets, r
 A standalone collaboration tool, not one of the ten decision skills: [relay](04-build/relay/SKILL.md) runs a turn-based review loop between two Claude Code agents — a **Producer** who builds and a **Reviewer** who critiques and proposes fixes the author applies — entirely inside one dated Markdown file, so a human stops copy-pasting output between two windows. The file is the shared bus, the change-log, and the decision record at once: graded findings (`Blocker` / `Should` / `Nit` / `Pass`), a mandatory disposition on every proposal, an **evidence contract** per turn (the Producer logs what it *ran / skipped / couldn't run*; the Reviewer logs whether its verdict is `behaviorally proven` or `textual only`), and a clean exit on **Approved**. The protocol is model-agnostic — run a different model in the Reviewer window (Codex, Gemini, another Claude tier) for genuinely independent eyes. See the worked [sample thread](04-build/relay/RELAY-sample.md).
 
 **Optional automation add-on.** Relay is human-locked by default (one "your turn" nudge per handoff). A fuller, `tick`-backed automation engine lives in a sibling repo: [xyz-3-agents-swarm · relay-system](https://github.com/Claude-AI-Tools-Ventura-County/xyz-3-agents-swarm/tree/main/relay-system/2026-06-14). It turns the manual, human-nudged relay into a hands-free, self-healing loop — `tick` coordination primitives enforce strict Producer/Reviewer turn-taking, auto-detect and recover stalled turns, and gate termination on an LLM-written `Approved` with a clean tree. It ships as a sibling self-extracting skill powered by `tick`, leaving the portable `/relay` protocol completely untouched and dependency-free.
+
+## Beta — the always-on rabbit-hole guard
+
+> **Beta.** Opt-in, off by default, and not yet proven across enough real sessions to claim it changes agent behavior. Installing the hooks changes nothing until you switch the guard on; switching it off returns you to a stock session. Try it and tell us whether the drip actually stops.
+
+Invoking [rabbit-hole](04-build/rabbit-hole/SKILL.md) by hand means *noticing* the drip first — usually two or three interruptions after it started costing you. Skill auto-invocation keys off the `description` field, which competes with every other skill's description and loses badly mid-task, exactly when you need it.
+
+An optional pair of Claude Code hooks closes that gap. A `SessionStart` hook injects the skill's trigger rule as hidden system context; a `UserPromptSubmit` hook re-anchors a short reminder each turn. The agent then fires the triage **on itself** before the third unsolicited finding, instead of waiting for you to get annoyed enough to type the slash command.
+
+**It is not a response template.** The hooks inject *when to fire*, never a format to fill. Ordinary replies stay ordinary. The rule explicitly forbids inventing a finding to fill an empty bucket, and forbids firing on genuinely exploratory work or mid-debug when each finding narrows the same bug — the `refuse-rather-than-fake-it` discipline the rest of the suite runs on, applied to the guard itself.
+
+```bash
+04-build/rabbit-hole/hooks/install.sh              # wire the hooks in (guard stays off)
+04-build/rabbit-hole/hooks/install.sh --uninstall  # take them back out
+```
+
+| Command | Effect |
+|---|---|
+| `/rabbit-hole on` | Guard on. Persists across sessions until turned off. |
+| `/rabbit-hole off` | Guard off. Hooks stay installed and emit nothing. |
+| `/rabbit-hole` | Unchanged — a one-shot triage, guard or no guard. |
+
+`stop` is deliberately **not** an off-switch phrase: *"stop going down rabbit holes"* is one of the skill's own trigger phrases — someone saying it wants a triage now, not to disable the thing that produces one.
+
+State is one flag file, `$CLAUDE_CONFIG_DIR/.rabbit-hole-active`. Absent means off; no hook ever creates it implicitly, and a corrupted, oversized, or symlinked flag reads as off. Both hooks silent-fail on every filesystem error and exit 0 — a broken hook must never block session start.
+
+Cost, when on: roughly 470–575 tokens once per session, plus 95–110 per turn (heuristic bounds from character and word counts, not a tokenizer count). Zero when off. Full detail, including the manual `settings.json` entries for a commented config the installer refuses to touch, in [HOOKS.md](04-build/rabbit-hole/HOOKS.md).
+
+The hook architecture and its symlink-hardened flag helpers are adapted from [caveman](https://github.com/JuliusBrussee/caveman) by Julius Brussee, MIT licensed — the notice is retained in `rabbit-config.js`, and MIT permits relicensing into this GPL v2 work.
 
 ## What they share
 
@@ -244,7 +273,10 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 ├── 04-build/
 │   ├── debug-mantra/SKILL.md       # Four-step debugging discipline
 │   ├── ponytail-refined/SKILL.md   # Force the laziest implementation that works
-│   ├── rabbit-hole/SKILL.md        # Stop the one-more-thing drip; triage once
+│   ├── rabbit-hole/                # Stop the one-more-thing drip; triage once
+│   │   ├── SKILL.md
+│   │   ├── HOOKS.md                # Beta — always-on guard (opt-in hooks)
+│   │   └── hooks/                  # SessionStart + UserPromptSubmit, install.sh
 │   └── relay/                      # Two-agent review relay (one file, no copy-paste)
 │       ├── SKILL.md
 │       └── RELAY-sample.md

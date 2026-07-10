@@ -1,0 +1,5 @@
+{
+  "//": "Pins this directory to CommonJS so the .js hooks resolve as CJS even when an ancestor package.json declares \"type\": \"module\". Without it, require() throws ReferenceError: require is not defined in ES module scope.",
+  "type": "commonjs",
+  "private": true
+}

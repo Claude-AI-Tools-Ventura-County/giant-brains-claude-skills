@@ -22,6 +22,12 @@ When invoked, do three things in order:
 
 The discipline that makes this work: after the triage, anything new gets appended to the out-of-scope / dropped list, not raised as a new interruption. The user got the full picture once; they don't get nickel-and-dimed again.
 
+## Always-on guard (optional)
+
+Invoking this skill by hand means noticing the drip first — usually two or three
+interruptions in. An opt-in hook pair puts the trigger rule in the model's
+context every turn so it fires on itself instead. See [HOOKS.md](HOOKS.md).
+
 ## How this differs from its siblings
 
 - **rabbit-hole** (during, consolidate) — "You keep finding things — stop, sweep it all, sort it, then proceed." Cuts the drip mid-task.
