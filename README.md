@@ -110,6 +110,7 @@ The core above is the decision-and-improvement throughline. Around it sit skills
 | [spike-360](02-plan/spike-360/SKILL.md) | A change might introduce, move, or replace a source of truth | **Interrogate authority** before planning anything that touches authoritative state |
 | [swe](02-plan/swe/SKILL.md) | Authoring or reviewing a v1.x build doc / spec / RFC | **Governance lens** — minimal scope, designed for diagnosis, verifiable before code |
 | [phase-qa](02-plan/phase-qa/SKILL.md) | A phased plan needs checks baked in, or completed phases reviewed | **Plan QA** — append phase-appropriate checklists, then diff-review the finished phases |
+| [feynman](02-plan/feynman/SKILL.md) | "Explain this simply", "ELI5 this doc", "translate this for execs" | **Translate, don't dilute** — a layered plain-English rebuild with analogies that name where they break, and an honest list of what the source left unclear |
 | [debug-mantra](04-build/debug-mantra/SKILL.md) | A bug, a stack trace, a "where is this coming from?" | **Debugging discipline** — reproduce, trace the fail path, falsify the hypothesis, cross-reference |
 | [rabbit-hole](04-build/rabbit-hole/SKILL.md) | An agent keeps surfacing one-more-thing on a simple task | **Stop the drip** — one end-to-end triage that puts every issue on the table at once. Optional [always-on guard](#beta--the-always-on-rabbit-hole-guard) *(beta)* |
 | [ponytail](04-build/ponytail-refined/SKILL.md) | Over-engineering, bloat, "what's the simplest version?" | **Force the laziest implementation** that works — YAGNI on code and abstractions, not on explicit feature requirements |
@@ -260,6 +261,7 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 │   ├── take-a-step-back/SKILL.md   # Act I — frame the decision
 │   └── worth-it/SKILL.md           # Value lens — is the payoff worth the cost
 ├── 02-plan/
+│   ├── feynman/SKILL.md            # Plain-English translation without dilution
 │   ├── linear/SKILL.md             # The bridge — decide → do
 │   ├── phase-qa/SKILL.md           # Plan QA checklists + phase diff review
 │   ├── spike-360/SKILL.md          # Classify authority before planning
