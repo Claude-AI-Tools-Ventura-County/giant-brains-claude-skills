@@ -66,7 +66,7 @@ If the user asks to take a turn but the file doesn't exist yet, you're in this m
 4. **Append your block** at the bottom, directly above the marker line. Never edit earlier turns.
 5. **Update the header:** flip `NEXT`; bump `ROUND` when a Producer opens a new cycle; set `STATUS` (`Approved` ends the relay; `Escalated` if the max `ROUND` ends without `Approved`).
 6. **Commit your turn:** `relay(<slug>): <role> r<N>`, then fill the hash into your block's `Commit:` line. This is what lets the operator `git diff` exactly which proposals the Producer implemented — the safety net behind every applied change. A **Reviewer turn never changes the artifact**: if the relay log is gitignored (the common case) it writes `Commit: none (comments only)`; if the log is *tracked*, the Reviewer still commits the log (rule 9 — no uncommitted state across a handoff) and records that hash. The Producer's turn carries the actual artifact diff — or `Commit: none (comments only)` if it too touched no tracked files.
-7. **Hand off in one line.** Close your reply to the human with who goes next, e.g. *"Round 2 Reviewer done — Changes requested, 1 Blocker. Tell the Producer to take its turn."* The human nudges; they never paste.
+7. **Report to the human** using the format in **Reporting to the human** below — TLDR first, sorted findings last, then the hand-off. The human nudges; they never paste.
 
 ### Turn block formats
 
@@ -203,9 +203,20 @@ The embedded **▶ TAKE YOUR TURN** block in the relay file is the Reviewer's fu
 1. **Needs sandbox disabled.** Codex CLI requires keychain access and `chatgpt.com` network — both blocked under Claude Code's sandbox. Run with `dangerouslyDisableSandbox: true`.
 2. **Auth mode.** When using `auth_mode=chatgpt`, turns are billed via the ChatGPT subscription, not API credits.
 
-## Framing
+## Reporting to the human (chat reply, not the file)
 
-Don't just silently edit files. Open each turn with a short conversational line to the human ("Taking the Reviewer turn — reviewing `evidence.py` against the DoD…") and close with the hand-off nudge. The structured block lives in the file; the human gets a human sentence.
+The relay **log** (the turn block you appended) and your **chat reply** are two different documents with two different jobs — the log is the durable record, the chat reply is what the human actually reads to decide what to do next. Keep them separate, and shape the chat reply like this:
+
+1. **TLDR — one line, at the very top.** Round, role, verdict/status, and what happens next: *"Round 2 Reviewer done — Changes requested, 1 Blocker. Producer's turn next."* This **is** the hand-off nudge, just promoted to the first line instead of the last — the human should never have to read past line one to know the result.
+2. **One short framing sentence**, in your own voice — *"Reviewing `evidence.py` against the DoD…"* — only if it adds something the TLDR didn't already say. Skip it when it would just restate the TLDR.
+3. **If there are findings to report, close with them sorted by grade** — `[Blocker]` → `[Should]` → `[Nit]` → `[Pass]`, in that fixed order, never chronologically or interleaved with prose. One line each, with a `file:line` and the proposed fix inline:
+   ```
+   [Blocker] auth.py:42 — token isn't validated before use → Proposed fix: check `token.valid` before the call.
+   [Should] evidence.py:88 — magic number, extract a constant.
+   ```
+4. **Skip step 3 entirely** for 0–2 trivial findings, or a clean `Approved` with nothing to report — plain prose is fine. Don't force a sorted list where there's nothing to sort (same threshold `linear` uses for its own numbered-step format).
+
+This doesn't change what goes *in* the log — the log still uses the turn block formats above, verdict semantics are unchanged, and the Reviewer's `Approved`/`Changes requested`/`Blocked` distinction still governs whether the relay is open or closed. This section only governs how you *talk about* that log to the human.
 
 ## What success looks like
 
