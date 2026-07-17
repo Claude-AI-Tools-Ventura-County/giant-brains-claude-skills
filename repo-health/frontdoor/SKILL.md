@@ -25,6 +25,14 @@ Knock on the repo's front door as a cold newcomer with zero context — and repo
 
 You tend to grade onboarding on whether the *artifacts* exist ("there's a README, there's an install script") instead of whether the *path works* ("a real person, starting from nothing, reaches a running state without getting stuck or guessing"). You also tend to praise tidy structure while missing that three docs quietly disagree about the install command. This skill makes you walk the path, not inventory the files.
 
+## Operational safety — this skill is read-only
+
+Every command this skill runs against the audited repo must be **non-mutating**: `ls`, `Read`/`cat`, `grep`/`git grep`, `git status`, `git log`, `git diff`, `git show`. Inspect install/test scripts — don't execute them.
+
+**Never run a mutating or destructive command against the audited repo** — `git clean`, `git reset --hard`, `git checkout -- .`, `git worktree add`/`remove`, `rm -rf`, force-push, branch deletion, or anything in that family. This holds even when "just testing" the skill itself: an agent once tested this skill's write path using a git-worktree isolation mode, and the worktree machinery destroyed the entire repo. If you ever need to exercise this skill end-to-end, do it against a disposable `cp -r` copy in a scratch directory — never a git worktree of the real repo, and never the real repo itself.
+
+The **only** write this skill ever performs is the optional `FRONTDOOR.md` dashboard file (see Dashboard mode below) — one file, at the repo root, and only after the user explicitly opts in on that specific run. No other file is ever created, edited, deleted, moved, or overwritten, and no git state is ever changed.
+
 ## Core idea
 
 Two questions drive the whole audit:
@@ -91,7 +99,7 @@ Lead with the verdict. Then the source-of-truth map (the thing most audits skip)
 
 ## Dashboard mode — the persistent FRONTDOOR.md board
 
-The report above is a point-in-time read. For a repo you'll re-check over time, the skill can also emit a **persistent dashboard file** — `FRONTDOOR.md` — that turns the same findings into a board you *refresh by re-running checks* instead of re-auditing by hand. Every status on the board is verified by a command in its checks block, so nothing is merely asserted. The shipped [`FRONTDOOR.md`](FRONTDOOR.md) in this skill's folder is the worked example; copy its shape.
+The report above is a point-in-time read. For a repo you'll re-check over time, the skill can also emit a **persistent dashboard file** — `FRONTDOOR.md` — that turns the same findings into a board you *refresh by re-running checks* instead of re-auditing by hand. This is the one write this skill ever performs — see *Operational safety* above; it still requires explicit opt-in every time, never a worktree, never any other file. Every status on the board is verified by a command in its checks block, so nothing is merely asserted. The shipped [`FRONTDOOR.md`](FRONTDOOR.md) in this skill's folder is the worked example; copy its shape.
 
 **Offer it once, after the first audit.** When you finish the conversational report and the repo has **no** `FRONTDOOR.md` yet, offer a single time: *"Want me to save this as a persistent FRONTDOOR.md dashboard at your repo root? Each finding becomes a re-runnable check, so next time you refresh the board with one command instead of re-auditing from scratch."* Generate the file only if the user accepts. If a `FRONTDOOR.md` already exists, don't re-offer — **refresh** it instead (see below).
 
