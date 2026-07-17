@@ -115,9 +115,9 @@ The report above is a point-in-time read. For a repo you'll re-check over time, 
 6. **Deterministic checks — re-run to refresh** — a single `bash` block, run from the repo root, with the invariant stated at the top: **empty output = all green; any printed line names an OPEN finding.**
 
 **The checks block is the whole point — author it carefully:**
-- One check per finding ID **and** per baseline. Label each printed line with its ID: `echo "FD-02 OPEN: README test count != validate.sh"`.
+- One check per finding ID **and** per baseline. Label each printed line with its ID: `echo "FD-02 OPEN: README test count != recorded baseline"`.
 - Each check prints **only when the finding is still open**, so a fully-green board produces *silence*: `grep -q '12/12' AGENTS.md && echo "FD-03 OPEN: ..."`.
-- Keep checks **read-only and deterministic** — `grep` / `test` / `sed` / `git grep`. No mutations, and no network except the secrets baseline; if a check needs `git`, note it. Derive moving numbers from the source of truth instead of hardcoding them: `ACTUAL=$(bash validate.sh | sed -nE 's/^passed: ([0-9]+) .*/\1/p')`.
+- Keep checks **read-only and deterministic** — `grep` / `test` / `sed` / `git grep`. No mutations, no network except the secrets baseline, and **never execute the audited repo's own scripts, tests, or build to derive a number** — piping a run of `validate.sh` or the test suite through `sed` is execution wearing a read-only disguise, and it's the exact pattern that has destroyed a repo before (see *Operational safety*). For a moving number like a test-pass count, record it as a literal the operator updates by hand after running the suite themselves, then have the checks block only `grep` for that recorded value across the docs: `EXPECTED=36  # updated by hand after a manual run — never auto-derived by this block`.
 - The leaked-secret baseline check stays in this block, and a hit forces the 🚧 verdict — same stop-everything rule as the conversational report.
 
 **Refreshing an existing board.** Re-run the checks block. Any printed line → that finding stays ⬜ OPEN; silence on a line's ID → flip it to ✅ FIXED. Then update `Last audited`, re-derive the `Verdict` and the at-a-glance colors, and add new `FD-##` rows (each with its check) for anything the re-walk surfaced. Keep IDs stable — never renumber a fixed finding.

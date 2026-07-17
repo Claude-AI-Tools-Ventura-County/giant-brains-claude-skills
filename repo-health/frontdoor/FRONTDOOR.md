@@ -50,12 +50,14 @@ Severity 🔴 high · 🟠 med · 🟡 low — Status ⬜ OPEN · ✅ FIXED
 
 ## Deterministic checks — re-run to refresh
 
-Empty output = all green. Any line printed names an OPEN finding. (A future
-`utils/pdda-check-frontdoor.sh` could wrap this onto the existing `pdda-*` / `validate.sh` rail.)
+Empty output = all green. Any line printed names an OPEN finding. This block never executes the
+repo's own scripts or tests — that's execution wearing a read-only disguise. `EXPECTED` below is a
+literal the operator updates by hand after running `./validate.sh` themselves; it is never
+auto-derived by this block.
 
 ```bash
 # Run from the repo root.
-ACTUAL=$(bash validate.sh 2>/dev/null | sed -nE 's/^passed: ([0-9]+) \/ .*/\1/p')
+EXPECTED=36  # updated by hand after a manual ./validate.sh run — never auto-derived
 
 # FD-01 — CLAUDE.md required-reading paths must exist
 for f in PROJECT/2-WORKING/P1-TRINITY.md \
@@ -65,12 +67,12 @@ for f in PROJECT/2-WORKING/P1-TRINITY.md \
          experiments/coordination-layer/BACKLOG.md; do
   [ -e "$f" ] || echo "FD-01 OPEN: CLAUDE.md sends agents to a missing path: $f"
 done
-# FD-02 — README test count must match validate.sh
-grep -qE "$ACTUAL ?/ ?$ACTUAL" README.md || echo "FD-02 OPEN: README test count != validate.sh ($ACTUAL)"
+# FD-02 — README test count must match the recorded baseline
+grep -qE "$EXPECTED ?/ ?$EXPECTED" README.md || echo "FD-02 OPEN: README test count != recorded baseline ($EXPECTED)"
 # FD-03 — AGENTS.md must not carry the stale 12/12
-grep -q '12/12' AGENTS.md && echo "FD-03 OPEN: AGENTS.md still says 12/12 (actual $ACTUAL)"
+grep -q '12/12' AGENTS.md && echo "FD-03 OPEN: AGENTS.md still says 12/12 (recorded baseline $EXPECTED)"
 # FD-04 — ROADMAP status table must not carry the stale 33/33
-grep -q '33/33' ROADMAP.md && echo "FD-04 OPEN: ROADMAP status table still says 33/33 (actual $ACTUAL)"
+grep -q '33/33' ROADMAP.md && echo "FD-04 OPEN: ROADMAP status table still says 33/33 (recorded baseline $EXPECTED)"
 # FD-05 — every relative link in README must resolve
 grep -oE '\]\(([^)]+)\)' README.md | sed -E 's/^\]\(//; s/\)$//' | grep -vE '^https?:|^#' | while read -r p; do
   [ -e "${p%%#*}" ] || echo "FD-05 OPEN: dead README link -> $p"
