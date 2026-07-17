@@ -218,3 +218,11 @@ rename is a find-and-replace, Easy, pick one and move.
   and reports; it never writes.
 - **The lenses already ran individually this conversation** — re-running them as
   a battery is nagging, not coaching.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-10 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

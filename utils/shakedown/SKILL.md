@@ -123,3 +123,11 @@ Calibration matters as much as coverage — don't run the full harness where the
 - **Per-repo folder.** `SHAKEDOWN/` lives at the target repo root (mirrors the relay bus), not one global folder across all projects. Offer to centralize if the user prefers.
 
 State both at the end of the first run so the user can redirect.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-22 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

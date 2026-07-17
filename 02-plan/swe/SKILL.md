@@ -203,3 +203,11 @@ Output:
 ## What success looks like
 
 The author sees, before any code exists, exactly where the plan is a wish rather than a build: the loop with no cap, the migration with no rollback, the task that can't prove it's done. The best outcome is a v1.x doc that ships fast *because* its risky parts were priced up front — not one that ships fast and pays later.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

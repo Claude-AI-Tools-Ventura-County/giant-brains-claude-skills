@@ -104,3 +104,11 @@ Once all three pillars are defined and the baseline is captured, summarize them,
 ## What success looks like
 
 The operator leaves with either a **runnable contract** — metric, oracle, budget, baseline, and a cleared green light — or a precise statement of the one thing still missing. They never get handed off to an optimization loop that was never measurable to begin with, and a genuinely subjective goal gets a proxy offer instead of a dead end. When the spec is already complete, the skill says "cleared" in one line and gets out of the way.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

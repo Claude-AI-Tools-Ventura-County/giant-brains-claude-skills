@@ -54,6 +54,7 @@ This repo *is* the skill suite, so changes here are mostly to `SKILL.md` files a
 - **Every skill includes a counter-example** where it correctly does *not* escalate. Skills without one drift toward alarm.
 - **ASCII punctuation** — straight quotes, regular hyphens. Em-dashes are fine.
 - **Brevity is the product.** If an edit makes a skill's output longer without changing a decision, it's a regression.
+- **Review History is append-only.** Every `SKILL.md` ends with a `## Review History` table (`Date | Reviewer | Outcome | Notes`). Add a row when a skill is actually reviewed; never edit or delete a past row, and never backfill a row claiming a review happened if it didn't — principle #6 applied to the skill docs themselves.
 - When you change a skill's behavior or add a skill, update [README.md](README.md) in the same change — the count, the tables, the install loops, and the layout tree all state it.
 
 ## The experiment, measured

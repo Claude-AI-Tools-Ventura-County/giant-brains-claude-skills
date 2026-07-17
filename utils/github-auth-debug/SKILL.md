@@ -80,3 +80,11 @@ Expect: the login, a permission (`ADMIN`/`WRITE`), the `!… gh auth git-credent
 - Non-destructive only: never `gh auth logout`, never delete keychain entries, never remove the existing `osxkeychain` helper.
 - Run the actual re-auth (`gh auth login --web`) as the operator — it's interactive and writes to their keychain; Claude diagnoses and verifies, the human authenticates.
 - Treat a sandboxed `gh` "invalid token" as inconclusive, never as a reason to logout/re-auth/re-architect.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-25 | Noel Saw | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

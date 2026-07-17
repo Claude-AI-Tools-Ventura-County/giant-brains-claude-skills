@@ -343,3 +343,11 @@ items by leaving them unchecked (or adding a `~~strikethrough~~ Waived: reason` 
   review, that is `/code-review`. For completed phases this skill does run a targeted diff
   review, but only to populate checklist items against the standard and litmus-test
   rubric — it does not surface general bugs or style issues.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

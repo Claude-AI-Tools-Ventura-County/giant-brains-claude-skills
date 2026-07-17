@@ -102,3 +102,11 @@ Output:
 ## What success looks like
 
 The operator sees, in one glance, which corner they are about to sacrifice and whether they meant to. The best result is often the realization that the real lever is scope, not heroics — that "do less, well" beats "do it all, badly."
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

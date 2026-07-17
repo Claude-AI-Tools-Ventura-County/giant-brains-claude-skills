@@ -111,3 +111,11 @@ One compact block: the file path, count added, count skipped as already covered,
 
 - Never remove or rewrite existing rules, and never touch `deny`/`ask` -- `deny` wins over `allow` by design and may be load-bearing.
 - Adding permissions is the *only* write this skill makes. No reformatting the rest of the file, no sorting their existing rules, no cleanup.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-10 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

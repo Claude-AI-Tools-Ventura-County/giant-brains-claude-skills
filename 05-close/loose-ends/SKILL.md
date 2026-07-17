@@ -149,3 +149,11 @@ Output:
 ## What success looks like
 
 The operator either closes a short, evidenced list or ships with earned confidence — never wades through speculative cautions, never re-litigates work that was delivered fine, and never finds out a week later that the README still says nine.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-07-05 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

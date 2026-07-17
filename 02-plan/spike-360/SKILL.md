@@ -138,3 +138,11 @@ Output:
 ## What success looks like
 
 The operator learns the authority level — and therefore the true scope — in the first line, before a single phase or schema is drawn. A proposal that was about to become an event-sourced rewrite gets resized to a ledger; or, if the larger change is genuinely wanted, it walks in with its new invariants named and approved instead of discovered in phase three.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

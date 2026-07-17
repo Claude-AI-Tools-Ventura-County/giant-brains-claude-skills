@@ -108,3 +108,11 @@ Output:
 ## What success looks like
 
 The reader can decide in about 15 seconds without opening the long version, and nothing load-bearing was lost. Shorter is the goal; clarity is the constraint.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |

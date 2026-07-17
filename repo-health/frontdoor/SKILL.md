@@ -172,3 +172,11 @@ Separate what you verified from what you're inferring, so the report is defensib
 ## What success looks like
 
 The reader knows in one line whether a newcomer gets in, can see at a glance which doc is the real one, knows exactly which hurdles an agent removes and which they'll have to clear themselves, and has a fix list they can start on in the next ten minutes.
+
+## Review History
+
+<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
+
+| Date | Reviewer | Outcome | Notes |
+|---|---|---|---|
+| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |
