@@ -113,6 +113,7 @@ The core above is the decision-and-improvement throughline. Around it sit skills
 | [feynman](02-plan/feynman/SKILL.md) | "Explain this simply", "ELI5 this doc", "translate this for execs" | **Translate, don't dilute** — a layered plain-English rebuild with analogies that name where they break, and an honest list of what the source left unclear |
 | [debug-mantra](04-build/debug-mantra/SKILL.md) | A bug, a stack trace, a "where is this coming from?" | **Debugging discipline** — reproduce, trace the fail path, falsify the hypothesis, cross-reference |
 | [rabbit-hole](04-build/rabbit-hole/SKILL.md) | An agent keeps surfacing one-more-thing on a simple task | **Stop the drip** — one end-to-end triage that puts every issue on the table at once. Optional [always-on guard](#beta--the-always-on-rabbit-hole-guard) *(beta)* |
+| [stay-focused](04-build/stay-focused/SKILL.md) | A long session keeps wandering off the task it started on | **Hold one anchor** — lead every reply with the original task's live status, in minimum-viable text. Optional [always-on guard](#the-always-on-stay-focused-anchor) |
 | [ponytail](04-build/ponytail-refined/SKILL.md) | Over-engineering, bloat, "what's the simplest version?" | **Force the laziest implementation** that works — YAGNI on code and abstractions, not on explicit feature requirements |
 | [honest](repo-health/honest/SKILL.md) | "What's the real state of this repo?" before a stakeholder update | **Ground-truth read** — how mature the codebase really is and what you can safely claim |
 | [front-door](repo-health/frontdoor/SKILL.md) | Auditing onboarding — "can a new user install this?" | **Walk the front door** — does clone-to-working actually work, and is a secret leaked? |
@@ -155,6 +156,27 @@ State is one flag file, `$CLAUDE_CONFIG_DIR/.rabbit-hole-active`. Absent means o
 Cost, when on: roughly 470–575 tokens once per session, plus 95–110 per turn (heuristic bounds from character and word counts, not a tokenizer count). Zero when off. Full detail, including the manual `settings.json` entries for a commented config the installer refuses to touch, in [HOOKS.md](04-build/rabbit-hole/HOOKS.md).
 
 The hook architecture and its symlink-hardened flag helpers are adapted from [caveman](https://github.com/JuliusBrussee/caveman) by Julius Brussee, MIT licensed — the notice is retained in `rabbit-config.js`, and MIT permits relicensing into this GPL v2 work.
+
+## The always-on stay-focused anchor
+
+[stay-focused](04-build/stay-focused/SKILL.md) locks a whole session to **one anchor task** and makes every reply lead with that task's live status — *fixed? shipped? blocked on an unmerged branch?* — over a horizontal rule, followed by a tight rabbit-hole-style body (What's Shipped / What's Blocked / Recommended / Optional / Only Useful FYIs), each bucket one line, empty buckets dropped. You set it once at the top of a session: `stay focused on <task>` (or `stay on track for <task>`).
+
+The whole promise is *never lose the original task* — and that is exactly what plain skill instructions are worst at holding, because the anchor fades from attention as context fills with tangents and tool output. So here the hooks are **recommended, not just a beta opt-in**. A `SessionStart` hook re-injects the anchor and reply shape into every session (including one resumed the next morning); a `UserPromptSubmit` hook sets the anchor from your phrasing, clears it on an explicit off, and re-anchors a short reminder each turn.
+
+```bash
+04-build/stay-focused/hooks/install.sh              # wire the hooks in (no anchor set)
+04-build/stay-focused/hooks/install.sh --uninstall  # take them back out
+```
+
+| Command | Effect |
+|---|---|
+| `stay focused on <task>` | Set the session anchor. Persists until cleared. |
+| `/stay-focused off` | Clear the anchor. Hooks stay installed and emit nothing. |
+| `stay focused` *(no task)* | If nothing is set, the model asks what to lock onto. |
+
+A bare `stop` is deliberately **not** an off-switch — it clears the anchor only when bound to focus/track (*"stop staying focused"*). A tangent you explicitly ask for is served but does **not** replace the anchor: the next reply reopens with the original task's status.
+
+State is one flag file, `$CLAUDE_CONFIG_DIR/.stay-focused-anchor`, holding the sanitized anchor text (single line, capped at 512 bytes). Absent or empty means off; a corrupted, oversized, or symlinked flag reads as no-anchor. It coexists with the rabbit-hole guard — both register on the same events, each strips only its own entries. Cost, with an anchor set: roughly 485–535 tokens once per session, plus 185–205 per turn (heuristic bounds, not a tokenizer count); zero when off. Full detail in [HOOKS.md](04-build/stay-focused/HOOKS.md). The hook architecture and its symlink-hardened flag helpers are again adapted from [caveman](https://github.com/JuliusBrussee/caveman) (MIT), the notice retained in `focus-config.js`.
 
 ## What they share
 
@@ -278,6 +300,10 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 │   ├── rabbit-hole/                # Stop the one-more-thing drip; triage once
 │   │   ├── SKILL.md
 │   │   ├── HOOKS.md                # Beta — always-on guard (opt-in hooks)
+│   │   └── hooks/                  # SessionStart + UserPromptSubmit, install.sh
+│   ├── stay-focused/               # Lock a session to one anchor; status-first replies
+│   │   ├── SKILL.md
+│   │   ├── HOOKS.md                # Always-on anchor guard (opt-in hooks)
 │   │   └── hooks/                  # SessionStart + UserPromptSubmit, install.sh
 │   └── relay/                      # Two-agent review relay (one file, no copy-paste)
 │       ├── SKILL.md
