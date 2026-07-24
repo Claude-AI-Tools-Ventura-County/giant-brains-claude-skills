@@ -119,6 +119,7 @@ The core above is the decision-and-improvement throughline. Around it sit skills
 | [front-door](repo-health/frontdoor/SKILL.md) | Auditing onboarding — "can a new user install this?" | **Walk the front door** — does clone-to-working actually work, and is a secret leaked? |
 | [readme-audit](repo-health/readme/SKILL.md) | "Is the README accurate / clear / still matching the code?" | **Audit the README** as artifact and as map — then follow its links as a doc-hygiene litmus |
 | [snapshot](repo-health/snapshot/SKILL.md) | "Save this session" before signing off or a crash | **Checkpoint the session** to an additive `snapshot.md` you can resume from later |
+| [btw](repo-health/BTW/SKILL.md) | "Focus mode", declaring up to 3 tasks for a session, "no side quests" | **Session attention firewall** — anchor to declared focus, park off-task findings as Action / Review Later / Interesting instead of surfacing them |
 
 Standalone tooling that isn't part of the suite (read-only permission presets, recent-prompt allowlisting, skill path-hardening, gh/git auth repair, per-repo VS Code window tinting, a daily Obsidian habit FSM, a dotfiles-sync kit) lives under [utils/](utils/README.md).
 
@@ -312,6 +313,7 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 │   ├── loose-ends/SKILL.md         # The sweep — before "done"
 │   └── record-decision/SKILL.md    # The ledger — record → revisit
 ├── repo-health/
+│   ├── BTW/SKILL.md                # Session attention firewall — anchor to 1-3 tasks, park the rest
 │   ├── frontdoor/SKILL.md          # Audit onboarding — clone → working
 │   ├── honest/SKILL.md             # Ground-truth read of the repo
 │   ├── readme/SKILL.md             # Audit the README + doc-hygiene litmus
