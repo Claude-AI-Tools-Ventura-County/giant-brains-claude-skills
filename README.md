@@ -118,10 +118,11 @@ The core above is the decision-and-improvement throughline. Around it sit skills
 | [honest](repo-health/honest/SKILL.md) | "What's the real state of this repo?" before a stakeholder update | **Ground-truth read** — how mature the codebase really is and what you can safely claim |
 | [front-door](repo-health/frontdoor/SKILL.md) | Auditing onboarding — "can a new user install this?" | **Walk the front door** — does clone-to-working actually work, and is a secret leaked? |
 | [readme-audit](repo-health/readme/SKILL.md) | "Is the README accurate / clear / still matching the code?" | **Audit the README** as artifact and as map — then follow its links as a doc-hygiene litmus |
+| [shakedown](repo-health/shakedown/SKILL.md) | A skill's bundled script runs in one session but is "not found" in another | **Shake out path bugs** — static path audit plus a live foreign-CWD / nested / spaces / install-mode matrix, then a graded report with the fix |
 | [snapshot](repo-health/snapshot/SKILL.md) | "Save this session" before signing off or a crash | **Checkpoint the session** to an additive `snapshot.md` you can resume from later |
 | [btw](repo-health/BTW/SKILL.md) | "Focus mode", declaring up to 3 tasks for a session, "no side quests" | **Session attention firewall** — anchor to declared focus, park off-task findings as Action / Review Later / Interesting instead of surfacing them |
 
-Standalone tooling that isn't part of the suite (read-only permission presets, recent-prompt allowlisting, skill path-hardening, gh/git auth repair, per-repo VS Code window tinting, a daily Obsidian habit FSM, a dotfiles-sync kit) lives under [utils/](utils/README.md).
+Standalone tooling that isn't part of the suite (read-only permission presets, recent-prompt allowlisting, gh/git auth repair, per-repo VS Code window tinting, a daily Obsidian habit FSM, a dotfiles-sync kit) lives under [utils/](utils/README.md).
 
 ## Beyond the suite — the relay
 
@@ -317,6 +318,9 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 │   ├── frontdoor/SKILL.md          # Audit onboarding — clone → working
 │   ├── honest/SKILL.md             # Ground-truth read of the repo
 │   ├── readme/SKILL.md             # Audit the README + doc-hygiene litmus
+│   ├── shakedown/                  # Harden a script-calling skill against path-discovery bugs
+│   │   ├── SKILL.md
+│   │   └── scripts/                # audit.sh (static), harness.sh (live matrix), lib.sh
 │   └── snapshot/SKILL.md           # Session recovery
 ├── giantbrains/SKILL.md            # The router — one door to the suite
 ├── utils/                          # Standalone tooling — not part of the suite
@@ -333,9 +337,6 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 │   │   ├── scan.py
 │   │   ├── write_rules.py
 │   │   └── tests/
-│   ├── shakedown/                  # Harden a script-calling skill against path-discovery bugs
-│   │   ├── SKILL.md
-│   │   └── scripts/
 │   ├── skill-sync/                 # Keep installed skills in sync with this repo
 │   ├── vscode-color/               # Give each repo a stable, distinct VS Code background tint
 │   │   ├── SKILL.md

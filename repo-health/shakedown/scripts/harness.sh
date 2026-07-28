@@ -57,7 +57,7 @@ matrix() { # <cmd-template>
   mkdir -p "$BASE/fakehome"; inst="$(stage "$BASE/fakehome/.claude/skills/$name")"; mkdir -p "$BASE/ucwd"
                                                         row "user install"      "$BASE/ucwd"          "$inst" "$BASE/fakehome" "$tmpl"
   # symlinked install: the skill dir referenced by the command is a SYMLINK to the real copy
-  # (e.g. ~/.claude/skills/shakedown -> repo/utils/shakedown). A locator using `find` without -L,
+  # (e.g. ~/.claude/skills/shakedown -> repo/repo-health/shakedown). A locator using `find` without -L,
   # or self-location that breaks across a symlink, fails exactly here — the gap that let shakedown
   # pass its own audit. ln -sfn so the symlink is fresh on both Run A and Run B passes.
   inst="$(stage "$BASE/symreal/$name")"; ln -sfn "$inst" "$BASE/sym-$name"; mkdir -p "$BASE/symcwd"
