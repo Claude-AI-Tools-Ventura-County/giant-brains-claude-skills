@@ -7,6 +7,8 @@ Division of labor:
     preamble, keep only the action). It passes those clean items to this script.
   - This script does the MECHANICAL guarantees, so trust is deterministic rather
     than promised:
+      * resolve the parking-lot directory: PDDA repos get PROJECT/2-WORKING/,
+        everything else falls back to a repo-root 2-WORKING/ (detect, don't depend)
       * resolve the week file (Monday-of-week) so a whole week shares ONE file
       * fuzzy-dedup each item against everything already in the week file
       * safe read-modify-write — every existing line is preserved — via a temp
@@ -43,6 +45,58 @@ def monday_of(d):
     return d - datetime.timedelta(days=d.weekday())
 
 
+def find_project_root(start):
+    """Walk up from `start` to the nearest git root. Falls back to `start` when
+    there is no repo — the parking lot must work outside git too."""
+    start = os.path.abspath(start)
+    cur = start
+    while True:
+        if os.path.exists(os.path.join(cur, '.git')):  # dir, or file for worktrees
+            return cur
+        parent = os.path.dirname(cur)
+        if parent == cur:
+            return start
+        cur = parent
+
+
+def detect_pdda(root):
+    """Detect a PDDA-governed repo. Returns (is_pdda, reason).
+
+    Detection only — the skill never *requires* PDDA. A repo without it simply
+    gets the repo-root fallback, so this helper behaves identically either way.
+    """
+    project = os.path.join(root, 'PROJECT')
+    if not os.path.isdir(project):
+        return False, 'no PROJECT/ directory'
+    if os.path.isfile(os.path.join(project, 'PDDA.md')):
+        return True, 'PROJECT/PDDA.md present'
+    if os.path.isdir(os.path.join(project, '2-WORKING')):
+        return True, 'PROJECT/2-WORKING/ present'
+    return False, 'PROJECT/ exists but is not PDDA-shaped'
+
+
+def resolve_work_dir(root, explicit):
+    """Pick the parking-lot directory. Returns (path, is_pdda, reason)."""
+    if explicit:
+        return os.path.abspath(explicit), False, 'explicit --dir override'
+    is_pdda, reason = detect_pdda(root)
+    if is_pdda:
+        return os.path.join(root, 'PROJECT', '2-WORKING'), True, 'PDDA detected (%s)' % reason
+    return os.path.join(root, '2-WORKING'), False, 'no PDDA layout (%s)' % reason
+
+
+def legacy_root_files(root, work_dir):
+    """Week files stranded in a repo-root 2-WORKING/ after PDDA was adopted.
+    Reported, never moved — relocating an operator's backlog is their call."""
+    legacy = os.path.join(root, '2-WORKING')
+    if os.path.abspath(legacy) == os.path.abspath(work_dir) or not os.path.isdir(legacy):
+        return []
+    return sorted(
+        os.path.join(legacy, n) for n in os.listdir(legacy)
+        if n.startswith('MYRIAD-WEEK-') and n.endswith('.md')
+    )
+
+
 def default_owner():
     for key in ('MYRIAD_OWNER', 'USER', 'USERNAME'):
         value = os.environ.get(key, '').strip()
@@ -72,6 +126,35 @@ def ensure_frontmatter(text, mon, today, owner):
     if text.lstrip().startswith('---'):
         return text
     return render_frontmatter(mon, today, owner) + text.lstrip('\n')
+
+
+STATUS_TABLE = (
+    '## Status\n\n'
+    "| What was just completed | What's next |\n"
+    '|---|---|\n'
+    '| Parking lot opened for this week by `/myriad`. | Work off the open items below. This is a '
+    '**parking lot, not a burndown** — `roadmap_exempt: true`, so no ROADMAP pointer is expected. '
+    'Retire the file once every box is checked or reassigned. |\n'
+)
+
+
+def ensure_status_table(text):
+    """PDDA repos require a '## Status' table in governed docs. Seed one so a
+    week file lands compliant instead of tripping the check on first write.
+    Only called when PDDA was detected — plain repos keep the leaner file."""
+    if re.search(r'^##\s+Status\s*$', text, re.MULTILINE):
+        return text
+    lines = text.splitlines()
+    # Insert after the H1 when there is one, else at the top.
+    idx = next((i for i, ln in enumerate(lines) if ln.startswith('# ')), None)
+    at = 0 if idx is None else idx + 1
+    while at < len(lines) and lines[at].strip() == '':  # skip blanks already there
+        at += 1
+    block = STATUS_TABLE.rstrip('\n').splitlines() + ['']
+    if at:
+        block = [''] + block
+    lines[at:at] = block
+    return '\n'.join(lines) + '\n'
 
 
 def existing_norms(text):
@@ -128,7 +211,8 @@ def atomic_write(path, text):
 
 def main():
     ap = argparse.ArgumentParser(description='Bulletproof append to the weekly MYRIAD file.')
-    ap.add_argument('--dir', required=True, help='Absolute path to the 2-WORKING directory')
+    ap.add_argument('--root', help='Project root to resolve from (default: nearest git root, else cwd)')
+    ap.add_argument('--dir', help='Explicit parking-lot directory; overrides --root auto-resolution')
     ap.add_argument('--date', help='Override today (YYYY-MM-DD); default = today')
     ap.add_argument('--threshold', type=float, default=0.85, help='Fuzzy-dedup similarity 0-1 (default 0.85)')
     ap.add_argument('--item', action='append', default=[], help='An item (repeatable); else read stdin')
@@ -149,8 +233,10 @@ def main():
         if it:
             items.append(it)
 
-    work_dir = os.path.abspath(args.dir)
+    root = os.path.abspath(args.root) if args.root else find_project_root(os.getcwd())
+    work_dir, is_pdda, resolution = resolve_work_dir(root, args.dir)
     path = os.path.join(work_dir, f'MYRIAD-WEEK-{mon.isoformat()}.md')
+    stranded = legacy_root_files(root, work_dir)
 
     if os.path.exists(path):
         with open(path, encoding='utf-8') as f:
@@ -158,6 +244,8 @@ def main():
     else:
         text = f'# Myriad — Week of {mon.isoformat()}\n'
     text = ensure_frontmatter(text, mon, today, owner)
+    if is_pdda:
+        text = ensure_status_table(text)
 
     norms = existing_norms(text)
     new_items, dupes = [], []
@@ -171,6 +259,10 @@ def main():
 
     receipt = {
         'file': path,
+        'project_root': root,
+        'work_dir': work_dir,
+        'pdda_detected': is_pdda,
+        'resolution': resolution,
         'week_of': mon.isoformat(),
         'date': date_str,
         'logged': [],
@@ -178,6 +270,8 @@ def main():
         'dry_run': args.dry_run,
         'verified': False,
     }
+    if stranded:
+        receipt['stranded_legacy_files'] = stranded
 
     if not new_items:
         receipt['message'] = 'Nothing new to log (all duplicates or empty input).'

@@ -94,10 +94,24 @@ mechanical guarantees — week-file resolution, fuzzy dedup, atomic write, and r
 verification — live in a helper script and must not be skipped or hand-rolled.
 **Do not hand-edit the weekly file.** Let the script own the write.
 
-**Resolve two paths first.** `<skill-dir>` = the absolute directory this SKILL.md was loaded
-from (the helper is at `<skill-dir>/scripts/log_myriad.py`). `<2-working>` = the `2-WORKING/`
-directory in the current project root; the script creates it if missing, so pass the intended
-absolute path even when it doesn't exist yet.
+**Resolve one path first.** `<skill-dir>` = the absolute directory this SKILL.md was loaded
+from (the helper is at `<skill-dir>/scripts/log_myriad.py`).
+
+**Do not pick the parking-lot directory yourself — the script does.** It walks up from the
+cwd to the nearest git root, then:
+
+| Repo shape | Parking lot |
+|---|---|
+| PDDA-governed (`PROJECT/PDDA.md` or `PROJECT/2-WORKING/` present) | `PROJECT/2-WORKING/` |
+| Anything else, including no git repo at all | `2-WORKING/` at the root |
+
+This is **detection, not dependency**: myriad never requires PDDA, never invokes `pdda.sh`,
+and behaves identically in a plain repo — it just files into the conventional folder when a
+PDDA layout happens to be there. The script creates the directory if missing. Every receipt
+reports `work_dir`, `pdda_detected`, and `resolution`, so the choice is always visible rather
+than assumed. Pass `--root <path>` if the cwd isn't inside the target project, or `--dir <path>`
+to override the resolution outright — but prefer the default; a hand-passed path is exactly how
+week files end up stranded in the wrong folder.
 
 **4a. Your job first (the semantic part).** For each myriad item, write ONE clean,
 actionable sentence. Strip preamble and keep only the action — e.g.
@@ -108,18 +122,19 @@ nice-to-have goes here.)
 
 **4b. Preview first — always dry-run before writing.** Pipe one clean item per line:
 ```bash
-printf '%s\n' "item 1" "item 2" | python3 "<skill-dir>/scripts/log_myriad.py" --dir "<2-working>" --dry-run
+printf '%s\n' "item 1" "item 2" | python3 "<skill-dir>/scripts/log_myriad.py" --dry-run
 ```
-The JSON receipt shows the target file, what would be logged, and what it would skip as a
-duplicate. Show the user the target file and the proposed items, then ask **"Append now? (y/n)"**.
+The JSON receipt shows the resolved target file, what would be logged, and what it would skip
+as a duplicate. Show the user the target file and the proposed items, then ask **"Append now? (y/n)"**.
 **Stop here — do not run 4c until the user replies yes.** The dry-run writes nothing, so it is
 safe to pause indefinitely.
 
 **4c. On yes — write + verify.** Same command without `--dry-run`:
 ```bash
-printf '%s\n' "item 1" "item 2" | python3 "<skill-dir>/scripts/log_myriad.py" --dir "<2-working>"
+printf '%s\n' "item 1" "item 2" | python3 "<skill-dir>/scripts/log_myriad.py"
 ```
-The script resolves the week file (Monday-of-week, so the whole week shares one file),
+The script resolves the parking-lot directory (PDDA-aware, per the table above) and the
+week file (Monday-of-week, so the whole week shares one file),
 fuzzy-dedups against everything already logged that week, appends under today's
 `### <date>` section without touching any existing line, seeds a PDDA-style
 frontmatter block at the top when the weekly file is first created (and upgrades a
@@ -128,6 +143,10 @@ confirm every item is on disk.**
 
 **4d. Report the receipt honestly.** Relay the script's `message` verbatim, e.g.
 *"Logged 2 new item(s), skipped 1 duplicate(s), all verified on disk."*
+- If the receipt carries `stranded_legacy_files`, this repo adopted PDDA after those week
+  files were written, so a backlog is sitting in the root `2-WORKING/` where the skill no
+  longer looks. Tell the user and offer to move them into `PROJECT/2-WORKING/`. **Never move
+  them yourself** — relocating someone's parking lot is their call, not a side effect of logging.
 - If `verified` is `false` or the script exits non-zero (code 3), the write did **not**
   verify — tell the user it FAILED and do not claim anything was logged.
 - If neither `python3` nor `python` (3.6+) is available, **do not hand-write to the weekly
@@ -163,7 +182,8 @@ Untracked: SKILLS/PDDA-EOD/myriad/
 
 ---
 
-**Myriad Items (to be logged)** — append to `2-WORKING/MYRIAD-WEEK-2026-07-06.md`:
+**Myriad Items (to be logged)** — append to `PROJECT/2-WORKING/MYRIAD-WEEK-2026-07-06.md`
+*(resolved by the script: PDDA detected)*:
 
 ```markdown
 ---
@@ -200,6 +220,9 @@ Append now? (y/n) → on yes the helper runs and returns:
   read-back verification. Never claim an item was logged unless the receipt says `verified: true`.
   Trust is the whole point — if the user can't trust the file, the skill has failed even when the
   summary looks clean.
+- **Let the script choose the folder.** Don't pass `--dir` on a hunch and don't reason about
+  where `2-WORKING/` "should" be — auto-resolution is what keeps a PDDA repo's backlog out of
+  the repo root. PDDA is detected, never required: the skill works the same in a plain repo.
 - **Always** include the git-status reminder. Not optional.
 - **Respect the flow:** the user sees what's done, what's broken, and what needs their call,
   sees their git state, and safely defers everything else.
