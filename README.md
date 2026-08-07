@@ -122,7 +122,7 @@ The core above is the decision-and-improvement throughline. Around it sit skills
 | [snapshot](repo-health/snapshot/SKILL.md) | "Save this session" before signing off or a crash | **Checkpoint the session** to an additive `snapshot.md` you can resume from later |
 | [btw](repo-health/BTW/SKILL.md) | "Focus mode", declaring up to 3 tasks for a session, "no side quests" | **Session attention firewall** — anchor to declared focus, park off-task findings as Action / Review Later / Interesting instead of surfacing them |
 
-Standalone tooling that isn't part of the suite (read-only permission presets, recent-prompt allowlisting, gh/git auth repair, per-repo VS Code window tinting, a daily Obsidian habit FSM, a dotfiles-sync kit) lives under [utils/](utils/README.md).
+Standalone tooling that isn't part of the suite (read-only permission presets, recent-prompt allowlisting, gh/git auth repair, a time-boxed get-this-repo-building runner, per-repo VS Code window tinting, a daily Obsidian habit FSM, a dotfiles-sync kit) lives under [utils/](utils/README.md).
 
 ## Beyond the suite — the relay
 
@@ -326,6 +326,7 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 ├── utils/                          # Standalone tooling — not part of the suite
 │   ├── README.md
 │   ├── github-auth-debug/SKILL.md  # Fix the gh-vs-git auth split on macOS
+│   ├── install-improve-audit/SKILL.md  # Time-boxed: get an unfamiliar repo building, then PR the fixes
 │   ├── obsidian-habit/             # Daily one-tactic-a-day Obsidian habit FSM (adopt/decline/defer)
 │   │   ├── SKILL.md
 │   │   ├── scripts/                # habit.py (FSM), archive_stale_notes.py, streak_update.py
