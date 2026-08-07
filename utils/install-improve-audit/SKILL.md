@@ -25,7 +25,8 @@ GitHub issue number if given. Ask for nothing else — if the target resolves, s
 
 Your final message is invalid unless it contains all four:
 
-1. a verdict: `INSTALLED`, `INSTALLED-DEGRADED (<what is off>)`, or `BLOCKED (<one reason>)`
+1. a verdict: `INSTALLED`, `INSTALLED-DEGRADED (<what is off>)`, or
+   `BLOCKED (first blocker: <reason>)`
 2. the commands that now work, or the exact command that failed
 3. the last 15 lines of install-check output — from the passing run if DONE was
    reached, from the failing run if it was not
@@ -241,7 +242,9 @@ Two fix attempts per distinct error, 10 minutes max, then move down:
    partial install; a reader of the verdict must see the hole without opening
    the log.
 6. `BLOCKED`. Append to `## Blocked`: the error, what was tried, and the single
-   smallest thing that would unblock it.
+   smallest thing that would unblock it. The verdict names it as the *first*
+   blocker — serial fixing means later blockers are unknown, and the reader
+   must not assume the named one is the only one.
 
 Containers are not an acceptable install. If one would obviously have worked, log
 it once under Recommendations and move on.
@@ -292,7 +295,7 @@ build commands.
 
 ## Final output — exactly this, nothing more
 
-- **Verdict:** `INSTALLED` | `INSTALLED-DEGRADED (<what is off>)` | `BLOCKED (<one reason>)`
+- **Verdict:** `INSTALLED` | `INSTALLED-DEGRADED (<what is off>)` | `BLOCKED (first blocker: <reason>)`
 - **PR:** URL, and `draft` if drafted. With no push access: the branch name and the
   exact push command instead — the only permitted substitute for a URL
 - Last 15 lines of install-check output, verbatim — the passing run on DONE, the
