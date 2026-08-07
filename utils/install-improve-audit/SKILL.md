@@ -29,7 +29,10 @@ Your final message is invalid unless it contains all four:
    `BLOCKED (first blocker: <reason>)`
 2. the commands that now work, or the exact command that failed
 3. the last 15 lines of install-check output — from the passing run if DONE was
-   reached, from the failing run if it was not
+   reached, from the failing run if it was not. If those lines are a
+   dependency-resolver package wall, keep the lines that prove pass/fail and
+   elide the package list mid-line, saying so — the requirement is evidence,
+   not bulk
 4. the PR URL — or, if you lack push access, the branch name and the exact push
    command in its place. That is the only permitted substitute.
 
@@ -300,6 +303,8 @@ build commands.
   exact push command instead — the only permitted substitute for a URL
 - Last 15 lines of install-check output, verbatim — the passing run on DONE, the
   failing run on `BLOCKED`. Never omitted: a run with no output is not a report.
+  Package-wall lines may be elided mid-line with the elision marked; the status
+  lines that prove the exit are the part that must survive.
 - The copy-pasteable commands that now work, or the command that failed
 - `git diff --stat` for the branch
 - `## Improvements` — one line each, with the commit that carries it (omit if none)
