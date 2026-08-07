@@ -235,7 +235,11 @@ Two fix attempts per distinct error, 10 minutes max, then move down:
    green exit code — that is not a degradation; keep moving down the ladder.
 4. Relax the declared version. Log it as a degradation with the reason.
 5. Exclude the failing optional component, workspace member, or extra; build the
-   rest. Log what is excluded.
+   rest. Log what is excluded, and carry it into the verdict parenthetical with
+   the count — `INSTALLED-DEGRADED (2 of 10 workspace members excluded)` — and
+   into the PR title. The log table alone is not enough visibility for a
+   partial install; a reader of the verdict must see the hole without opening
+   the log.
 6. `BLOCKED`. Append to `## Blocked`: the error, what was tried, and the single
    smallest thing that would unblock it.
 
