@@ -66,6 +66,10 @@ Edge cases, decided in advance — do not deliberate:
 
 - **No build command exists or can be inferred:** dependency install plus the
   load check is DONE. Verdict `INSTALLED-DEGRADED (no build command)`.
+- **The only documented build command is a container run** (`docker compose up
+  --build`, `docker build`, …): treat it as no build command — containers are
+  not an acceptable install — and log the container path once under
+  Recommendations. Same verdict: `INSTALLED-DEGRADED (no build command)`.
 - **The documented build command also runs tests, lint, or e2e:** narrow it to the
   compile/build step only. Tests are not part of DONE. If it cannot be narrowed and
   only the test phase fails, verdict `INSTALLED-DEGRADED (tests failing, build clean)`.
