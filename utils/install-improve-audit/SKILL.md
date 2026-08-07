@@ -308,7 +308,11 @@ build commands.
 - The copy-pasteable commands that now work, or the command that failed
 - `git diff --stat` for the branch
 - `## Improvements` — one line each, with the commit that carries it (omit if none)
-- `## Blocked` and `## Recommendations` — ranked, each traceable to an error you hit
+- `## Blocked` and `## Recommendations` — ranked, each traceable to an error you
+  hit **or to a file the fix loop legitimately opened**. A problem seen inside
+  the scope fence that produced no error still belongs here; observed but
+  unreportable is not a state this skill permits. The fence limits where you
+  look, never what you may say about what you saw
 - `### Security — incidental findings only` (below; omit entirely if empty)
 
 ### Security — incidental findings only
@@ -323,7 +327,9 @@ pulled over plain HTTP or from an unpinned source; no lockfile at all.
 
 **Maximum 3 items, one line each:** what it is, the path, why it matters. No
 severity ratings, no remediation plans, no CVE lookups. If you find yourself
-investigating, stop — write the line and move on.
+investigating, stop — write the line and move on. If more than 3 qualify, write
+the 3 that matter most and state the count of the rest in one line — never drop
+a qualifying find silently.
 
 An empty security section is the expected outcome, not a gap.
 
