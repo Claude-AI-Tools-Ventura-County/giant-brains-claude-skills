@@ -18,3 +18,14 @@ __pycache__/
 # Aider Studio (auto-added)
 REPO_MAP.md
 .aider/
+.xyz/
+PROJECT/PDDA-ACTIVITY.jsonl
+.pdda-gh-state.tsv
+
+# PDDA + xyz marathon infra — local-only, drives GH-7/GH-8 planning. This repo's public face stays
+# skills-only; none of this should ever reach GitHub.
+/PROJECT/
+/RELEASES.md
+/utils/pdda/
+/.pdda-mode
+/.pdda-quad
