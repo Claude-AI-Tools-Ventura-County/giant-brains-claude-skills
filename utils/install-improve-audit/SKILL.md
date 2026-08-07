@@ -48,7 +48,8 @@ From a clean tree, both of these exit 0:
 1. the repo's dependency install command
 2. the repo's build command
 
-Write both into `install-check.sh` at the repo root as your first real action. If
+Write both into `install-check.sh` at the repo root at step 4 of the order of
+operations — right after branching, so the file is born on the install branch. If
 that file exists or the root is not writable, use `.install-audit/install-check.sh`
 and name that path in your final output.
 
@@ -97,13 +98,14 @@ happen after this clock stops, and have their own limits.
    files. Do not assess the code."* If Explore is unavailable, do the same recon
    yourself, limited to those same files and the same 10 minutes.
 3. **Branch** `install/<YYYY-MM-DD>-<slug>`.
-4. **Create the audit doc:** frontmatter and an empty log table only. Nothing else
+4. **Write `install-check.sh`** with the documented install and build commands.
+5. **Create the audit doc:** frontmatter and an empty log table only. Nothing else
    goes in it yet.
-5. **Run the documented install command.** Do not pre-diagnose. Let it fail.
-6. **Loop until DONE or budget:** take the **first** error → smallest change that
+6. **Run the documented install command.** Do not pre-diagnose. Let it fail.
+7. **Loop until DONE or budget:** take the **first** error → smallest change that
    clears it → re-run → append one log row. Repeat.
-7. **On DONE:** open the Improve box, if anything on its list qualifies.
-8. **Write** the audit doc's status table, `## Blocked`, `## Improvements`, and
+8. **On DONE:** open the Improve box, if anything on its list qualifies.
+9. **Write** the audit doc's status table, `## Blocked`, `## Improvements`, and
    `## Recommendations`, then open the PR.
 
 ## What you may read during the fix loop
@@ -194,7 +196,7 @@ chain after the PR merges, not to this run.
 Two rules hold regardless of location:
 
 - **Append-only during the run.** Each row is written **after** the fix is applied.
-  No narrative sections until step 8.
+  No narrative sections until step 9.
 - The log is a table: `| time | step | error (first line only) | change made | file | result |`
 
 ## Blocker ladder — native only, in this order
