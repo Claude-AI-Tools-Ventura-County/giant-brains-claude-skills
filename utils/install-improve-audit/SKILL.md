@@ -43,12 +43,18 @@ name is the change log, not a code audit.
 
 ## DONE — binary, nothing else counts
 
-From a clean tree, both of these exit 0:
+From a clean tree, all three of these exit 0:
 
 1. the repo's dependency install command
 2. the repo's build command
+3. a minimal load check of what was installed — `python -c "import <package>"`,
+   `node -e "require('<entry>')"`, or the ecosystem's equivalent, appended to
+   `install-check.sh`. Loading only: no app start, no config, no network. This
+   is the cheapest proof that the resolver's exit 0 produced something that
+   executes — a pin that installs clean but cannot import fails here instead
+   of in the first user's session.
 
-Write both into `install-check.sh` at the repo root at step 4 of the order of
+Write all three into `install-check.sh` at the repo root at step 4 of the order of
 operations — right after branching, so the file is born on the install branch. If
 that file exists or the root is not writable, use `.install-audit/install-check.sh`
 and name that path in your final output.
@@ -58,8 +64,8 @@ lines verbatim. "It builds now" is not acceptance.
 
 Edge cases, decided in advance — do not deliberate:
 
-- **No build command exists or can be inferred:** dependency install alone is DONE.
-  Verdict `INSTALLED-DEGRADED (no build command)`.
+- **No build command exists or can be inferred:** dependency install plus the
+  load check is DONE. Verdict `INSTALLED-DEGRADED (no build command)`.
 - **The documented build command also runs tests, lint, or e2e:** narrow it to the
   compile/build step only. Tests are not part of DONE. If it cannot be narrowed and
   only the test phase fails, verdict `INSTALLED-DEGRADED (tests failing, build clean)`.
