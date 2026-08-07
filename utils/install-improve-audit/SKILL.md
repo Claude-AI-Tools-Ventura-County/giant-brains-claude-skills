@@ -228,7 +228,11 @@ Two fix attempts per distinct error, 10 minutes max, then move down:
 2. Switch to the runtime version the repo **declares**, via the version manager.
    Do not edit the declaration.
 3. If a postinstall script is the blocker, retry with scripts disabled
-   (`--ignore-scripts` or equivalent). Log it as a degradation.
+   (`--ignore-scripts` or equivalent). The log row names the skipped scripts
+   and what they were supposed to produce, and the verdict reason says
+   `scripts disabled — untested at runtime`. If a skipped script builds the
+   package's own native component, disabling it is a broken install wearing a
+   green exit code — that is not a degradation; keep moving down the ladder.
 4. Relax the declared version. Log it as a degradation with the reason.
 5. Exclude the failing optional component, workspace member, or extra; build the
    rest. Log what is excluded.
