@@ -19,6 +19,8 @@ __pycache__/
 REPO_MAP.md
 .aider/
 .xyz/
+# tick coordination event log — per-device relay/marathon runtime state, never shared
+/.tick/
 PROJECT/PDDA-ACTIVITY.jsonl
 .pdda-gh-state.tsv
 
