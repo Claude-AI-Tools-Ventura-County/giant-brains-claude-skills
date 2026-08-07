@@ -1,6 +1,6 @@
 ---
 name: install-improve-audit
-description: Get an unfamiliar repo installing and building locally, fix only what blocks it, and open a PR carrying the fixes plus an append-only change log. The deliverable is a working build and a PR — never a findings report. Trigger when the user says "install this repo", "get this building", "clone and set this up", "make this run locally", "why won't this build", "/install-improve-audit", or hands over a repo path or URL and asks for it working. Improvements are a bounded bonus tier that opens only after the build passes, is capped at 3 items, and is always droppable. Do NOT use for repo analysis, architecture review, code-quality assessment, deliberate security scanning, or dependency-hygiene audits — this skill refuses those and names the right tool instead.
+description: Get an unfamiliar repo installing and building locally, fix only what blocks it, and open a PR carrying the fixes plus an append-only change log. The deliverable is a working build and a PR — never a findings report. Trigger when the user says "install this repo", "get this building", "clone and set this up", "make this run locally", "why won't this build", "docker compose build fails", "/install-improve-audit", or hands over a repo path or URL and asks for it working. Container-native repos are first-class: the container build is a real install path, not a disqualification, and a repo that builds in its own image reaches INSTALLED. Improvements are a bounded bonus tier that opens only after the build passes, is capped at 3 items, and is always droppable. Do NOT use for repo analysis, architecture review, code-quality assessment, deliberate security scanning, or dependency-hygiene audits — this skill refuses those and names the right tool instead.
 ---
 
 # Install Improve Audit
@@ -36,6 +36,21 @@ Your final message is invalid unless it contains all four:
 4. the PR URL — or, if you lack push access, the branch name and the exact push
    command in its place. That is the only permitted substitute.
 
+**When more than one degradation applies**, semicolon-join every one of them in this
+fixed order — do not pick a winner, and never drop one to keep the line short:
+
+1. excluded components, with the count (`2 of 10 workspace members excluded`)
+2. `scripts disabled — untested at runtime`
+3. relaxed version, with what it was relaxed from
+4. `no build command`
+5. `container build only; native install documented but not verified`
+6. `tests failing, build clean`
+7. start-check failure, with the reason
+
+So: `INSTALLED-DEGRADED (2 of 10 workspace members excluded; scripts disabled —
+untested at runtime)`. A most-severe-wins rule would hide a partial install behind a
+lesser reason, which is the exact thing the verdict exists to surface.
+
 An issues list is not a deliverable. A code-quality assessment is not a
 deliverable. A repo-is-bad summary is not a deliverable. If the repo cannot be
 installed, ship `BLOCKED` with the first blocking error and the smallest next
@@ -63,6 +78,11 @@ operations — right after branching, so the file is born on the install branch.
 that file exists or the root is not writable, use `.install-audit/install-check.sh`
 and name that path in your final output.
 
+**The first two lines are `#!/usr/bin/env bash` and `set -euo pipefail`.** Without
+`set -e` the script's exit status is the *last* command's, so a failed build followed
+by a passing load check exits 0 and the gate certifies a broken install. This is not
+optional and not a style preference.
+
 You are not finished until the check exits 0 and you have pasted its last 15
 lines verbatim. "It builds now" is not acceptance.
 
@@ -70,31 +90,86 @@ Edge cases, decided in advance — do not deliberate:
 
 - **No build command exists or can be inferred:** dependency install plus the
   load check is DONE. Verdict `INSTALLED-DEGRADED (no build command)`.
-- **The only documented build command is a container run** (`docker compose up
-  --build`, `docker build`, …): treat it as no build command — containers are
-  not an acceptable install — and log the container path once under
-  Recommendations. Same verdict: `INSTALLED-DEGRADED (no build command)`.
+- **The repo's install path is containerized:** see the `## Containers` section below.
+  A container-native repo reaches plain `INSTALLED`.
 - **The documented build command also runs tests, lint, or e2e:** narrow it to the
   compile/build step only. Tests are not part of DONE. If it cannot be narrowed and
   only the test phase fails, verdict `INSTALLED-DEGRADED (tests failing, build clean)`.
 - **The target moves mid-run** (upstream commits land, or the operator calls for
-  a fresh tree): reset to a clean tree at the new state, keep the audit-log rows
-  already earned, and restart the loop at step 6. Re-apply an earlier fix only
-  when its error recurs. The budget does not reset.
-- **Optional, after DONE:** start the app for 10 seconds and kill it. If it dies,
-  verdict is `INSTALLED-DEGRADED` with the reason. Do not fix runtime config unless
-  it is under 10 minutes.
+  a fresh tree): commit whatever has landed, reset to a clean tree at the new state,
+  then cherry-pick back only the commits whose errors still recur. Keep the audit-log
+  rows already earned and restart the loop at step 7. The budget does not reset.
+  Because every fix is committed as it lands (step 7), a reset costs you nothing that
+  was already earned.
+- **Optional, after DONE:** start the app for about 10 seconds, then kill it. Start it
+  in the background and `kill` it by PID — do **not** reach for `timeout`, which is not
+  present on macOS/BSD by default. Do not `source` an example env file blindly either;
+  unquoted values with spaces word-split and the failure looks like a repo bug when it
+  is your harness. If the app dies, verdict is `INSTALLED-DEGRADED` with the reason.
+  Do not fix runtime config unless it is a one-liner.
 
-## Budget
+  Worth doing rather than skipping: the one real run found a repo that documents no
+  build command but whose run command silently compiled a production build. The
+  start-check is where an implicit build shows itself.
 
-45 minutes of **active work** for the install. Unattended waiting — dependency
-downloads, cold builds — does not count against it. The Improve box and the PR steps
-happen after this clock stops, and have their own limits.
+## Containers — a first-class install path
 
-- At **20 minutes**, print one line: `STATUS <mm:ss> | last error | next move`.
-- At **22 minutes**, if the build has never succeeded, all fixing stops. From that
-  point the only permitted actions are:
-  1. commit `install-check.sh` and every fix that did land
+Some repos are built on containers. For those, the container path **is** the install,
+and this skill's job is to get it working — not to refuse it and report that the repo
+has no build command. A container-native repo that builds reaches plain `INSTALLED`.
+
+**Build is not run.** `docker build` and `docker compose build` start nothing: no
+services, no ports, no long-running process. They exit 0 or non-zero, and that is
+exactly what the gate needs. `docker compose up` starts services and is **not** a gate
+command — if the documented command is `docker compose up --build`, narrow it to
+`docker compose build`.
+
+**When to use the container path.** Use it when the repo documents no native install,
+when the native path is explicitly unsupported, or when the container build is the
+README's primary route and the native path fails. Prefer native when both work — it is
+faster to re-run and proves more about the dependency situation.
+
+**The gate, substituted.** The three-part native gate collapses to two commands, both
+in `install-check.sh`:
+
+1. `docker compose build` (or `docker build -t <tag> .`) — dependency install and
+   build are fused inside the image; there is no separate install step to assert.
+2. The load check, run **inside** the image:
+   `docker compose run --rm <service> python -c "import <package>"`, or
+   `docker run --rm <tag> node -e "require('<entry>')"`. Same rule as native: loading
+   only, no app start, no network.
+
+**Verdicts.** No new verdict vocabulary — the existing grammar already covers it:
+
+- Container build and load check pass, and the repo is container-native → `INSTALLED`.
+- Repo documents both paths and only the container one was verified →
+  `INSTALLED-DEGRADED (container build only; native install documented but not verified)`.
+- Docker is not installed, or the daemon is not running → `BLOCKED (first blocker:
+  docker unavailable)`. That is a genuine blocker, not a degradation — say so plainly
+  rather than falling back to a native path the repo does not support.
+
+**Cost.** A cold image build is slow, but the budget excludes unattended waiting and
+layer caching makes re-runs fast — which is what you want from a repeatable gate. Image
+build time is never a reason to refuse the container path.
+
+## Budget — counted in attempts, not minutes
+
+**8 failed fix attempts, total, for the whole install.** One attempt is one pass of the
+step-7 loop: one first-error, one smallest change, one re-run. A pass that clears its
+error does not count against the 8 — only failures do.
+
+Attempts, not minutes, because you have no clock. A wall-clock budget requires stamping
+a start time and subtracting subprocess duration from it, and in the one real run of
+this skill none of that happened: the session ran roughly three times its stated budget
+and no status line was ever emitted. An attempt counter is something you can actually
+hold. Note you cannot buy headroom by batching several changes into one attempt — the
+loop takes the **first** error and makes the **smallest** change that clears it, so a
+batched attempt breaks a rule that is already there.
+
+- After attempt **4**, print one line: `STATUS 4/8 | last error | next move`.
+- After attempt **8**, if the check has never passed, all fixing stops. From that point
+  the only permitted actions are:
+  1. commit anything not yet committed
   2. finish the audit log
   3. write `## Blocked` and `## Recommendations`
   4. open the draft PR
@@ -103,31 +178,53 @@ happen after this clock stops, and have their own limits.
   No further source reading. No alternate-architecture research. No issue list. No
   improvements — a repo that never built has nothing to improve.
 
+Unattended waiting — dependency downloads, cold image builds — is free and always was.
+The Improve box and the PR steps sit outside this count and have their own limits.
+
 ## Order of operations — do not reorder
 
 1. **Environment, one line each, no prose:** OS/arch; the runtime version the repo
    declares (`.nvmrc`, `.python-version`, `engines`, `rust-toolchain.toml`,
    `go.mod`); the version actually installed; which version manager is available;
-   package manager and version.
-2. **Recon — 10 minutes max, delegated.** Launch the Explore subagent, read-only,
+   package manager and version; whether Docker is installed and its daemon is
+   running (`docker info`). Docker is a gate input, not trivia — a container-native
+   repo cannot be installed without it.
+2. **Recon — one pass, delegated.** Launch the Explore subagent, read-only,
    with this exact return contract: *"Return the documented dependency-install
    command and build command from README, INSTALL, Makefile, and CI workflow files.
    Return the declared runtime version. Return nothing else. Do not read source
    files. Do not assess the code."* If Explore is unavailable, do the same recon
-   yourself, limited to those same files and the same 10 minutes.
+   yourself, limited to those same files. The file list is the bound, not a clock.
 3. **Branch** `install/<YYYY-MM-DD>-<slug>`.
-4. **Write `install-check.sh`** with the documented install and build commands,
-   then prove the gate can fail before trusting it: break it trivially (a
-   nonexistent package name, a misspelled command), run it, confirm a non-zero
-   exit, undo the break. Thirty seconds. The gate is self-authored under time
-   pressure — exactly the condition this skill says produces polarity
-   inversions in `fix_probes` — and an inverted gate reads every install as
-   done, including through the pasted output lines.
+4. **Write `install-check.sh`** with all three parts DONE requires (or the two-command
+   container substitute), `set -euo pipefail` at the top, then prove the gate can fail
+   before trusting it:
+
+   Replace the **first** command with an unmistakable marker — a command that cannot
+   exist, e.g. `zzz_gate_marker_zzz` — run the script, and confirm two things
+   together: it exits non-zero, **and** the error names your marker. Then restore the
+   command. Do not run the unmodified gate here; step 6 does that.
+
+   Both halves matter. A non-zero exit alone proves nothing at this point, because the
+   install has not run yet and is presumed failing — that is the premise of this whole
+   skill. Only the marker appearing in the output proves the script actually reaches
+   and reports the command you think it does. Breaking the first command keeps this to
+   seconds instead of a cold dependency resolve.
+
+   The gate is self-authored under time pressure — exactly the condition this skill
+   says produces polarity inversions in `fix_probes` — and an inverted gate reads every
+   install as done, including through the pasted output lines.
 5. **Create the audit doc:** frontmatter and an empty log table only. Nothing else
    goes in it yet.
 6. **Run the documented install command.** Do not pre-diagnose. Let it fail.
 7. **Loop until DONE or budget:** take the **first** error → smallest change that
-   clears it → re-run → append one log row. Repeat.
+   clears it → re-run → append one log row → **commit that fix on the spot**, one
+   commit per logical fix, message naming the error it cleared. Repeat.
+
+   Committing inside the loop is what makes "one commit per logical fix" real instead
+   of reconstructed at the end, and it is what lets a mid-run reset cost nothing. Every
+   repo file you change gets a log row and a commit — including a change you made and
+   then decided was unnecessary, which gets a row saying so.
 8. **On DONE:** open the Improve box, if anything on its list qualifies.
 9. **Write** the audit doc's status table, `## Blocked`, `## Improvements`, and
    `## Recommendations`, then open the PR.
@@ -143,9 +240,10 @@ command names. Do not browse the codebase looking for problems.
 Opens only after `install-check.sh` exits 0. Everything in it is droppable, and
 dropping all of it costs the run nothing.
 
-**Box: 15 minutes, 3 items maximum, hard stop.** Separate from the 45-minute install
-budget, and it runs before the PR steps. When either cap is hit, stop mid-item, revert
-anything unfinished, and move what is left to `## Recommendations`.
+**Box: 3 items maximum, and at most 2 failed attempts across the whole box.** Separate
+from the install attempt budget, and it runs before the PR steps. When either cap is
+hit, stop mid-item, revert anything unfinished, and move what is left to
+`## Recommendations`.
 
 **Eligible — only these, and only when the install itself put it in front of you:**
 
@@ -155,9 +253,9 @@ anything unfinished, and move what is left to `## Recommendations`.
 3. Add the step you had to work out yourself to the existing install docs.
 4. Add a key you had to guess to an existing `.env.example`.
 5. Wire `install-check.sh` into a CI workflow that already runs on push — one line,
-   only if such a workflow already exists, and only when this run will push and
-   can watch the result. CI wiring is the one item the re-run rule below cannot
-   verify locally; on a no-push run it goes to `## Recommendations` instead.
+   and only if such a workflow already exists. This is the one item the local re-run
+   rule cannot verify; the reviewer sees the result on the PR, which is what CI is
+   for. On a run with no push access it goes to `## Recommendations` instead.
 
 **Not eligible, however tempting:** dependency upgrades the build did not need,
 refactors, formatting or lint sweeps, new tests, new CI files, new doc files, renaming
@@ -213,7 +311,7 @@ MARATHON.yaml stanzas, lifecycle folder transitions.
 set authored under time pressure is where polarity inversions come from, and an
 inverted probe reads as already-done. A later pass adds probes if this graduates.
 
-`ratings_provisional: true` is load-bearing — a 45-minute run's ratings are guesses,
+`ratings_provisional: true` is load-bearing — a single-pass run's ratings are guesses,
 and the flag keeps this doc out of automated selection until a human reviews it.
 
 **Never move the doc to `3-COMPLETED`.** That transition belongs to the closeout
@@ -225,9 +323,10 @@ Two rules hold regardless of location:
   No narrative sections until step 9.
 - The log is a table: `| time | step | error (first line only) | change made | file | result |`
 
-## Blocker ladder — native only, in this order
+## Blocker ladder — in this order
 
-Two fix attempts per distinct error, 10 minutes max, then move down:
+Two fix attempts per distinct error, then move down. Every failed attempt counts
+against the 8:
 
 1. Honor the lockfile exactly (`npm ci`, `pip install -r` with hashes,
    `poetry install`, `cargo build --locked`) before touching any version.
@@ -251,8 +350,8 @@ Two fix attempts per distinct error, 10 minutes max, then move down:
    blocker — serial fixing means later blockers are unknown, and the reader
    must not assume the named one is the only one.
 
-Containers are not an acceptable install. If one would obviously have worked, log
-it once under Recommendations and move on.
+Before rung 6, if the repo has a container path you have not tried, try it — see
+`## Containers`. A repo that builds in its own container is installed, not blocked.
 
 ## Scope fence
 
@@ -280,10 +379,11 @@ build commands.
 
 ## The PR — the run is not finished at DONE
 
-1. **Commit** `install-check.sh`, the audit doc, and every fix. One commit per
-   logical fix; do not squash the fix history into a single commit. The reviewer
-   needs to see which change cleared which error. Improvement commits stay separate
-   and keep their `improve:` prefix, so they can be dropped independently.
+1. **Commit what is left** — the audit doc, and anything not already committed. The
+   fixes themselves were committed inside the loop at step 7, one per logical fix, so
+   the history already shows which change cleared which error; do not squash it now.
+   Improvement commits stay separate and keep their `improve:` prefix, so they can be
+   dropped independently.
 2. **CHANGELOG.md** — if the repo already has one, add **one** entry summarizing the
    landed fixes. If the repo has no CHANGELOG, do not create one.
 3. **Push the branch.** If you lack push access to origin, stop here and hand back the
@@ -310,11 +410,13 @@ build commands.
 - The copy-pasteable commands that now work, or the command that failed
 - `git diff --stat` for the branch
 - `## Improvements` — one line each, with the commit that carries it (omit if none)
-- `## Blocked` and `## Recommendations` — ranked, each traceable to an error you
-  hit **or to a file the fix loop legitimately opened**. A problem seen inside
-  the scope fence that produced no error still belongs here; observed but
-  unreportable is not a state this skill permits. The fence limits where you
-  look, never what you may say about what you saw
+- `## Blocked` and `## Recommendations` — ranked. **Recommendations: maximum 3**, plus
+  a `+N more not listed` line if more qualify — never drop one silently. Each must be
+  something you actually saw during recon or the run, not something you inferred about
+  a repo you did not read. The fence limits where you look, never what you may say
+  about what you saw. The **cap** is what keeps this from becoming the findings report
+  this skill exists to prevent; a provenance test does not, and would delete the
+  recon-sourced observations that are often the most useful lines in the report
 - `### Security — incidental findings only` (below; omit entirely if empty)
 
 ### Security — incidental findings only
