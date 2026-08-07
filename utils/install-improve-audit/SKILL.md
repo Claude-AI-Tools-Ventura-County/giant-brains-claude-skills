@@ -98,7 +98,13 @@ happen after this clock stops, and have their own limits.
    files. Do not assess the code."* If Explore is unavailable, do the same recon
    yourself, limited to those same files and the same 10 minutes.
 3. **Branch** `install/<YYYY-MM-DD>-<slug>`.
-4. **Write `install-check.sh`** with the documented install and build commands.
+4. **Write `install-check.sh`** with the documented install and build commands,
+   then prove the gate can fail before trusting it: break it trivially (a
+   nonexistent package name, a misspelled command), run it, confirm a non-zero
+   exit, undo the break. Thirty seconds. The gate is self-authored under time
+   pressure — exactly the condition this skill says produces polarity
+   inversions in `fix_probes` — and an inverted gate reads every install as
+   done, including through the pasted output lines.
 5. **Create the audit doc:** frontmatter and an empty log table only. Nothing else
    goes in it yet.
 6. **Run the documented install command.** Do not pre-diagnose. Let it fail.
