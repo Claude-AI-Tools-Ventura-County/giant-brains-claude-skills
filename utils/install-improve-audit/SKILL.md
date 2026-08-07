@@ -155,7 +155,9 @@ anything unfinished, and move what is left to `## Recommendations`.
 3. Add the step you had to work out yourself to the existing install docs.
 4. Add a key you had to guess to an existing `.env.example`.
 5. Wire `install-check.sh` into a CI workflow that already runs on push — one line,
-   and only if such a workflow already exists.
+   only if such a workflow already exists, and only when this run will push and
+   can watch the result. CI wiring is the one item the re-run rule below cannot
+   verify locally; on a no-push run it goes to `## Recommendations` instead.
 
 **Not eligible, however tempting:** dependency upgrades the build did not need,
 refactors, formatting or lint sweeps, new tests, new CI files, new doc files, renaming
