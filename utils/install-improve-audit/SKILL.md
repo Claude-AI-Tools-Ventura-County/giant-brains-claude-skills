@@ -73,6 +73,10 @@ Edge cases, decided in advance — do not deliberate:
 - **The documented build command also runs tests, lint, or e2e:** narrow it to the
   compile/build step only. Tests are not part of DONE. If it cannot be narrowed and
   only the test phase fails, verdict `INSTALLED-DEGRADED (tests failing, build clean)`.
+- **The target moves mid-run** (upstream commits land, or the operator calls for
+  a fresh tree): reset to a clean tree at the new state, keep the audit-log rows
+  already earned, and restart the loop at step 6. Re-apply an earlier fix only
+  when its error recurs. The budget does not reset.
 - **Optional, after DONE:** start the app for 10 seconds and kill it. If it dies,
   verdict is `INSTALLED-DEGRADED` with the reason. Do not fix runtime config unless
   it is under 10 minutes.
