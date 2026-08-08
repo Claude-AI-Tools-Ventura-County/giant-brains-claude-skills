@@ -326,7 +326,7 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 ├── utils/                          # Standalone tooling — not part of the suite
 │   ├── README.md
 │   ├── github-auth-debug/SKILL.md  # Fix the gh-vs-git auth split on macOS
-│   ├── install-improve-audit/SKILL.md  # Time-boxed: get an unfamiliar repo building, then PR the fixes
+│   ├── install-improve-audit/SKILL.md  # Get an unfamiliar repo building (native or container), then PR the fixes
 │   ├── obsidian-habit/             # Daily one-tactic-a-day Obsidian habit FSM (adopt/decline/defer)
 │   │   ├── SKILL.md
 │   │   ├── scripts/                # habit.py (FSM), archive_stale_notes.py, streak_update.py
