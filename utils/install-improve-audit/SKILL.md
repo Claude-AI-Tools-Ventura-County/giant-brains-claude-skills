@@ -216,7 +216,11 @@ The Improve box and the PR steps sit outside this count and have their own limit
    install as done, including through the pasted output lines.
 5. **Create the audit doc:** frontmatter and an empty log table only. Nothing else
    goes in it yet.
-6. **Run the documented install command.** Do not pre-diagnose. Let it fail.
+6. **Run the gate's install path** — the same command `install-check.sh` holds, not
+   whatever the README says verbatim. Native repo: the documented dependency-install
+   command. Container repo: the narrowed build from `## Containers`
+   (`docker compose build` / `docker build`), **never** `docker compose up`, even when
+   `up --build` is exactly what the README documents. Do not pre-diagnose. Let it fail.
 7. **Loop until DONE or budget:** take the **first** error → smallest change that
    clears it → re-run → append one log row → **commit that fix on the spot**, one
    commit per logical fix, message naming the error it cleared. Repeat.
