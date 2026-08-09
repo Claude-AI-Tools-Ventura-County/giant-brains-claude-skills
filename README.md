@@ -2,7 +2,7 @@
 
 <img width="1941" height="1058" alt="giant-brains-02" src="https://github.com/user-attachments/assets/d5a0e02b-eec2-4026-b83e-cf725def5942" />
 
-A suite of Claude Code skills that catch you at the moment of a decision, again when you're improving something, and once more before you call it done — and force a short, honest answer you can act on in seconds. A ten-skill decision-and-improvement core, plus a widening set for debugging, docs, repo, and session hygiene.
+A suite of Claude Code skills that catch you at the moment of a decision, again when you're improving something, and once more before you call it done — and force a short, honest answer you can act on in seconds. An eleven-skill decision-and-improvement core, plus a widening set for debugging, docs, repo, and session hygiene.
 
 **New here?** Jump to [Install](#install) — a symlink loop puts the whole suite in Claude Code in under a minute.
 
@@ -30,6 +30,7 @@ A suite of skills for [Claude Code](https://claude.com/claude-code) that bring h
 - **An agent gave you scattered steps or a verbose completion message** and you need the execution sequence — [linear](02-plan/linear/SKILL.md).
 - **You told an agent "make this faster"** but can't tell whether it actually did — [baseline-spec](03-improve/baseline-spec/SKILL.md) to define what "better" means, then [auto-improve](03-improve/auto-improve/SKILL.md) to prove it.
 - **The work feels finished** and you want what's missing enumerated, executed, and committed before you say "done" ("close the loop") — [loose-ends](05-close/loose-ends/SKILL.md).
+- **The done list is frozen** and you want a bounded closure audit that reports only evidenced blockers while deterministically parking everything else — [finish-line](05-close/finish-line/SKILL.md).
 - **You just made a call that's expensive to unwind** and want the bet written down before it evaporates — [record-decision](05-close/record-decision/SKILL.md).
 - **You have a whole plan doc, not one decision,** and want it stress-tested before work starts — [giantbrains](giantbrains/SKILL.md) triages once, runs the right two or three lenses, and returns one combined verdict.
 
@@ -72,13 +73,16 @@ The two acts join end to end: decide *whether and what* (Act I), sequence the wo
 
 ## The sweep — declaring done honestly
 
-Work rarely ends where the request did. One skill fires at the last moment — after the work, before the word "done."
+Work rarely ends where the request did. Two skills fire at the last moment — after the work, before the word "done."
 
 | Skill | The operator's question | Its job |
 |---|---|---|
 | [loose-ends](05-close/loose-ends/SKILL.md) | "What did I forget?" / "Close loop" | **Sweep & Execute** — diff work against the ask, enumerate what's absent, run custom sequence scripts, execute final fixes, and commit/push |
+| [finish-line](05-close/finish-line/SKILL.md) | "Is this frozen done list actually closed?" | **Close & Park** — run a bounded evidence gate, report only Critical/High blockers, and park excluded findings locally |
 
 [loose-ends](05-close/loose-ends/SKILL.md) (alias "close-loop") is Act I's mirror image: the decision skills guard the moment *before committing*; this one guards the moment *before declaring done*. It reconstructs the contract (the original request, including the throwaway clauses), inventories what was actually delivered, and sweeps for the classic forgettables — the dropped requirement, the unrun test, the stale README, the leftover debug print. It also explicitly checks for a local or global `.claude/loose-ends-sequence.md` manifest to load and run project-specific custom end sequences. Crucially, it then actively offers to **close the loop**: executing the missing steps, running custom scripts and linters, auto-syncing the docs, and generating the final git commit and push. Findings come back blocking-first, each with an evidenced address and an offer to execute the fix. It is strictly post-work: "what am I missing?" asked *before* the work exists belongs to [take-a-step-back](01-decide/take-a-step-back/SKILL.md), gating the phases of a plan doc belongs to [phase-qa](02-plan/phase-qa/SKILL.md), and bugs in code that *is* present belong to a code review — this skill hunts the absent, not the wrong.
+
+[finish-line](05-close/finish-line/SKILL.md) is the narrower terminal gate: the user supplies a frozen done list, it verifies only that list, reports objective Critical/High blockers with evidence, and parks every other finding in a local ignored `PARKED/` file. Use it when the task is to end scope, not to discover more work; a request to finish active implementation still belongs to the implementation workflow.
 
 ## The ledger — remembering why
 
@@ -314,6 +318,7 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 │       ├── SKILL.md
 │       └── RELAY-sample.md
 ├── 05-close/
+│   ├── finish-line/SKILL.md       # Bounded closure gate — report blockers, park the rest
 │   ├── loose-ends/SKILL.md         # The sweep — before "done"
 │   └── record-decision/SKILL.md    # The ledger — record → revisit
 ├── repo-health/

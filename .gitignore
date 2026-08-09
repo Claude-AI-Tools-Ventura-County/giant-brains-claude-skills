@@ -11,6 +11,9 @@ __pycache__/
 # Personal session recovery artifact — may contain pasted chat content, never commit
 /snapshot.md
 
+# Finish-line closure audit output — local, per-run parked work
+/PARKED/
+
 # Skill sync runtime log and machine-local config (absolute local paths) — not tracked state
 /utils/skill-sync/skill-sync.log
 /utils/skill-sync/skill-sync.conf
