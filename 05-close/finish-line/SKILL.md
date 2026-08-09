@@ -29,6 +29,8 @@ that does not pass the gate is parked deterministically and never re-raised.
    ask exactly one question and stop:
    "What should define done: an existing PRD, spec, plan, issue, PR, or a
    numbered list?"
+   The list FREEZES at this step. Work completed after the freeze does not
+   extend it, and a later "are we done?" does not re-run SOURCE.
 2. NARROW silently. Turn the candidate list into the smallest verifiable done
    list that closes the user's stated outcome. Keep only explicit, current
    commitments directly tied to that outcome; collapse duplicates and
@@ -44,6 +46,12 @@ that does not pass the gate is parked deterministically and never re-raised.
 6. CLOSE. After this turn the chapter is closed per the verdict. Never
    re-audit, re-open, or reframe any parked or frozen item unless the user
    explicitly asks to reopen or revisit it.
+   This binds every later turn, not just this one. A follow-up such as "are we
+   done?", "is that everything?", "will this close it?", or "anything else?"
+   is answered by restating the existing verdict — it is not a new audit and
+   must not produce a candidate that was not in the frozen list. Re-entry is
+   the failure mode this skill exists to prevent; the Severity Gate only
+   bounds a single pass, this step bounds the number of passes.
 
 ## Severity Gate — the only definitions that exist
 
@@ -67,6 +75,11 @@ HIGH (reported; user decides fix-now or park):
 - H3 A frozen done-list item is not actually met; show file:line.
 - H4 Loud failure on a primary path with no recovery, requiring manual
   intervention.
+- H5 Latent defect in code on this branch that would meet C1–C4 if a config
+  value that exists and is settable TODAY were changed; name the exact knob
+  and its current value, and cite file:line. Unreachable in the current
+  configuration is why this is HIGH and not CRITICAL: it is surfaced for a
+  decision and can be deferred under X6, where a CRITICAL cannot.
 
 PARK BY DEFINITION (never report; park with the matching rule id):
 - X1 Pre-existing on main and not worsened by this branch (including known
@@ -85,6 +98,11 @@ Gate mechanics:
 - Use X1 only after confirming the finding is pre-existing on main and not
   worsened here. If that comparison is uncertain, use the supported X code;
   use X5 when evidence is insufficient.
+- H5 is the one exception to "unsure → park", and it is narrow: the knob must
+  exist and be settable today, and you must state it. A toggle that would have
+  to be built first is X3; a knob you cannot name is X5. H5 exists because
+  "not firing right now" and "not a defect" are different claims, and parking
+  the first as the second is how a real bug ships inside a clean close.
 
 ## Post-report HIGH deferral (the only permitted follow-up)
 
@@ -102,6 +120,13 @@ PARKED: 1 item → PARKED/<filename> (R-<id>)
 ```
 
 ## PARKED File Protocol (deterministic — never invent names or formats)
+
+What these files are for: a durable, uniform record that survives the
+conversation, so a parked item can be found later by date, repo, rule, or
+anchor and linked to the plans and issues that do the real work. They are
+nodes in a project graph — not plans, specs, PRDs, or backlogs. Every field
+below is either an identifier or an edge. The moment an entry starts
+explaining, justifying, or sequencing, it has stopped being a node.
 
 Location: `<repo-root>/PARKED/` — create the folder if missing.
 repo-root = `git rev-parse --show-toplevel`; fallback: current directory.
@@ -122,7 +147,7 @@ no free prose, no additional files (no README, no index):
 
 ```
 ---
-schema: finish-line/parked/v1
+schema: finish-line/parked/v2
 created_local: YYYY-MM-DDTHH:MM
 repo: <reponame>
 ---
@@ -138,13 +163,34 @@ repo: <reponame>
 #### P-001 — <short title, ≤ 8 words>
 - claimed_severity: <what this was tempted to be called, e.g. "robustness gap">
 - exclusion_rule: <X-code verbatim, e.g. X1>
-- evidence: <file:line, or "none">
+- evidence: <exactly one file:line, or "none">
 - summary: <one sentence, ≤ 40 words>
+- remediation: <one sentence, ≤ 20 words — direction only, or "unknown">
+- issue: <existing #N or URL, or "none">
 - revisit_when: <one concrete, checkable trigger condition, or "never">
 ```
 
 R-ids are zero-padded and assigned in run-creation order; P-ids are
 zero-padded and assigned in finding-notice order.
+
+Field discipline — these three fields are the ones that grow into a plan doc
+if left unbounded, so bound them:
+
+- `evidence` is ONE `file:line` — the single most load-bearing location, not
+  the first one found, not a range, not a list. If an item genuinely has no
+  single anchor, that is a sign it is a theme rather than a finding: park it
+  under X2 with `evidence: none`.
+- `remediation` names a direction, not a solution: "gate it behind the same
+  coverage check", "reset the shared global in teardown". It exists so a
+  reader knows which way to walk, not so they can skip the thinking. No
+  steps, no options, no rationale, no code, no second sentence.
+- `issue` is only for a tracker item that ALREADY exists. Never file one to
+  populate the field, and never write "should file one" — that is a decision
+  (X4) and it belongs to the user, not the audit.
+
+When an item will not fit these bounds, the answer is to file a GitHub issue
+and put its number in `issue` — never to expand the entry. The PARKED file is
+a set of pointers into the work, not a description of it.
 
 ## Chat Output (exact; nothing before or after)
 
@@ -178,3 +224,11 @@ instead.
 - Treating "will this close it?" as an open-ended audit invitation.
 - Reporting severity by vibe ("important", "should", "risky") instead of code.
 - Creating any file other than the single PARKED file for this run.
+- Answering a repeated "are we done?" with a fresh sweep instead of the
+  standing verdict. Each re-ask that surfaces one more item teaches the user
+  that closure is unreachable, which is worse than any item it finds.
+- Downgrading a latent defect to X-park because it is not firing today. That
+  is H5, and H5 is reported.
+- Growing a PARKED entry past its field caps, or adding structure to a PARKED
+  file — sub-bullets, priorities, sequencing, effort estimates, owners,
+  status. A parked file that reads like a plan has become one.
