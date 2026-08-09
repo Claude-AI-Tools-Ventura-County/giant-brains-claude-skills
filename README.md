@@ -21,6 +21,7 @@ A suite of skills for [Claude Code](https://claude.com/claude-code) that bring h
 
 ## When to reach for it
 
+- **An agent handed you a menu of options that all sound complicated** and you want to check it isn't hiding a false dilemma or bundling two problems into one — [better-options](01-decide/better-options/SKILL.md).
 - **You're about to commit to a plan or migration** and want to pressure-test the framing before you start — [take-a-step-back](01-decide/take-a-step-back/SKILL.md).
 - **You're unsure a feature or refactor is worth building** and want the payoff priced against the cost before you spend the effort — [worth-it](01-decide/worth-it/SKILL.md).
 - **A deadline is squeezing you** and you need to name which of speed, cost, or quality you're actually trading away — [iron-triangle](01-decide/iron-triangle/SKILL.md).
@@ -34,16 +35,17 @@ A suite of skills for [Claude Code](https://claude.com/claude-code) that bring h
 
 ## Act I — Deciding well (decision hygiene)
 
-Four skills that fire around a decision, each answering a different question at a different moment.
+Five skills that fire around a decision, each answering a different question at a different moment.
 
 | Skill | The operator's question | Its job |
 |---|---|---|
+| [better-options](01-decide/better-options/SKILL.md) | "Is this menu itself honest — one problem or several, and is the simplest option even on it?" | **Scrub** — catch a conflated ask or a false dilemma before any option is chosen |
 | [take-a-step-back](01-decide/take-a-step-back/SKILL.md) | "Am I making the best decision possible?" | **Frame** — challenge the plan and the problem before committing |
 | [iron-triangle](01-decide/iron-triangle/SKILL.md) | "Which of speed, cost, or quality am I trading away?" | **Price** — make the implicit tradeoff explicit |
 | [blast-radius](01-decide/blast-radius/SKILL.md) | "How big is the path I chose, what breaks, how hard to undo?" | **Size** — measure cost and reversibility of a chosen path |
 | [bottom-line](01-decide/bottom-line/SKILL.md) | "There's too much here — what's the call?" | **Cut** — compress overload and analysis paralysis into a decision, with a brief anchor to where the work sits |
 
-They **chain** along the life of a decision: **frame** it (should I, and is this the right problem?), **price** the tradeoff (which corner gives?), **size** the chosen path (how big, what breaks?), then **cut** to the bottom line when the analysis balloons. The same situation can touch all four precisely because they answer different questions at different moments.
+They **chain** along the life of a decision: **scrub** the menu (is it even honest?), **frame** it (should I, and is this the right problem?), **price** the tradeoff (which corner gives?), **size** the chosen path (how big, what breaks?), then **cut** to the bottom line when the analysis balloons. The same situation can touch all five precisely because they answer different questions at different moments.
 
 ## The bridge — from deciding to doing
 
@@ -279,6 +281,7 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 ```
 .
 ├── 01-decide/
+│   ├── better-options/SKILL.md     # Act I — scrub the menu before anything is chosen
 │   ├── blast-radius/SKILL.md       # Act I — size cost & reversibility
 │   ├── bottom-line/SKILL.md        # Act I — cut to the call
 │   ├── iron-triangle/SKILL.md      # Act I — price the tradeoff
