@@ -3,9 +3,9 @@ name: better-options
 description: |
   Pressure-test an option set before the operator picks. Catches an AI agent — this one included — conflating two separate problems into one menu, or quietly narrowing the field to a false dilemma that skips the boring option. Borrows debug-mantra's falsify-the-hypothesis rigor (disprove each option before trusting it) then ponytail's minimalism bias (of what survives, favor the smallest) to surface the option nobody named because it wasn't impressive enough.
 
-  Trigger when an agent — this one included — presents two or more options for a non-trivial engineering decision, especially when every option involves new abstractions, infrastructure, or a rewrite; when the framing sounds like "you have to either X or Y," "there's no way around it," or "we'd need to..."; or when the user asks "is that really the only way," "feels like you're overcomplicating this," "are these actually the same problem," or "what's the simplest version that still works."  Also self-trigger before presenting any option menu on a complicated technical decision — pressure-test it before showing it.
+  Trigger when an agent — this one included — or a user presents two or more options for a non-trivial engineering decision, especially when every option involves new abstractions, infrastructure, or a rewrite; when the framing sounds like "you have to either X or Y," "there's no way around it," or "we'd need to..."; or when the user asks "is that really the only way," "feels like you're overcomplicating this," "are these actually the same problem," or "what's the simplest version that still works." Also self-trigger internally before presenting any option menu on a complicated technical decision — pressure-test it before the menu ever reaches the operator.
 
-  Do not trigger when only one viable path exists and the menu is honest about that, when the choice is low-stakes and reversible (take-a-step-back's "lighter than it feels" territory), or when an option list already exists and the ask is just to compress it into a call — that's bottom-line's job.
+  Do not trigger merely because two or more options are on the table — reach for it when the menu bundles separate concerns, omits a simpler path, or treats an assumption as unavoidable. Skip it when only one viable path exists and the menu is honest about that, when the choice is low-stakes and reversible (take-a-step-back's "lighter than it feels" territory), or when an option list already exists and the ask is just to compress it into a call — that's bottom-line's job.
 ---
 
 # Better Options
@@ -18,8 +18,10 @@ Two failure modes make an option set worse than useless: it silently **bundles d
 
 Two borrowed disciplines, applied in sequence to the menu itself rather than to a single plan:
 
-1. **Falsify before trusting** (from [debug-mantra](../../04-build/debug-mantra/SKILL.md)) — treat "these are the options" and "this requires X" as hypotheses, not facts. For the leading option, find the cheapest disproof and run it before building on top of the option. If the option's justification doesn't survive a real attempt to knock it down, it doesn't belong on the menu.
+1. **Falsify before trusting** (from [debug-mantra](../../04-build/debug-mantra/SKILL.md)) — treat "these are the options" and "this requires X" as hypotheses, not facts. For the leading option, find the cheapest disproof and run it before building on top of the option. A disproof only counts if it points to something concrete — a test, a command, an existing code path, an observable constraint, or a specific piece of missing evidence; "I considered it and it still seems right" is not a disproof. If no cheap disproof is available, say what evidence would supply one instead of skipping the step. If the option's justification doesn't survive a real attempt to knock it down, it doesn't belong on the menu.
 2. **Favor the smallest survivor** (from [ponytail](../../04-build/ponytail-refined/SKILL.md)) — once options survive falsification, don't default to the most architecturally satisfying one. Actively check whether a config flag, an existing feature, a one-line change, or deleting code resolves the actual observed problem — not the theorized one.
+
+An option **survives** falsification when its justification holds up against a real attempt to disprove it — plausibility alone doesn't count. That distinction guards point 2 against becoming reflexive minimalism: the bias is toward the smallest *survivor*, not the smallest option outright. A small option that doesn't actually resolve the observed problem isn't a survivor, it's just small, and the bigger option that does survive should win instead.
 
 The conflation check comes first, because it's the cheapest disproof of all: half of inflated option menus dissolve the moment you notice they're answering two questions at once.
 
@@ -35,23 +37,23 @@ If the menu is already trustworthy and just needs cutting to a call, hand off to
 
 ## Output format
 
-Lead with what the menu actually is. Then run the check — most decisions need only the core three lines.
+Lead with what the menu actually is — whichever menu is under test: one an agent or user already stated, or the draft you were about to present yourself before self-triggering this check. Either way, run the check before any menu reaches the operator as a recommendation. Most decisions need only the core three lines.
 
-**The menu:** [The options as presented, in one line, plus the decision they're supposedly resolving.]
+**The menu:** [The options under test, in one line, plus the decision they're supposedly resolving.]
 
 **Better-options check** — core:
 - **Conflation:** [Is this one problem or several wearing one option set? If several, name the split — each sub-problem may have its own trivial fix.]
 - **Falsified survivor:** [Walk the cheapest disproof of the leading option's justification. Does it survive? If it doesn't, say so plainly — that option is dead, not "worth keeping in mind."]
 - **Simplest surviving option:** [Among what survives, the smallest fix that resolves the *actual observed* problem — config, flag, existing feature, one-liner, deletion — named explicitly, even if it wasn't on the original menu.]
 
-Add from the menu only when it changes the call:
+Include these sections only when they change the recommendation:
 - **Dropped option:** [The boring option that never made the list, and why it likely got skipped — usually because it isn't architecturally interesting, not because it doesn't work.]
 - **False dilemma:** [Only two or three options were named, but a smaller move avoids the tradeoff between them entirely.]
 - **What the bundle was hiding:** [When conflation is the finding, name what got obscured — usually the cheap fix for the smaller of the two bundled problems.]
 
 **Do next:** [The smallest concrete action that tests the simplest surviving option — not "consider it," an actual step.]
 
-**Missing:** [Only if a fact you don't have would change which option survives. Omit by default.]
+**Missing:** [Only if a fact you don't have would change which option survives. Omit by default — don't use this field to dodge making the call.]
 
 ## Principles
 
@@ -69,9 +71,10 @@ Add from the menu only when it changes the call:
 
 ## Scaling
 
-- **Menu is honest, no conflation, options already minimal** → say so in one line and stop. Don't manufacture a finding — a clean menu is a valid outcome, not evidence the skill missed something.
+- **Menu is honest, no conflation, options already minimal** → say so in one line and stop. Don't manufacture a finding — a clean menu is a valid outcome, not evidence the skill missed something. *e.g. "The menu holds: one problem, genuinely viable options, no simpler path missing. Proceed with the stated choice."*
 - **Conflation found** → lead with it; it's usually the whole finding. The falsified-survivor and simplest-option lines then apply per sub-problem, not to the original bundle.
 - **False dilemma found (menu is honest about being one problem, but narrow)** → lead with the dropped option and why it got skipped.
+- **Only one option is presented, framed as inevitable** ("we have to," "there's no way around it") → treat the necessity claim itself as the hypothesis to falsify. The check still applies with a menu of one — conflation and survivor collapse onto that single option's justification.
 - **High-stakes / expensive-to-reverse decision** → add the "What the bundle was hiding" or "False dilemma" line explicitly, and treat "Do next" as a real spike, not a suggestion.
 - **User already ran their own falsification and it holds** → confirm briefly and defer; don't re-litigate a check that already happened.
 
