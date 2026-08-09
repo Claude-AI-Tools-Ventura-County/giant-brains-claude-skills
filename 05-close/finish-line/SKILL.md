@@ -13,22 +13,35 @@ description: >
 # Finish Line
 
 A bounded closure protocol. Its job is to END work, not to discover work.
-Discovery happens once, here, under a strict gate; everything that does not
-pass the gate is parked deterministically and never re-raised.
+A supplied laundry list is source material, not an automatic finish line.
+Discovery and narrowing happen once, here, under a strict gate; everything
+that does not pass the gate is parked deterministically and never re-raised.
 
 ## Protocol (exact order)
 
-1. FREEZE. The done list is whatever the user provides in the invoking
-   message. If none is provided, ask exactly one question and stop:
-   "Paste the frozen done list (numbered, one line per item)."
-   Do not infer, extend, or re-scope the list yourself.
-2. AUDIT silently. Check each frozen item against the repo (met / not met).
+1. SOURCE. Reuse the clearest laundry list, done list, or completion criteria
+   already in the conversation, task context, persistent project memory, or an
+   earlier assistant response. A user list or accepted checklist supersedes an
+   assistant-generated one. If none is available, use the relevant PRD, spec,
+   plan, issue, or PR already known in context or memory; derive candidates
+   only from that source. Do not ask the user to paste material already
+   available. If no authoritative source is available, or sources conflict,
+   ask exactly one question and stop:
+   "What should define done: an existing PRD, spec, plan, issue, PR, or a
+   numbered list?"
+2. NARROW silently. Turn the candidate list into the smallest verifiable done
+   list that closes the user's stated outcome. Keep only explicit, current
+   commitments directly tied to that outcome; collapse duplicates and
+   implementation details into one outcome item. Park every other candidate
+   under the matching X rule. Do not ask the user to choose or confirm the
+   narrowing, add new commitments, or re-scope the outcome.
+3. AUDIT silently. Check each frozen item against the repo (met / not met).
    Collect any new findings. Apply the Severity Gate below.
-3. PARK everything that does not pass the gate, using the PARKED File
+4. PARK everything that does not pass the gate, using the PARKED File
    Protocol below. Zero exceptions; do not mention individual parked items
    in chat.
-4. REPORT using the Chat Output format below. Nothing else.
-5. CLOSE. After this turn the chapter is closed per the verdict. Never
+5. REPORT using the Chat Output format below. Nothing else.
+6. CLOSE. After this turn the chapter is closed per the verdict. Never
    re-audit, re-open, or reframe any parked or frozen item unless the user
    explicitly asks to reopen or revisit it.
 
@@ -69,8 +82,24 @@ Gate mechanics:
   it is not satisfied → park.
 - A pre-existing issue may be reported ONLY if it meets C1–C4 on main today;
   flag it PRE-EXISTING, do not add it to scope; cap: one per run.
-- If the user later chooses to defer a reported HIGH item, park it with
-  exclusion_rule: X6 (user-deferred).
+- Use X1 only after confirming the finding is pre-existing on main and not
+  worsened here. If that comparison is uncertain, use the supported X code;
+  use X5 when evidence is insufficient.
+
+## Post-report HIGH deferral (the only permitted follow-up)
+
+When the user says `park H<code> from this run` or names a run as
+`park H<code> from PARKED/<filename> R-<id>`, do not re-audit. Append that
+reported HIGH item to its original run with `exclusion_rule: X6
+(user-deferred)`, increase only that run's `parked_items`, and return the
+follow-up output below. If a filename has multiple runs and the user did not
+identify one, ask exactly one question naming the available run ids. Do not
+otherwise reopen, extend, or reframe the audit.
+
+```
+CLOSED: yes|no — <one clause>
+PARKED: 1 item → PARKED/<filename> (R-<id>)
+```
 
 ## PARKED File Protocol (deterministic — never invent names or formats)
 
@@ -83,10 +112,10 @@ Filename: `YYYY-MM-DD-<reponame>-HHMM.md`
   replaced by one `-`; leading/trailing `-` stripped.
 - HHMM: local 24-hour zero-padded hour+minute at invocation (14:05 → 1405).
 - Example: `2026-08-08-reminders-service-1430.md`
-- If the exact filename already exists, append to its `## Items` section and
-  continue the P-id sequence; never create a variant name. Keep
-  `created_local` unchanged and update `frozen_items` and `parked_items` to
-  their cumulative totals across every run in that file.
+- Create one file for every audit run, including a run with zero parked items.
+- If the exact filename already exists, append a new run to `## Runs`, assign
+  the next R-id and P-id, and never create a variant name. Keep each run's
+  counts separate; never change another run's counts.
 
 Content: exactly this template, fields in this order, no extra fields,
 no free prose, no additional files (no README, no index):
@@ -96,15 +125,17 @@ no free prose, no additional files (no README, no index):
 schema: finish-line/parked/v1
 created_local: YYYY-MM-DDTHH:MM
 repo: <reponame>
-frozen_items: <count>
-parked_items: <count>
 ---
 
 # Parked — YYYY-MM-DD HH:MM — <reponame>
 
-## Items
+## Runs
 
-### P-001 — <short title, ≤ 8 words>
+### R-001 — YYYY-MM-DDTHH:MM
+- frozen_items: <count>
+- parked_items: <count>
+
+#### P-001 — <short title, ≤ 8 words>
 - claimed_severity: <what this was tempted to be called, e.g. "robustness gap">
 - exclusion_rule: <X-code verbatim, e.g. X1>
 - evidence: <file:line, or "none">
@@ -112,21 +143,26 @@ parked_items: <count>
 - revisit_when: <one concrete, checkable trigger condition, or "never">
 ```
 
-Ids zero-padded three digits, assigned in the order items were noticed.
+R-ids are zero-padded and assigned in run-creation order; P-ids are
+zero-padded and assigned in finding-notice order.
 
 ## Chat Output (exact; nothing before or after)
 
 ```
-DONE LIST:
+CLOSED: yes|no — <one clause>
+DONE LIST: <source already in context, or file path>
 #1 met|not met — reason (file:line)
 ...
 NEW BLOCKING FINDINGS: none | <code> <file:line> — <one-sentence proof>
-PARKED: <n> item(s) → PARKED/<filename>
-CLOSED: yes|no — <one clause>
+PARKED: <n> item(s) → PARKED/<filename> (R-<id>)
 ```
 
-After the CLOSED line: stop. No rules restated, no summaries, no
-suggestions, no questions.
+Set CLOSED to `no` if any CRITICAL or undecided HIGH from that run remains.
+Set it to `yes` only when neither exists, or when every HIGH was deferred
+under X6. A CRITICAL item cannot be deferred under this protocol.
+
+After the PARKED line: stop. No rules restated, no summaries, no suggestions,
+no questions.
 
 ## Counter-example — do not invoke
 
