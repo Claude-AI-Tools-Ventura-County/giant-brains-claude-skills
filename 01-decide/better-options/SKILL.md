@@ -21,7 +21,7 @@ Two borrowed disciplines, applied in sequence to the menu itself rather than to 
 1. **Falsify before trusting** (from [debug-mantra](../../04-build/debug-mantra/SKILL.md)) — treat "these are the options" and "this requires X" as hypotheses, not facts. For the leading option, find the cheapest disproof and run it before building on top of the option. A disproof only counts if it points to something concrete — a test, a command, an existing code path, an observable constraint, or a specific piece of missing evidence; "I considered it and it still seems right" is not a disproof. If no cheap disproof is available, say what evidence would supply one instead of skipping the step. If the option's justification doesn't survive a real attempt to knock it down, it doesn't belong on the menu.
 2. **Favor the smallest survivor** (from [ponytail](../../04-build/ponytail-refined/SKILL.md)) — once options survive falsification, don't default to the most architecturally satisfying one. Actively check whether a config flag, an existing feature, a one-line change, or deleting code resolves the actual observed problem — not the theorized one.
 
-An option **survives** falsification when its justification holds up against a real attempt to disprove it — plausibility alone doesn't count. That distinction guards point 2 against becoming reflexive minimalism: the bias is toward the smallest *survivor*, not the smallest option outright. A small option that doesn't actually resolve the observed problem isn't a survivor, it's just small, and the bigger option that does survive should win instead.
+An option **survives** falsification when its justification — the claim that *this option is necessary* to resolve the observed problem, not merely that it's *a valid way* to resolve it — holds up against a real attempt to disprove it; plausibility alone doesn't count. That distinction guards point 2 against becoming reflexive minimalism: the bias is toward the smallest *survivor*, not the smallest option outright. A small option that doesn't actually resolve the observed problem isn't a survivor, it's just small, and the bigger option that does survive should win instead.
 
 The conflation check comes first, because it's the cheapest disproof of all: half of inflated option menus dissolve the moment you notice they're answering two questions at once.
 
@@ -57,7 +57,7 @@ Include these sections only when they change the recommendation:
 
 ## Principles
 
-**Check for conflation first.** It's the highest-leverage, cheapest question: "is this actually one decision?" A menu that quietly answers two questions at once inflates every option on it.
+**Check for conflation first.** It's the highest-leverage, cheapest question: "is this actually one decision?" A menu that quietly answers two questions at once inflates every option on it. The tell: options that differ in *what they're actually fixing*, not just in how — option A resolving problem X and option B resolving problem Y is a menu for two problems, not two approaches to one. The same tell applies inside a single option: one that bundles several changes with different risk and reversibility profiles (a "migration" that's really schema change plus data move plus app retooling) is a mini-menu of its own — split it before falsifying it as one thing.
 
 **Disprove, don't just describe.** Don't list an option's tradeoffs and move on — try to knock the option's stated justification down. An option whose justification doesn't survive a real attempt at disproof shouldn't be presented as equally valid to one that does.
 
@@ -71,12 +71,14 @@ Include these sections only when they change the recommendation:
 
 ## Scaling
 
-- **Menu is honest, no conflation, options already minimal** → say so in one line and stop. Don't manufacture a finding — a clean menu is a valid outcome, not evidence the skill missed something. *e.g. "The menu holds: one problem, genuinely viable options, no simpler path missing. Proceed with the stated choice."*
+- **Menu is honest, no conflation, options already minimal** → say so in one line and stop. Don't manufacture a finding — a clean menu is a valid outcome, not evidence the skill missed something. ("Minimal" means no option on the menu can be reduced further and no omitted option is both smaller and sufficient — not that the list is short.) *e.g. "The menu holds: one problem, genuinely viable options, no simpler path missing. Proceed with the stated choice."*
+- **Menu is honest but large or overwhelming** → don't just stop silently. Say so and hand off explicitly: "the menu is honest — run bottom-line to cut it to a call." Size, not honesty, is bottom-line's problem to solve.
 - **Conflation found** → lead with it; it's usually the whole finding. The falsified-survivor and simplest-option lines then apply per sub-problem, not to the original bundle.
 - **False dilemma found (menu is honest about being one problem, but narrow)** → lead with the dropped option and why it got skipped.
-- **Only one option is presented, framed as inevitable** ("we have to," "there's no way around it") → treat the necessity claim itself as the hypothesis to falsify. The check still applies with a menu of one — conflation and survivor collapse onto that single option's justification.
+- **Only one option is presented, framed as inevitable** ("we have to," "there's no way around it") → treat the necessity claim itself as the hypothesis to falsify. The check still applies with a menu of one — conflation and survivor collapse onto that single option's justification. See Example 3.
 - **High-stakes / expensive-to-reverse decision** → add the "What the bundle was hiding" or "False dilemma" line explicitly, and treat "Do next" as a real spike, not a suggestion.
 - **User already ran their own falsification and it holds** → confirm briefly and defer; don't re-litigate a check that already happened.
+- **Simplest survivor rejected for non-technical reasons** (strategic direction, team skill-building, architectural consistency) → the recommendation stands as stated; the rejection makes it a documented *choice* rather than an oversight. Don't re-litigate a reasoned override.
 
 ## Example 1 — a conflated bug report
 
@@ -111,3 +113,18 @@ Output:
 > **False dilemma:** Migrate-or-shard were the two options an agent under scale pressure reaches for by default; "check whether the query is even indexed" isn't architecturally interesting, so it never made the list.
 >
 > **Do next:** Add the index, rerun the load test, and only revisit migrate-vs-shard if the ceiling persists against an indexed query.
+
+## Example 3 — a menu of one, framed as inevitable
+
+Input (abridged): "We have to rewrite the scheduler — the current one can't handle backpressure."
+
+Output:
+
+> **The menu:** Rewrite the scheduler — the only option offered, framed as required.
+>
+> **Better-options check:**
+> - **Conflation:** None — one problem (the scheduler can't handle backpressure), one option.
+> - **Falsified survivor:** The necessity claim is "the current scheduler *cannot* handle backpressure." Disproof: dropping `max_in_flight` from 100 to 10 keeps the queue inside its buffer under the same load test that motivated the rewrite — the current scheduler handles backpressure once the concurrency ceiling is configured correctly. The rewrite's justification does not survive.
+> - **Simplest surviving option:** Lower `max_in_flight` to a value the buffer actually supports and rerun the load test. A rewrite isn't justified unless this fails.
+>
+> **Do next:** Change the config value, rerun the backpressure test that motivated the rewrite claim, and only revisit the rewrite if it still fails.
