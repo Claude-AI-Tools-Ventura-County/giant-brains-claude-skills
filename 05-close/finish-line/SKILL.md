@@ -19,14 +19,19 @@ that does not pass the gate is parked deterministically and never re-raised.
 
 ## Protocol (exact order)
 
-1. SOURCE. Reuse the clearest laundry list, done list, or completion criteria
-   already in the conversation, task context, persistent project memory, or an
-   earlier assistant response. A user list or accepted checklist supersedes an
-   assistant-generated one. If none is available, use the relevant PRD, spec,
-   plan, issue, or PR already known in context or memory; derive candidates
-   only from that source. Do not ask the user to paste material already
-   available. If no authoritative source is available, or sources conflict,
-   ask exactly one question and stop:
+1. SOURCE. Pick the highest-precedence candidate available, in this order:
+   (a) an explicit user-stated done/completion list in this conversation —
+   if the user has stated more than one, the most recent supersedes earlier
+   ones; (b) a checklist the user has already accepted or confirmed, even if
+   assistant-drafted; (c) an authoritative PRD, spec, plan, issue, or PR
+   already known in context or memory; (d) an assistant-generated summary
+   with no user confirmation. Derive candidates only from the selected
+   source. Do not ask the user to paste material already available.
+   Two sources CONFLICT only when they sit at the same precedence tier and
+   name different outcomes — not when one is just more detailed or granular
+   than the other; merge same-outcome sources instead of picking one. If no
+   source is available at any tier, or two same-tier sources conflict, ask
+   exactly one question and stop:
    "What should define done: an existing PRD, spec, plan, issue, PR, or a
    numbered list?"
    The list FREEZES at this step. Work completed after the freeze does not
@@ -35,8 +40,10 @@ that does not pass the gate is parked deterministically and never re-raised.
    list that closes the user's stated outcome. Keep only explicit, current
    commitments directly tied to that outcome; collapse duplicates and
    implementation details into one outcome item. Park every other candidate
-   under the matching X rule. Do not ask the user to choose or confirm the
-   narrowing, add new commitments, or re-scope the outcome.
+   under the matching X rule — a candidate that is a legitimate requirement
+   but simply not needed for this closure parks under X4: narrowing scope is
+   itself a decision, not a defect. Do not ask the user to choose or confirm
+   the narrowing, add new commitments, or re-scope the outcome.
 3. AUDIT silently. Check each frozen item against the repo (met / not met).
    Collect any new findings. Apply the Severity Gate below.
 4. PARK everything that does not pass the gate, using the PARKED File
@@ -87,7 +94,10 @@ PARK BY DEFINITION (never report; park with the matching rule id):
 - X2 Missing enhancements, refactors, naming, docs, tests for hypotheticals,
   thresholds, observability wishes, machinery hygiene, architecture taste.
 - X3 Anything worded as "if someday / as it grows / should have".
-- X4 Anything that is a decision rather than a defect.
+- X4 Anything that is a decision rather than a defect, including a candidate
+  that would be legitimate elsewhere but is not required to close this
+  specific outcome (a NARROW-stage scope exclusion, not an AUDIT-stage
+  defect call).
 - X5 Anything without file:line evidence.
 
 Gate mechanics:
@@ -177,9 +187,14 @@ Field discipline — these three fields are the ones that grow into a plan doc
 if left unbounded, so bound them:
 
 - `evidence` is ONE `file:line` — the single most load-bearing location, not
-  the first one found, not a range, not a list. If an item genuinely has no
-  single anchor, that is a sign it is a theme rather than a finding: park it
-  under X2 with `evidence: none`.
+  the first one found, not a range, not a list. A concrete defect that
+  recurs at multiple call sites still has one most load-bearing anchor: cite
+  that site as `evidence` and use `remediation` to flag the recurrence (e.g.
+  "apply the same fix at every call site matching X") — it is not lost, just
+  pointed at through one exemplar. Reserve `evidence: none` under X2 for
+  genuinely diffuse themes with no concrete instance to anchor to (naming,
+  architecture taste, observability wishes) — not for a real bug that merely
+  has more than one location.
 - `remediation` names a direction, not a solution: "gate it behind the same
   coverage check", "reset the shared global in teardown". It exists so a
   reader knows which way to walk, not so they can skip the thinking. No
