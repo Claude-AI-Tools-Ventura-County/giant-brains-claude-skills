@@ -1,0 +1,52 @@
+{"timestamp":"2026-07-22T02:02:16Z","severity":"info","check":"pdda-run","file":".","line":0,"message":"starting deterministic PDDA run (mode=observe)","action":"start"}
+{"timestamp":"2026-07-22T02:02:17Z","severity":"info","check":"pdda-check-frontmatter","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-22T02:02:17Z","severity":"info","check":"pdda-check-status-table","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-22T02:02:17Z","severity":"info","check":"pdda-check-hardcoded-paths","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-22T02:02:17Z","severity":"info","check":"pdda-check-roadmap","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-22T02:02:17Z","severity":"info","check":"pdda-check-roadmap-coverage","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-22T02:02:17Z","severity":"warn","check":"pdda-check-changelog","file":"CHANGELOG.md","line":1,"message":"CHANGELOG newest entry (2026-06-06) predates the latest commit (2026-07-17) by 41 day(s) — add an end-of-iteration entry","action":"update-changelog"}
+{"timestamp":"2026-07-22T02:02:18Z","severity":"info","check":"pdda-check-changelog","file":".","line":0,"message":"errors=0 warns=1 info=0","action":"summary"}
+{"timestamp":"2026-07-22T02:02:18Z","severity":"info","check":"pdda-stale-working-docs","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-22T02:02:18Z","severity":"info","check":"pdda-check-issue-doc-sync","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-22T02:02:18Z","severity":"info","check":"pdda-check-releases","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-22T02:02:19Z","severity":"warn","check":"pdda-check-governance","file":"AGENTS.md","line":35,"message":"dead reference 'record-decision/SKILL.md' — no file at record-decision/SKILL.md","action":"fix-dead-reference"}
+{"timestamp":"2026-07-22T02:02:19Z","severity":"warn","check":"pdda-check-governance","file":"AGENTS.md","line":52,"message":"dead reference 'skill.md' — no file at skill.md","action":"fix-dead-reference"}
+{"timestamp":"2026-07-22T02:02:20Z","severity":"warn","check":"pdda-check-governance","file":"README.md","line":79,"message":"dead reference '.claude/loose-ends-sequence.md' — no file at .claude/loose-ends-sequence.md","action":"fix-dead-reference"}
+{"timestamp":"2026-07-22T02:02:21Z","severity":"warn","check":"pdda-check-governance","file":"README.md","line":91,"message":"dead reference 'MEMORY.md' — no file at MEMORY.md","action":"fix-dead-reference"}
+{"timestamp":"2026-07-22T02:02:22Z","severity":"warn","check":"pdda-check-governance","file":"README.md","line":258,"message":"dead reference 'skill.md' — no file at skill.md","action":"fix-dead-reference"}
+{"timestamp":"2026-07-22T02:02:23Z","severity":"warn","check":"pdda-check-governance","file":"README.md","line":265,"message":"dead reference 'skill.md' — no file at skill.md","action":"fix-dead-reference"}
+{"timestamp":"2026-07-22T02:02:38Z","severity":"info","check":"pdda-check-governance","file":"ROUTER.md","line":0,"message":"governance index doc 'ROUTER.md' not found; skipping orphan-doc check","action":"skip"}
+{"timestamp":"2026-07-22T02:02:39Z","severity":"info","check":"pdda-check-governance","file":".","line":0,"message":"errors=0 warns=6 info=1","action":"summary"}
+{"timestamp":"2026-07-22T02:02:39Z","severity":"info","check":"pdda-doc-ready","file":".","line":0,"message":"LLM readiness review skipped (set PDDA_LLM_BIN to a model CLI such as agy/codex/claude to enable)","action":"skip"}
+{"timestamp":"2026-07-22T02:02:39Z","severity":"info","check":"pdda-doc-ready","file":".","line":0,"message":"errors=0 warns=0 info=1","action":"summary"}
+{"timestamp":"2026-07-22T02:02:39Z","severity":"warn","check":"pdda-run","file":".","line":0,"message":"PDDA run reported 7 warning(s) and no errors: pdda-check-changelog pdda-check-governance","action":"finish"}
+{"timestamp":"2026-07-22T02:05:24Z","severity":"info","check":"pdda-check-frontmatter","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-22T02:05:24Z","severity":"info","check":"pdda-check-roadmap","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-22T02:05:24Z","severity":"info","check":"pdda-check-roadmap-coverage","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-22T02:06:28Z","severity":"info","check":"pdda-check-roadmap","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-22T02:06:28Z","severity":"info","check":"pdda-check-roadmap-coverage","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-31T05:02:24Z","severity":"info","check":"pdda-run","file":".","line":0,"message":"starting deterministic PDDA run (mode=observe)","action":"start"}
+{"timestamp":"2026-07-31T05:02:24Z","severity":"info","check":"pdda-check-frontmatter","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-31T05:02:24Z","severity":"info","check":"pdda-check-status-table","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-31T05:02:24Z","severity":"info","check":"pdda-check-hardcoded-paths","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-31T05:02:24Z","severity":"info","check":"pdda-check-roadmap","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-31T05:02:25Z","severity":"info","check":"pdda-check-roadmap-coverage","file":"PROJECT/2-WORKING/MARATHON-PLAN-2026-07-22.md","line":1,"message":"roadmap coverage check skipped because roadmap_exempt=true","action":"skip"}
+{"timestamp":"2026-07-31T05:02:25Z","severity":"error","check":"pdda-check-roadmap-coverage","file":"PROJECT/1-INBOX/GH-7-FRONTDOOR-STALENESS-MATURITY-STAGE.md","line":1,"message":"captured GH issue doc is not parked in ROADMAP.md (PROJECT/1-INBOX/GH-7-FRONTDOOR-STALENESS-MATURITY-STAGE.md) — add a one-line queue entry linking it, or set roadmap_exempt: true","action":"add-roadmap-queue"}
+{"timestamp":"2026-07-31T05:02:25Z","severity":"error","check":"pdda-check-roadmap-coverage","file":"PROJECT/1-INBOX/GH-8-SHAKEDOWN-RERUN-TRIGGER-ON-LAYOUT-CHANGE.md","line":1,"message":"captured GH issue doc is not parked in ROADMAP.md (PROJECT/1-INBOX/GH-8-SHAKEDOWN-RERUN-TRIGGER-ON-LAYOUT-CHANGE.md) — add a one-line queue entry linking it, or set roadmap_exempt: true","action":"add-roadmap-queue"}
+{"timestamp":"2026-07-31T05:02:25Z","severity":"error","check":"pdda-check-roadmap-coverage","file":".","line":0,"message":"errors=2 warns=0 info=1","action":"summary"}
+{"timestamp":"2026-07-31T05:02:25Z","severity":"warn","check":"pdda-check-changelog","file":"CHANGELOG.md","line":1,"message":"CHANGELOG newest entry (2026-06-06) predates the latest commit (2026-07-28) by 52 day(s) — add an end-of-iteration entry","action":"update-changelog"}
+{"timestamp":"2026-07-31T05:02:25Z","severity":"info","check":"pdda-check-changelog","file":".","line":0,"message":"errors=0 warns=1 info=0","action":"summary"}
+{"timestamp":"2026-07-31T05:02:25Z","severity":"warn","check":"pdda-stale-working-docs","file":"PROJECT/2-WORKING/MARATHON-PLAN-2026-07-22.md","line":1,"message":"stale (9d old) — recommend: git mv PROJECT/2-WORKING/MARATHON-PLAN-2026-07-22.md PROJECT/4-MISC/MARATHON-PLAN-2026-07-22.md","action":"flagged"}
+{"timestamp":"2026-07-31T05:02:26Z","severity":"info","check":"pdda-stale-working-docs","file":".","line":0,"message":"errors=0 warns=1 info=0","action":"summary"}
+{"timestamp":"2026-07-31T05:02:26Z","severity":"info","check":"pdda-check-issue-doc-sync","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-31T05:02:26Z","severity":"info","check":"pdda-check-releases","file":".","line":0,"message":"errors=0 warns=0 info=0","action":"summary"}
+{"timestamp":"2026-07-31T05:02:44Z","severity":"warn","check":"pdda-check-governance","file":"AGENTS.md","line":35,"message":"dead reference 'record-decision/SKILL.md' — no file at record-decision/SKILL.md","action":"fix-dead-reference"}
+{"timestamp":"2026-07-31T05:02:44Z","severity":"warn","check":"pdda-check-governance","file":"AGENTS.md","line":52,"message":"dead reference 'skill.md' — no file at skill.md","action":"fix-dead-reference"}
+{"timestamp":"2026-07-31T05:02:45Z","severity":"warn","check":"pdda-check-governance","file":"README.md","line":79,"message":"dead reference '.claude/loose-ends-sequence.md' — no file at .claude/loose-ends-sequence.md","action":"fix-dead-reference"}
+{"timestamp":"2026-07-31T05:02:45Z","severity":"warn","check":"pdda-check-governance","file":"README.md","line":91,"message":"dead reference 'MEMORY.md' — no file at MEMORY.md","action":"fix-dead-reference"}
+{"timestamp":"2026-07-31T05:02:47Z","severity":"warn","check":"pdda-check-governance","file":"README.md","line":260,"message":"dead reference 'skill.md' — no file at skill.md","action":"fix-dead-reference"}
+{"timestamp":"2026-07-31T05:02:47Z","severity":"warn","check":"pdda-check-governance","file":"README.md","line":267,"message":"dead reference 'skill.md' — no file at skill.md","action":"fix-dead-reference"}
+{"timestamp":"2026-07-31T05:03:02Z","severity":"info","check":"pdda-check-governance","file":"ROUTER.md","line":0,"message":"governance index doc 'ROUTER.md' not found; skipping orphan-doc check","action":"skip"}
+{"timestamp":"2026-07-31T05:03:02Z","severity":"info","check":"pdda-check-governance","file":".","line":0,"message":"errors=0 warns=6 info=1","action":"summary"}
+{"timestamp":"2026-07-31T05:03:02Z","severity":"info","check":"pdda-doc-ready","file":".","line":0,"message":"readiness review skipped — deterministic checks reported errors: pdda-check-roadmap-coverage","action":"skip"}
+{"timestamp":"2026-07-31T05:03:02Z","severity":"error","check":"pdda-run","file":".","line":0,"message":"PDDA run reported 2 error(s) in mode=observe (non-blocking): pdda-check-roadmap-coverage","action":"finish"}
