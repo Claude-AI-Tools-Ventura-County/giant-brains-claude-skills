@@ -34,3 +34,4 @@ PROJECT/PDDA-ACTIVITY.jsonl
 /utils/pdda/
 /.pdda-mode
 /.pdda-quad
+.vscode/extensions.json
