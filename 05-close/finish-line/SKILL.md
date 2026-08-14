@@ -43,7 +43,8 @@ that does not pass the gate is parked deterministically and never re-raised.
    under the matching X rule — a candidate that is a legitimate requirement
    but simply not needed for this closure parks under X4: narrowing scope is
    itself a decision, not a defect. Do not ask the user to choose or confirm
-   the narrowing, add new commitments, or re-scope the outcome.
+   the narrowing, add new commitments, or re-scope the outcome. A release
+   ledger, if one exists, is not an input here (see Release Context below).
 3. AUDIT silently. Check each frozen item against the repo (met / not met).
    Collect any new findings. Apply the Severity Gate below.
 4. PARK everything that does not pass the gate, using the PARKED File
@@ -59,6 +60,75 @@ that does not pass the gate is parked deterministically and never re-raised.
    must not produce a candidate that was not in the frozen list. Re-entry is
    the failure mode this skill exists to prevent; the Severity Gate only
    bounds a single pass, this step bounds the number of passes.
+
+## Release Context (optional sub-routine — never a gate)
+
+Many repos keep a forward-looking release ledger with named goal posts. When
+one exists, naming the release that closure is running against costs one line
+and tells the reader which goal post the verdict belongs to.
+
+This sub-routine is **display-only**. Its entire output is the `RELEASE:` line.
+It never reads into the done list, never changes what is frozen, parked, or
+reported, and never blocks. A repo with no ledger produces byte-identical
+output to a version of this skill without the sub-routine. Whenever a step
+below does not resolve cleanly, skip the whole sub-routine silently — an
+unlabelled close is always correct; a mislabelled one is not.
+
+DISCOVER. Look in exactly two places at repo-root
+(`git rev-parse --show-toplevel`; fallback: current directory):
+`RELEASES.md`, then `MILESTONES.md`. First one found wins. No directory walk,
+no fuzzy matching, no ROADMAP.md fallback — a queue ledger is not a milestone
+doc. Neither present → skip silently and never mention it.
+
+SELECT one block, or none.
+
+A block starts at a line beginning `Release:` and runs to the next such line
+or end of file. Do **not** split on blank lines: real ledgers omit the blank
+line between blocks, which would merge two releases into one block carrying
+two `Release:` values and make the selected label ambiguous.
+
+A block is a candidate only if it is outside HTML comments, has a concrete
+`Release:` value (not empty, `TBD`, `none`, or `-`), and has no shipped
+`Status:` (Shipped / Released / Done / Complete). A block with no `Status:`
+field counts as unshipped. Then:
+- If the user named a release or codename, use the block whose `Release:` or
+  `Codename:` matches. This is the only fully reliable signal and it always
+  wins. No match → skip silently.
+- Otherwise, among candidates carrying a parseable `Target Date:`, take the
+  **earliest** date. Releases ship in date order, so the earliest unshipped
+  target is the one in flight. Include overdue dates: a release that slipped
+  yesterday is exactly when the label is most useful, and the printed date
+  shows the reader the slip.
+- If no candidate carries a parseable `Target Date:`, or two or more tie for
+  earliest — **skip silently**. Both are common; neither is a defect.
+- Never rank by file order or version number. A ledger is not reliably sorted:
+  a real one in use today lists `1.5.0` above `1.4.270`, with both actively
+  worked. There is no ordering convention to lean on, and inventing one to
+  make the rule terminate is how a confident wrong label gets printed.
+- Every branch above terminates in a named block or a silent skip. There is no
+  judgement call left to the agent — if you find yourself weighing which
+  release "feels" active, the rule has already said skip.
+
+HARD LIMITS:
+- Never a SOURCE candidate at any tier. The ledger is forward-looking
+  planning, not an accepted done list; its `Description` prose is intent, not
+  a frozen commitment. If it disagrees with the selected SOURCE, the SOURCE
+  wins silently — this is not a same-tier conflict and never triggers the
+  Step 1 question.
+- Never an input to NARROW. The ledger must not be used to argue that a
+  candidate belongs to a later release and can therefore be dropped: a
+  mis-selected block would silently delete real work from the frozen list and
+  report a clean close over it. Scope exclusions come from the user's stated
+  outcome alone.
+- Never adds to or removes from the frozen list, and never changes a
+  met/not-met call.
+- Never affects `revisit_when` or any other PARKED field. Parked entries are
+  written exactly as they would be without a ledger.
+- Never blocks closure. A missed target date, an empty `Milestone:`, a stale
+  or self-contradicting ledger, and a ledger that disagrees with the repo are
+  all invisible here — not a finding, not a HIGH, not even a parked item.
+  Auditing the ledger is a different job than closing against it.
+- Never writes to the ledger.
 
 ## Severity Gate — the only definitions that exist
 
@@ -99,6 +169,8 @@ PARK BY DEFINITION (never report; park with the matching rule id):
   specific outcome (a NARROW-stage scope exclusion, not an AUDIT-stage
   defect call).
 - X5 Anything without file:line evidence.
+- X6 A reported HIGH the user chose to defer. Assigned only by the post-report
+  deferral below — never during an audit pass, and never to a CRITICAL.
 
 Gate mechanics:
 - Burden of proof is on INCLUSION. If unsure whether a code is satisfied,
@@ -211,12 +283,20 @@ a set of pointers into the work, not a description of it.
 
 ```
 CLOSED: yes|no — <one clause>
+RELEASE: <release> (<codename>) — target <date>
 DONE LIST: <source already in context, or file path>
 #1 met|not met — reason (file:line)
 ...
 NEW BLOCKING FINDINGS: none | <code> <file:line> — <one-sentence proof>
 PARKED: <n> item(s) → PARKED/<filename> (R-<id>)
 ```
+
+The `RELEASE:` line is the only optional line in this block. Print it when the
+Release Context sub-routine selected a block; **omit the line entirely** —
+not blank, not "none" — when there is no ledger or no block was selected.
+Drop any field the block leaves empty (`0.71.0 (Daily Driver)` with no target
+date; `0.71.0 — target 2026-10-15` with no codename). It is a label, never a
+verdict: it does not explain, justify, or state progress against the release.
 
 Set CLOSED to `no` if any CRITICAL or undecided HIGH from that run remains.
 Set it to `yes` only when neither exists, or when every HIGH was deferred
@@ -244,6 +324,13 @@ instead.
   that closure is unreachable, which is worse than any item it finds.
 - Downgrading a latent defect to X-park because it is not firing today. That
   is H5, and H5 is reported.
+- Treating a release ledger as the done list, or letting its `Description`
+  prose add an item the frozen list never had.
+- Reporting on the ledger itself — a slipped target date, an empty field, a
+  block that disagrees with the repo. Closing against a release is not
+  auditing the release plan.
+- Asking which release is in flight. The selection rule is deterministic; if
+  it does not resolve, the sub-routine is skipped, not escalated to a question.
 - Growing a PARKED entry past its field caps, or adding structure to a PARKED
   file — sub-bullets, priorities, sequencing, effort estimates, owners,
   status. A parked file that reads like a plan has become one.
