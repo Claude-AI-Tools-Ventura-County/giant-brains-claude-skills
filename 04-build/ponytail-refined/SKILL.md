@@ -139,11 +139,3 @@ terse prose). "stop ponytail" / "normal mode": revert. Level persists until
 changed or session end.
 
 The shortest path to done is the right path.
-
-## Review History
-
-<!-- Append-only: one row per review/audit pass. Never edit or delete a past row. -->
-
-| Date | Reviewer | Outcome | Notes |
-|---|---|---|---|
-| 2026-06-28 | noelsaw1 | Seeded | Baseline row from git history (last content change); no formal review conducted yet. |
