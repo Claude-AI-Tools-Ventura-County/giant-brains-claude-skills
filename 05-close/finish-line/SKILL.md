@@ -4,249 +4,164 @@ description: >
   Use when the user asks to close, wrap up, finalize, ship, or define "done"
   for a plan, chapter, PR, milestone, or project; or says any of:
   "finish line", "definition of done", "done list", "stop adding scope",
-  "no new items", "wrap it up", "close the chapter". Runs a bounded closure
-  audit: reports only objective Critical/High blockers and parks everything
-  else deterministically in /PARKED. Overrides any default urge to re-audit
-  or expand scope.
+  "no new items", "wrap it up", "close the chapter". Recommends the shortest
+  safe path from the current branch to the next checkpoint: remaining work,
+  governance compliance, and ship-safety blockers only — everything else is
+  parked in /PARKED for later pickup, never narrated in chat.
 ---
 
 # Finish Line
 
-A bounded closure protocol. Its job is to END work — an expedient arrival
-at a safe goal post (a milestone or release) — not to discover or raise
-additional work that belongs in a new phase, project, or milestone. The
-report carries only what is absolutely needed to reach the goal post;
-nice-to-know FYIs are parked, not reported.
-A supplied laundry list is source material, not an automatic finish line.
-Discovery and narrowing happen once, here, under a strict gate; everything
-that does not pass the gate is parked deterministically and never re-raised.
+The job is to hand the user a clear, safe path to a clean finish line —
+an expedient arrival at the next checkpoint (milestone or release). A clean
+finish line means exactly three things:
+
+1. The current branch's work (its GH issue, task, or stated outcome) is
+   fully completed — done and done.
+2. The repo's doc-governance systems are fully complied with. No shortcuts.
+3. Everything non-mandatory is dropped from chat — FYIs, nice-to-knows,
+   and especially narration of what the LLM did recently. Dropped detail
+   is captured in the PARKED file so work can be picked up later; it is
+   never spent in the user's chat window.
+
+This skill is forward-looking only. It reports what REMAINS, never what
+happened. It is not a retrospective, not a changelog, not a summary of
+recent activity. The user is focused on getting to the finish line; every
+line of output must move them toward it.
 
 ## Protocol (exact order)
 
-1. SOURCE. Pick the highest-precedence candidate available, in this order:
-   (a) an explicit user-stated done/completion list in this conversation —
-   if the user has stated more than one, the most recent supersedes earlier
-   ones; (b) a checklist the user has already accepted or confirmed, even if
-   assistant-drafted; (c) an authoritative PRD, spec, plan, issue, or PR
-   already known in context or memory; (d) an assistant-generated summary
-   with no user confirmation. Derive candidates only from the selected
-   source. Do not ask the user to paste material already available.
-   Two sources CONFLICT only when they sit at the same precedence tier and
-   name different outcomes — not when one is just more detailed or granular
-   than the other; merge same-outcome sources instead of picking one. If no
-   source is available at any tier, or two same-tier sources conflict, ask
-   exactly one question and stop:
+1. SOURCE. What defines done for this branch? Pick the highest-precedence
+   candidate available: (a) an explicit user-stated done list in this
+   conversation (most recent wins); (b) a checklist the user has accepted or
+   confirmed, even if assistant-drafted; (c) an authoritative PRD, spec,
+   plan, issue, or PR already known in context or memory; (d) an
+   assistant-generated summary with no user confirmation. Merge same-outcome
+   sources; two sources conflict only at the same tier naming different
+   outcomes. If no source exists at any tier, or same-tier sources conflict,
+   ask exactly one question and stop:
    "What should define done: an existing PRD, spec, plan, issue, PR, or a
    numbered list?"
-   The list FREEZES at this step. Work completed after the freeze does not
-   extend it, and a later "are we done?" does not re-run SOURCE.
-2. NARROW silently. Turn the candidate list into the smallest verifiable done
-   list that closes the user's stated outcome. Keep only explicit, current
-   commitments directly tied to that outcome; collapse duplicates and
-   implementation details into one outcome item. Park every other candidate
-   under the matching X rule — a candidate that is a legitimate requirement
-   but simply not needed for this closure parks under X4: narrowing scope is
-   itself a decision, not a defect. Do not ask the user to choose or confirm
-   the narrowing, add new commitments, or re-scope the outcome. A release
-   ledger, if one exists, is not an input here (see Release Context below).
-3. AUDIT silently. Check each frozen item against the repo (met / not met).
-   Collect any new findings. Apply the Severity Gate below.
-4. PARK everything that does not pass the gate, using the PARKED File
-   Protocol below. Zero exceptions; do not mention individual parked items
-   in chat.
-5. REPORT using the Chat Output format below. Nothing else.
-6. CLOSE. After this turn the chapter is closed per the verdict. Never
-   re-audit, re-open, or reframe any parked or frozen item unless the user
-   explicitly asks to reopen or revisit it.
-   This binds every later turn, not just this one. A follow-up such as "are we
-   done?", "is that everything?", "will this close it?", or "anything else?"
-   is answered by restating the existing verdict — it is not a new audit and
-   must not produce a candidate that was not in the frozen list. Re-entry is
-   the failure mode this skill exists to prevent; the Severity Gate only
-   bounds a single pass, this step bounds the number of passes.
+   The done list FREEZES here. Later work does not extend it; a later
+   "are we done?" does not re-run SOURCE.
 
-## Release Context (optional sub-routine — never a gate)
+2. CHECKPOINT. Identify the goal post the path leads to.
+   - Look for `RELEASES.md`, then `MILESTONES.md`, at repo-root
+     (`git rev-parse --show-toplevel`; fallback: current directory). First
+     found wins; no directory walk, no ROADMAP.md fallback.
+   - In the ledger, a block starts at a line beginning `Release:` and runs
+     to the next such line or end of file (never split on blank lines). A
+     candidate block has a concrete `Release:` value (not empty/TBD/none/-),
+     sits outside HTML comments, and has no shipped `Status:` (Shipped /
+     Released / Done / Complete; no `Status:` field = unshipped).
+   - If the user named a release or codename, that block wins. Otherwise
+     take the candidate with the earliest parseable `Target Date:`
+     (overdue included — a slipped date is when the label matters most).
+   - If the ledger exists but selection is ambiguous (no dates, tied
+     dates, no match), ask one short question naming the candidate
+     releases. If no ledger exists, the checkpoint is the branch's own
+     stated task — say so and continue; do not ask.
+   - The checkpoint is a destination label only. Its prose never adds to
+     or removes from the frozen done list, and a stale or self-contradicting
+     ledger is not a finding — closing against a checkpoint is a different
+     job than auditing the release plan.
 
-Many repos keep a forward-looking release ledger with named goal posts. When
-one exists, naming the release that closure is running against costs one line
-and tells the reader which goal post the verdict belongs to.
+3. ASSESS silently. Establish where the branch stands:
+   - Branch identity: `git branch --show-current`; ahead/behind the local
+     trunk (`main`, else `master`) via `git rev-list --left-right --count`.
+     Facts for the opening line, never a progress judgement.
+   - Each frozen done-list item: met or not met, against the repo.
+   - Governance obligations: discover the repo's own doc rules (CLAUDE.md /
+     AGENTS.md directives, PDDA lifecycle if `utils/pdda/` exists, CHANGELOG
+     and ROADMAP conventions, issue-doc sync, README update rules) and
+     determine which steps this close still owes.
+   - Ship-safety: note any Mandatory-bar item 3 finding encountered while
+     assessing. Do not launch an open-ended defect sweep; the frozen list
+     bounds the looking.
 
-This sub-routine is **display-only**. Its entire output is the `RELEASE:` line.
-It never reads into the done list, never changes what is frozen, parked, or
-reported, and never blocks. A repo with no ledger produces byte-identical
-output to a version of this skill without the sub-routine. Whenever a step
-below does not resolve cleanly, skip the whole sub-routine silently — an
-unlabelled close is always correct; a mislabelled one is not.
+4. PARK. Everything that fails the Mandatory Bar goes into the PARKED file
+   (protocol below), with enough detail for an easy pickup later. Zero
+   exceptions, and no individual parked item is mentioned in chat.
 
-DISCOVER. Look in exactly two places at repo-root
-(`git rev-parse --show-toplevel`; fallback: current directory):
-`RELEASES.md`, then `MILESTONES.md`. First one found wins. No directory walk,
-no fuzzy matching, no ROADMAP.md fallback — a queue ledger is not a milestone
-doc. Neither present → skip silently and never mention it.
+5. RECOMMEND. Deliver the Chat Output below. Nothing else.
 
-SELECT one block, or none.
+6. CLOSE. The recommendation stands. A follow-up like "are we done?",
+   "is that everything?", or "anything else?" is answered by restating the
+   standing path (minus steps since completed) — it is not a new audit and
+   must not surface a candidate the frozen list never had. Re-entry is the
+   failure mode this skill exists to prevent. Reopen only when the user
+   explicitly asks to reopen or revisit.
 
-A block starts at a line beginning `Release:` and runs to the next such line
-or end of file. Do **not** split on blank lines: real ledgers omit the blank
-line between blocks, which would merge two releases into one block carrying
-two `Release:` values and make the selected label ambiguous.
+## The Mandatory Bar — the only things that reach chat
 
-A block is a candidate only if it is outside HTML comments, has a concrete
-`Release:` value (not empty, `TBD`, `none`, or `-`), and has no shipped
-`Status:` (Shipped / Released / Done / Complete). A block with no `Status:`
-field counts as unshipped. Then:
-- If the user named a release or codename, use the block whose `Release:` or
-  `Codename:` matches. This is the only fully reliable signal and it always
-  wins. No match → skip silently.
-- Otherwise, among candidates carrying a parseable `Target Date:`, take the
-  **earliest** date. Releases ship in date order, so the earliest unshipped
-  target is the one in flight. Include overdue dates: a release that slipped
-  yesterday is exactly when the label is most useful, and the printed date
-  shows the reader the slip.
-- If no candidate carries a parseable `Target Date:`, or two or more tie for
-  earliest — **skip silently**. Both are common; neither is a defect.
-- Never rank by file order or version number. A ledger is not reliably sorted:
-  a real one in use today lists `1.5.0` above `1.4.270`, with both actively
-  worked. There is no ordering convention to lean on, and inventing one to
-  make the rule terminate is how a confident wrong label gets printed.
-- Every branch above terminates in a named block or a silent skip. There is no
-  judgement call left to the agent — if you find yourself weighing which
-  release "feels" active, the rule has already said skip.
+A step may appear in the recommendation ONLY if it is one of:
 
-HARD LIMITS:
-- Never a SOURCE candidate at any tier. The ledger is forward-looking
-  planning, not an accepted done list; its `Description` prose is intent, not
-  a frozen commitment. If it disagrees with the selected SOURCE, the SOURCE
-  wins silently — this is not a same-tier conflict and never triggers the
-  Step 1 question.
-- Never an input to NARROW. The ledger must not be used to argue that a
-  candidate belongs to a later release and can therefore be dropped: a
-  mis-selected block would silently delete real work from the frozen list and
-  report a clean close over it. Scope exclusions come from the user's stated
-  outcome alone.
-- Never adds to or removes from the frozen list, and never changes a
-  met/not-met call.
-- Never affects `revisit_when` or any other PARKED field. Parked entries are
-  written exactly as they would be without a ledger.
-- Never blocks closure. A missed target date, an empty `Milestone:`, a stale
-  or self-contradicting ledger, and a ledger that disagrees with the repo are
-  all invisible here — not a finding, not a HIGH, not even a parked item.
-  Auditing the ledger is a different job than closing against it.
-- Never writes to the ledger.
+1. REMAINING WORK — a frozen done-list item not yet met. Cite file:line
+   for the not-met call.
+2. GOVERNANCE — a doc-governance step the repo's own rules require for
+   this close (changelog entry, roadmap reconciliation, PDDA issue-doc
+   sync, README table update, ...). Governance steps are never droppable
+   and never shortcut: cite the rule's source file.
+3. SHIP-SAFETY — a defect that makes shipping unsafe: loss/corruption of
+   persisted data, a security hole (unauthorized access, secret leak,
+   injection), a crash/hang on a reachable path, or silent wrong output on
+   a primary path. Requires file:line evidence. Burden of proof is on
+   inclusion: unsure → park. A pre-existing trunk defect may appear only
+   if it meets this bar on the trunk today; flag it PRE-EXISTING; cap one
+   per run.
 
-## Branch Context (optional sub-routine — never a gate)
+Everything else — enhancements, refactors, naming, hypothetical-future
+concerns, observability wishes, "should have" items, decisions rather than
+defects, anything without evidence — is parked, not reported. A latent
+defect that would meet the ship-safety bar under a config knob that exists
+and is settable today is mandatory (name the knob, cite file:line); a
+defect behind a toggle that would have to be built first is parked.
 
-A closure verdict is rendered against exactly one checkout, and the reader
-should never have to guess which. Naming the branch costs one line and serves
-as the reminder-and-confirm for the flip side of scope discipline: how much
-work already sits on this branch relative to the trunk when the close is
-declared.
+## Chat Output — plain chat, never a code block or file
 
-This sub-routine is **display-only**. Its entire output is the `BRANCH:` line.
-Like Release Context, it never reads into the done list, never changes what is
-frozen, parked, or reported, and never blocks. If any step below does not
-resolve cleanly, drop the unresolved field — or the whole line — silently.
+The output is written INTO the chat window as normal prose the user can
+read at a glance. Never wrap it in a fenced code block, never write it to
+a .md file, never format it as a machine report.
 
-DISCOVER. `git branch --show-current` at invocation. Empty output (detached
-HEAD), not a git repository, or command failure → omit the line entirely.
-Never substitute a branch name remembered from context or conversation: the
-line reports where the audit actually ran, not where it was supposed to.
+Shape (target: under ~15 lines total):
 
-COUNT (optional fields). Trunk = local `main` if it exists, else local
-`master`, else no trunk. With a trunk that is not the current branch, take
-ahead/behind from `git rev-list --left-right --count <trunk>...HEAD`; if that
-fails (no merge base, shallow clone), print the branch name alone. If the
-current branch IS the trunk, print the name alone.
+- One opening line of fact: branch, checkpoint, and the verdict — e.g.
+  "Branch `feat/export-v2` (14 ahead / 2 behind main), targeting
+  **1.5.0 (Daily Driver)** — 3 steps remain to a clean finish." Or, when
+  nothing remains: "...— at the finish line; nothing remains."
+- Then: "Based on what I have, here's what I recommend to reach
+  <checkpoint>:" followed by a short numbered list — one line per step, in
+  execution order (remaining work → ship-safety fixes → governance), each
+  with its file:line or rule-source anchor. Steps only; no rationale
+  paragraphs, no options, no alternatives.
+- Last line: "Parked <n> item(s) for later → PARKED/<filename> (R-<id>)."
+- Stop. No summaries, no suggestions, no restated rules, no questions.
 
-HARD LIMITS:
-- The counts are a factual label, never a progress report. Never interpret
-  them ("almost done", "large branch", "far behind"), convert them into a
-  percentage, or attach any adjective to them.
-- Never a SOURCE candidate, never an input to NARROW, never changes a
-  met/not-met call.
-- Being on an unexpected or stale branch is not a finding and never blocks
-  closure — the line exists precisely so the user sees it and decides.
-- Read-only: never checkout, fetch, pull, or otherwise change git state.
+Forbidden in this output, verbatim wall-of-text killers:
+- Any account of completed work beyond the single opening fact line — no
+  "what landed", no "what was worth keeping", no judgement calls narrated,
+  no diff statistics, no story of the session.
+- FYIs of any kind. If it isn't a numbered step toward the checkpoint,
+  it doesn't appear.
+- Headers, sections, tables, or nested bullets. One fact line, one list,
+  one parked line.
 
-## Severity Gate — the only definitions that exist
+## Post-report step deferral (the only permitted follow-up)
 
-A finding may enter chat ONLY if it satisfies one code below verbatim,
-with evidence. Anything else is parked.
+When the user says `park step <n>` (or names a run: `park step <n> from
+PARKED/<filename> R-<id>`), do not re-assess. A REMAINING-WORK or
+SHIP-SAFETY step moves to its run's PARKED file with `exclusion_rule: X6
+(user-deferred)`; bump that run's `parked_items`; reply with the updated
+one-line verdict and the parked line only. A GOVERNANCE step cannot be
+deferred — no shortcuts on governance is definitional. Do not otherwise
+reopen, extend, or reframe the path.
 
-CRITICAL (blocks closure):
-- C1 Loss or corruption of persisted, acknowledged-written data,
-  reproducible on this branch.
-- C2 Security: unauthorized access, privilege escalation, secret leak,
-  injection.
-- C3 Unintended crash, unhandled rejection, or hang on a path reachable in
-  the current production configuration.
-- C4 Silent wrong output on a primary path (wrong data, no error signal).
+## PARKED File Protocol
 
-HIGH (reported; user decides fix-now or park):
-- H1 Regression introduced by this branch vs main; cite the diff hunk or a
-  failing test.
-- H2 Violates an explicit requirement quotable from the issue/PR/spec text;
-  quote it.
-- H3 A frozen done-list item is not actually met; show file:line.
-- H4 Loud failure on a primary path with no recovery, requiring manual
-  intervention.
-- H5 Latent defect in code on this branch that would meet C1–C4 if a config
-  value that exists and is settable TODAY were changed; name the exact knob
-  and its current value, and cite file:line. Unreachable in the current
-  configuration is why this is HIGH and not CRITICAL: it is surfaced for a
-  decision and can be deferred under X6, where a CRITICAL cannot.
-
-PARK BY DEFINITION (never report; park with the matching rule id):
-- X1 Pre-existing on main and not worsened by this branch (including known
-  robustness gaps; that is backlog, not this chapter).
-- X2 Missing enhancements, refactors, naming, docs, tests for hypotheticals,
-  thresholds, observability wishes, machinery hygiene, architecture taste.
-- X3 Anything worded as "if someday / as it grows / should have".
-- X4 Anything that is a decision rather than a defect, including a candidate
-  that would be legitimate elsewhere but is not required to close this
-  specific outcome (a NARROW-stage scope exclusion, not an AUDIT-stage
-  defect call).
-- X5 Anything without file:line evidence.
-- X6 A reported HIGH the user chose to defer. Assigned only by the post-report
-  deferral below — never during an audit pass, and never to a CRITICAL.
-
-Gate mechanics:
-- Burden of proof is on INCLUSION. If unsure whether a code is satisfied,
-  it is not satisfied → park.
-- A pre-existing issue may be reported ONLY if it meets C1–C4 on main today;
-  flag it PRE-EXISTING, do not add it to scope; cap: one per run.
-- Use X1 only after confirming the finding is pre-existing on main and not
-  worsened here. If that comparison is uncertain, use the supported X code;
-  use X5 when evidence is insufficient.
-- H5 is the one exception to "unsure → park", and it is narrow: the knob must
-  exist and be settable today, and you must state it. A toggle that would have
-  to be built first is X3; a knob you cannot name is X5. H5 exists because
-  "not firing right now" and "not a defect" are different claims, and parking
-  the first as the second is how a real bug ships inside a clean close.
-
-## Post-report HIGH deferral (the only permitted follow-up)
-
-When the user says `park H<code> from this run` or names a run as
-`park H<code> from PARKED/<filename> R-<id>`, do not re-audit. Append that
-reported HIGH item to its original run with `exclusion_rule: X6
-(user-deferred)`, increase only that run's `parked_items`, and return the
-follow-up output below. If a filename has multiple runs and the user did not
-identify one, ask exactly one question naming the available run ids. Do not
-otherwise reopen, extend, or reframe the audit.
-
-```
-CLOSED: yes|no — <one clause>
-PARKED: 1 item → PARKED/<filename> (R-<id>)
-```
-
-## PARKED File Protocol (deterministic — never invent names or formats)
-
-What these files are for: a durable, uniform record that survives the
-conversation, so a parked item can be found later by date, repo, rule, or
-anchor and linked to the plans and issues that do the real work. They are
-nodes in a project graph — not plans, specs, PRDs, or backlogs. Every field
-below is either an identifier or an edge. The moment an entry starts
-explaining, justifying, or sequencing, it has stopped being a node.
+What these files are for: a durable record that survives the conversation,
+detailed enough that parked work can be picked up and restarted later
+without re-deriving context — while keeping the user's chat window clean.
+Detail belongs HERE, not in chat.
 
 Location: `<repo-root>/PARKED/` — create the folder if missing.
 repo-root = `git rev-parse --show-toplevel`; fallback: current directory.
@@ -255,15 +170,13 @@ Filename: `YYYY-MM-DD-<reponame>-HHMM.md`
 - YYYY-MM-DD: local calendar date at invocation.
 - reponame: basename of repo-root, lowercased; every run of non-[a-z0-9]
   replaced by one `-`; leading/trailing `-` stripped.
-- HHMM: local 24-hour zero-padded hour+minute at invocation (14:05 → 1405).
+- HHMM: local 24-hour zero-padded hour+minute (14:05 → 1405).
 - Example: `2026-08-08-reminders-service-1430.md`
-- Create one file for every audit run, including a run with zero parked items.
-- If the exact filename already exists, append a new run to `## Runs`, assign
-  the next R-id and P-id, and never create a variant name. Keep each run's
-  counts separate; never change another run's counts.
+- One file per run, including a run with zero parked items. If the exact
+  filename exists, append a new run under `## Runs` with the next R-id;
+  never create a variant name, never change another run's counts.
 
-Content: exactly this template, fields in this order, no extra fields,
-no free prose, no additional files (no README, no index):
+Content template (fields in this order; no additional files):
 
 ```
 ---
@@ -281,100 +194,57 @@ repo: <reponame>
 - parked_items: <count>
 
 #### P-001 — <short title, ≤ 8 words>
-- claimed_severity: <what this was tempted to be called, e.g. "robustness gap">
-- exclusion_rule: <X-code verbatim, e.g. X1>
-- evidence: <exactly one file:line, or "none">
-- summary: <one sentence, ≤ 40 words>
-- remediation: <one sentence, ≤ 20 words — direction only, or "unknown">
-- issue: <existing #N or URL, or "none">
+- claimed_severity: <what this was tempted to be called>
+- exclusion_rule: <X-code, see below>
+- evidence: <most load-bearing file:line, or "none">
+- summary: <what it is and why it was dropped from this close — enough
+  detail to restart cold, a few sentences is fine>
+- remediation: <the direction a restart would take; recurrence notes
+  ("same fix at every call site matching X") welcome>
+- issue: <existing #N or URL, or "none" — never file one to fill this>
 - revisit_when: <one concrete, checkable trigger condition, or "never">
 ```
 
-R-ids are zero-padded and assigned in run-creation order; P-ids are
-zero-padded and assigned in finding-notice order.
+Exclusion rules (park reason codes):
+- X1 Pre-existing on trunk and not worsened by this branch.
+- X2 Enhancement, refactor, naming, docs-beyond-governance, tests for
+  hypotheticals, observability wish, architecture taste.
+- X3 Hypothetical-future ("if someday / as it grows / should have").
+- X4 A decision rather than a defect, including scope narrowed out of
+  this close.
+- X5 Insufficient evidence to meet the Mandatory Bar.
+- X6 A reported step the user chose to defer (assigned only by the
+  post-report deferral above; never to a governance step).
 
-Field discipline — these three fields are the ones that grow into a plan doc
-if left unbounded, so bound them:
-
-- `evidence` is ONE `file:line` — the single most load-bearing location, not
-  the first one found, not a range, not a list. A concrete defect that
-  recurs at multiple call sites still has one most load-bearing anchor: cite
-  that site as `evidence` and use `remediation` to flag the recurrence (e.g.
-  "apply the same fix at every call site matching X") — it is not lost, just
-  pointed at through one exemplar. Reserve `evidence: none` under X2 for
-  genuinely diffuse themes with no concrete instance to anchor to (naming,
-  architecture taste, observability wishes) — not for a real bug that merely
-  has more than one location.
-- `remediation` names a direction, not a solution: "gate it behind the same
-  coverage check", "reset the shared global in teardown". It exists so a
-  reader knows which way to walk, not so they can skip the thinking. No
-  steps, no options, no rationale, no code, no second sentence.
-- `issue` is only for a tracker item that ALREADY exists. Never file one to
-  populate the field, and never write "should file one" — that is a decision
-  (X4) and it belongs to the user, not the audit.
-
-When an item will not fit these bounds, the answer is to file a GitHub issue
-and put its number in `issue` — never to expand the entry. The PARKED file is
-a set of pointers into the work, not a description of it.
-
-## Chat Output (exact; nothing before or after)
-
-```
-CLOSED: yes|no — <one clause>
-RELEASE: <release> (<codename>) — target <date>
-BRANCH: <branch> — <a> ahead / <b> behind <trunk>
-DONE LIST: <source already in context, or file path>
-#1 met|not met — reason (file:line)
-...
-NEW BLOCKING FINDINGS: none | <code> <file:line> — <one-sentence proof>
-PARKED: <n> item(s) → PARKED/<filename> (R-<id>)
-```
-
-The `RELEASE:` and `BRANCH:` lines are the only optional lines in this block.
-Print each when its sub-routine resolved; **omit the line entirely** —
-not blank, not "none" — when it did not.
-For `RELEASE:`, drop any field the block leaves empty (`0.71.0 (Daily
-Driver)` with no target date; `0.71.0 — target 2026-10-15` with no codename).
-For `BRANCH:`, drop the ahead/behind counts when no trunk resolved or the
-branch is the trunk. Both are labels, never verdicts: they do not explain,
-justify, or state progress against the release or the trunk.
-
-Set CLOSED to `no` if any CRITICAL or undecided HIGH from that run remains.
-Set it to `yes` only when neither exists, or when every HIGH was deferred
-under X6. A CRITICAL item cannot be deferred under this protocol.
-
-After the PARKED line: stop. No rules restated, no summaries, no suggestions,
-no questions.
+R-ids and P-ids are zero-padded, assigned in order. Entries should be as
+detailed as a restart needs — but they are still entries, not plan docs:
+when one wants to become a plan, that is the user's call, not the audit's.
 
 ## Counter-example — do not invoke
 
-Do not fire when the user is asking to complete active work, even if they use
-"finish" casually. For example, "finish implementing the export and commit
-it" is an implementation request, not a closure audit; do the requested work
-instead.
+Do not fire when the user is asking to complete active work, even if they
+use "finish" casually. "Finish implementing the export and commit it" is an
+implementation request, not a closure path; do the requested work instead.
 
 ## Anti-patterns this skill forbids
 
-- Leading with gaps before the verdict.
-- Re-raising anything parked, in this or any later turn.
-- Treating "will this close it?" as an open-ended audit invitation.
-- Reporting severity by vibe ("important", "should", "risky") instead of code.
-- Creating any file other than the single PARKED file for this run.
+- The wall of text: narrating what landed, what was salvaged, what
+  judgement calls were made, diff stats, session history. The user needs
+  the path forward, not the story so far — 75% of that information is
+  useless to them.
+- Emitting the recommendation as a fenced code block, a template dump, or
+  a written .md file. Output is readable chat prose.
+- Re-raising anything parked, in this or any later turn, unless the user
+  explicitly reopens it.
 - Answering a repeated "are we done?" with a fresh sweep instead of the
-  standing verdict. Each re-ask that surfaces one more item teaches the user
-  that closure is unreachable, which is worse than any item it finds.
-- Downgrading a latent defect to X-park because it is not firing today. That
-  is H5, and H5 is reported.
-- Treating a release ledger as the done list, or letting its `Description`
-  prose add an item the frozen list never had.
-- Reporting on the ledger itself — a slipped target date, an empty field, a
-  block that disagrees with the repo. Closing against a release is not
-  auditing the release plan.
-- Asking which release is in flight. The selection rule is deterministic; if
-  it does not resolve, the sub-routine is skipped, not escalated to a question.
-- Turning the `BRANCH:` counts into a progress report, warning, or finding
-  ("only 2 behind — nearly done"). The line labels what the verdict was
-  rendered against; interpreting it re-opens the door this skill closes.
-- Growing a PARKED entry past its field caps, or adding structure to a PARKED
-  file — sub-bullets, priorities, sequencing, effort estimates, owners,
-  status. A parked file that reads like a plan has become one.
+  standing path. Each re-ask that surfaces one more item teaches the user
+  that the finish line is unreachable.
+- Shortcutting or deferring a governance step. Compliance is part of the
+  definition of clean.
+- Reporting a "risk" or "concern" without file:line evidence — that is a
+  parked FYI wearing a costume.
+- Treating the release ledger as the done list, or letting its prose add
+  an item the frozen list never had; reporting on the ledger itself (a
+  slipped date, an empty field) instead of closing against it.
+- Growing chat output past the one-fact-line + steps + parked-line shape:
+  no headers, no sections, no alternatives per step.
