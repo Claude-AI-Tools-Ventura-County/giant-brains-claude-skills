@@ -31,24 +31,10 @@ line of output must move them toward it.
 
 ## Protocol (exact order)
 
-1. SOURCE. What defines done for this branch? Pick the highest-precedence
-   candidate available: (a) an explicit user-stated done list in this
-   conversation (most recent wins); (b) a checklist the user has accepted or
-   confirmed, even if assistant-drafted; (c) an authoritative PRD, spec,
-   plan, issue, or PR already known in context or memory; (d) an
-   assistant-generated summary with no user confirmation. Merge same-outcome
-   sources; two sources conflict only at the same tier naming different
-   outcomes. If no source exists at any tier, or same-tier sources conflict,
-   ask exactly one question and stop:
-   "What should define done: an existing PRD, spec, plan, issue, PR, or a
-   numbered list?"
-   The done list FREEZES here. Later work does not extend it; a later
-   "are we done?" does not re-run SOURCE.
-
-2. CHECKPOINT. Identify the goal post the path leads to.
+1. CHECKPOINT. Identify the goal post the path leads to.
    - Look for `RELEASES.md`, then `MILESTONES.md`, at repo-root
      (`git rev-parse --show-toplevel`; fallback: current directory). First
-     found wins; no directory walk, no ROADMAP.md fallback.
+     found wins; no directory walk.
    - In the ledger, a block starts at a line beginning `Release:` and runs
      to the next such line or end of file (never split on blank lines). A
      candidate block has a concrete `Release:` value (not empty/TBD/none/-),
@@ -61,16 +47,42 @@ line of output must move them toward it.
      dates, no match), ask one short question naming the candidate
      releases. If no ledger exists, the checkpoint is the branch's own
      stated task — say so and continue; do not ask.
-   - The checkpoint is a destination label only. Its prose never adds to
-     or removes from the frozen done list, and a stale or self-contradicting
-     ledger is not a finding — closing against a checkpoint is a different
-     job than auditing the release plan.
+
+2. SOURCE. What defines done for this close? Pick the highest-precedence
+   candidate available:
+   (a) an explicit user-stated done list in this conversation (most recent
+   wins); (b) a checklist the user has accepted or confirmed, even if
+   assistant-drafted; (c) an authoritative PRD, spec, plan, issue, or PR
+   already known in context or memory; (d) the checkpoint's own block in
+   the release ledger — its stated scope, milestones, and description items
+   become the candidate list; (e) `ROADMAP.md`, only when no release ledger
+   exists; (f) an assistant-generated summary with no user confirmation.
+   The immediately preceding assistant output in this conversation is
+   first-class source material under (a), (b), and (f): the primary use
+   case is invoking finish-line right after Claude Code finishes a chunk
+   of work, and that just-produced output — the work it described, the
+   checklists it carried — is read, not ignored.
+   A blank conversation is equally supported: with tiers (a)–(c) empty,
+   the release ledger defines done. Merge same-outcome sources; two
+   sources conflict only at the same tier naming different outcomes. Ask
+   the question below ONLY when no tier resolves at all — a repo with a
+   RELEASES.md never triggers it — or when same-tier sources conflict:
+   "What should define done: an existing PRD, spec, plan, issue, PR, or a
+   numbered list?"
+   The done list FREEZES here. Later work does not extend it; a later
+   "are we done?" does not re-run SOURCE. When a higher tier (a)–(c) was
+   selected, the ledger's prose never adds or removes items — it defines
+   done only when it is itself the selected tier — and a stale or
+   self-contradicting ledger is never a finding: closing against a
+   checkpoint is a different job than auditing the release plan.
 
 3. ASSESS silently. Establish where the branch stands:
    - Branch identity: `git branch --show-current`; ahead/behind the local
      trunk (`main`, else `master`) via `git rev-list --left-right --count`.
      Facts for the opening line, never a progress judgement.
-   - Each frozen done-list item: met or not met, against the repo.
+   - Each frozen done-list item: met or not met, against the repo. Work
+     the assistant completed and reported earlier in this conversation is
+     evidence here — verify it in the tree rather than re-deriving it.
    - Governance obligations: discover the repo's own doc rules (CLAUDE.md /
      AGENTS.md directives, PDDA lifecycle if `utils/pdda/` exists, CHANGELOG
      and ROADMAP conventions, issue-doc sync, README update rules) and
@@ -243,8 +255,11 @@ implementation request, not a closure path; do the requested work instead.
   definition of clean.
 - Reporting a "risk" or "concern" without file:line evidence — that is a
   parked FYI wearing a costume.
-- Treating the release ledger as the done list, or letting its prose add
-  an item the frozen list never had; reporting on the ledger itself (a
-  slipped date, an empty field) instead of closing against it.
+- Letting the ledger's prose override or extend a higher-precedence source
+  once the list is frozen; reporting on the ledger itself (a slipped date,
+  an empty field) instead of closing against it.
+- Asking the SOURCE question on a blank conversation when the repo has a
+  RELEASES.md — the ledger is the obvious source there; the question is a
+  last resort, not a default.
 - Growing chat output past the one-fact-line + steps + parked-line shape:
   no headers, no sections, no alternatives per step.
