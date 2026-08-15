@@ -12,7 +12,11 @@ description: >
 
 # Finish Line
 
-A bounded closure protocol. Its job is to END work, not to discover work.
+A bounded closure protocol. Its job is to END work — an expedient arrival
+at a safe goal post (a milestone or release) — not to discover or raise
+additional work that belongs in a new phase, project, or milestone. The
+report carries only what is absolutely needed to reach the goal post;
+nice-to-know FYIs are parked, not reported.
 A supplied laundry list is source material, not an automatic finish line.
 Discovery and narrowing happen once, here, under a strict gate; everything
 that does not pass the gate is parked deterministically and never re-raised.
@@ -129,6 +133,40 @@ HARD LIMITS:
   all invisible here — not a finding, not a HIGH, not even a parked item.
   Auditing the ledger is a different job than closing against it.
 - Never writes to the ledger.
+
+## Branch Context (optional sub-routine — never a gate)
+
+A closure verdict is rendered against exactly one checkout, and the reader
+should never have to guess which. Naming the branch costs one line and serves
+as the reminder-and-confirm for the flip side of scope discipline: how much
+work already sits on this branch relative to the trunk when the close is
+declared.
+
+This sub-routine is **display-only**. Its entire output is the `BRANCH:` line.
+Like Release Context, it never reads into the done list, never changes what is
+frozen, parked, or reported, and never blocks. If any step below does not
+resolve cleanly, drop the unresolved field — or the whole line — silently.
+
+DISCOVER. `git branch --show-current` at invocation. Empty output (detached
+HEAD), not a git repository, or command failure → omit the line entirely.
+Never substitute a branch name remembered from context or conversation: the
+line reports where the audit actually ran, not where it was supposed to.
+
+COUNT (optional fields). Trunk = local `main` if it exists, else local
+`master`, else no trunk. With a trunk that is not the current branch, take
+ahead/behind from `git rev-list --left-right --count <trunk>...HEAD`; if that
+fails (no merge base, shallow clone), print the branch name alone. If the
+current branch IS the trunk, print the name alone.
+
+HARD LIMITS:
+- The counts are a factual label, never a progress report. Never interpret
+  them ("almost done", "large branch", "far behind"), convert them into a
+  percentage, or attach any adjective to them.
+- Never a SOURCE candidate, never an input to NARROW, never changes a
+  met/not-met call.
+- Being on an unexpected or stale branch is not a finding and never blocks
+  closure — the line exists precisely so the user sees it and decides.
+- Read-only: never checkout, fetch, pull, or otherwise change git state.
 
 ## Severity Gate — the only definitions that exist
 
@@ -284,6 +322,7 @@ a set of pointers into the work, not a description of it.
 ```
 CLOSED: yes|no — <one clause>
 RELEASE: <release> (<codename>) — target <date>
+BRANCH: <branch> — <a> ahead / <b> behind <trunk>
 DONE LIST: <source already in context, or file path>
 #1 met|not met — reason (file:line)
 ...
@@ -291,12 +330,14 @@ NEW BLOCKING FINDINGS: none | <code> <file:line> — <one-sentence proof>
 PARKED: <n> item(s) → PARKED/<filename> (R-<id>)
 ```
 
-The `RELEASE:` line is the only optional line in this block. Print it when the
-Release Context sub-routine selected a block; **omit the line entirely** —
-not blank, not "none" — when there is no ledger or no block was selected.
-Drop any field the block leaves empty (`0.71.0 (Daily Driver)` with no target
-date; `0.71.0 — target 2026-10-15` with no codename). It is a label, never a
-verdict: it does not explain, justify, or state progress against the release.
+The `RELEASE:` and `BRANCH:` lines are the only optional lines in this block.
+Print each when its sub-routine resolved; **omit the line entirely** —
+not blank, not "none" — when it did not.
+For `RELEASE:`, drop any field the block leaves empty (`0.71.0 (Daily
+Driver)` with no target date; `0.71.0 — target 2026-10-15` with no codename).
+For `BRANCH:`, drop the ahead/behind counts when no trunk resolved or the
+branch is the trunk. Both are labels, never verdicts: they do not explain,
+justify, or state progress against the release or the trunk.
 
 Set CLOSED to `no` if any CRITICAL or undecided HIGH from that run remains.
 Set it to `yes` only when neither exists, or when every HIGH was deferred
@@ -331,6 +372,9 @@ instead.
   auditing the release plan.
 - Asking which release is in flight. The selection rule is deterministic; if
   it does not resolve, the sub-routine is skipped, not escalated to a question.
+- Turning the `BRANCH:` counts into a progress report, warning, or finding
+  ("only 2 behind — nearly done"). The line labels what the verdict was
+  rendered against; interpreting it re-opens the door this skill closes.
 - Growing a PARKED entry past its field caps, or adding structure to a PARKED
   file — sub-bullets, priorities, sequencing, effort estimates, owners,
   status. A parked file that reads like a plan has become one.
