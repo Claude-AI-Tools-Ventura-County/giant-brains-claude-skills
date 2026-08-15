@@ -55,6 +55,7 @@ This repo *is* the skill suite, so changes here are mostly to `SKILL.md` files a
 - **ASCII punctuation** — straight quotes, regular hyphens. Em-dashes are fine.
 - **Brevity is the product.** If an edit makes a skill's output longer without changing a decision, it's a regression.
 - When you change a skill's behavior or add a skill, update [README.md](README.md) in the same change — the count, the tables, the install loops, and the layout tree all state it.
+- **Git SOP: commit and push directly to `main`.** This is not a complex codebase; branch → PR → merge is useless ceremony here. No feature branches, no PRs unless the user explicitly asks for one.
 
 ## The experiment, measured
 
