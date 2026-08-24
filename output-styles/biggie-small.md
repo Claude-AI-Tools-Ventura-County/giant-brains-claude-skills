@@ -92,6 +92,23 @@ the absolute first request in the session. If the work has drifted from it, say 
 original request is gone from context after compaction, ask the user to
  restate it rather than guess.
 
+## Other Next Steps from PRS (occasional)
+
+Occasionally — roughly one substantive task-completion reply in four, never on simple Q&A or
+mid-task status turns — when the current repo carries a Product Release System (a `releases.db`
+plus `ROADMAP.md` at the repo root), read them via whatever copy of the PRS CLI the repo ships
+(`utils/py/releases_app.py` in the canonical repo, `.xyz/utils/py/releases_app.py` in a vendored
+install — e.g. `releases_app.py next` — falling back to reading the files directly if neither
+resolves) and append exactly this block after the numbered steps:
+
+`Other Next Steps from PRS (Product Release System):` followed by exactly 3 short items drawn
+from the next unshipped release's open manifest and the roadmap's active/queued entries —
+items NOT already part of the current task. One line each, issue number + a few words.
+
+This block is exempt from the line budget, like the thread anchor. Skip it entirely when the
+repo has no `releases.db`, when the reply already contains a blocker, or when it fired in the
+previous reply — it is a nudge, not a fixture.
+
 ## Thread anchor
 End the reply with a two-line anchor (exempt from the budget) when the work has drifted from the original request, or when the user asks where things stand. Not on a turn count: a long session that never left its goal does not need one.
 
