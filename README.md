@@ -28,6 +28,7 @@ A suite of skills for [Claude Code](https://claude.com/claude-code) that bring h
 - **You're eyeing a refactor or schema change** and need to know how far it ripples and how hard it is to undo — [blast-radius](01-decide/blast-radius/SKILL.md).
 - **An agent handed you a wall of options** and you just need the call — [bottom-line](01-decide/bottom-line/SKILL.md).
 - **An agent gave you scattered steps or a verbose completion message** and you need the execution sequence — [linear](02-plan/linear/SKILL.md).
+- **An agent is about to write you a plan for a change that spans several files** and you want it traced against the real system first, not composed from three grepped files — [recon](02-plan/recon/SKILL.md).
 - **You told an agent "make this faster"** but can't tell whether it actually did — [baseline-spec](03-improve/baseline-spec/SKILL.md) to define what "better" means, then [auto-improve](03-improve/auto-improve/SKILL.md) to prove it.
 - **The work feels finished** and you want what's missing enumerated, executed, and committed before you say "done" ("close the loop") — [loose-ends](05-close/loose-ends/SKILL.md).
 - **A long issue list keeps extending the finish line** and you want a bounded audit that narrows it to verifiable closure commitments, reports only evidenced blockers, and parks everything else — [finish-line](05-close/finish-line/SKILL.md).
@@ -113,6 +114,7 @@ The core above is the decision-and-improvement throughline. Around it sit skills
 | Skill | When it fires | Its job |
 |---|---|---|
 | [worth-it](01-decide/worth-it/SKILL.md) | "Is this feature/refactor even worth building?" | **Price the payoff** against the cost across every constituency a change serves, versus doing nothing |
+| [recon](02-plan/recon/SKILL.md) | About to write a plan, spec, or refactor that spans more than one file | **Trace the system first** — parallel subagents map call paths, state, contracts, and failure paths into a Recon Map, so the plan's blast radius is read, not invented |
 | [spike-360](02-plan/spike-360/SKILL.md) | A change might introduce, move, or replace a source of truth | **Interrogate authority** before planning anything that touches authoritative state |
 | [swe](02-plan/swe/SKILL.md) | Authoring or reviewing a v1.x build doc / spec / RFC | **Governance lens** — minimal scope, designed for diagnosis, verifiable before code |
 | [phase-qa](02-plan/phase-qa/SKILL.md) | A phased plan needs checks baked in, or completed phases reviewed | **Plan QA** — append phase-appropriate checklists, then diff-review the finished phases |
@@ -295,6 +297,7 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 │   ├── feynman/SKILL.md            # Plain-English translation without dilution
 │   ├── linear/SKILL.md             # The bridge — decide → do
 │   ├── phase-qa/SKILL.md           # Plan QA checklists + phase diff review
+│   ├── recon/SKILL.md              # Trace the real system before any plan is written
 │   ├── spike-360/SKILL.md          # Classify authority before planning
 │   └── swe/SKILL.md                # Engineering-governance lens for build docs
 ├── 03-improve/
