@@ -95,6 +95,7 @@ Lead with the authority level — it is the line that must survive skimming, bec
 
 - **take-a-step-back** is the general pre-commit reset ("am I solving the right problem?"). spike-360 is its architecture-specific form: it forces a concrete authority classification and, above a threshold, a failure-scenario pass.
 - **blast-radius** sizes a path you have *already chosen*. spike-360 fires earlier and questions whether the path's authority level is even the right one — its verdict can feed straight into blast-radius.
+- **recon** — the read-only trace of the current system. spike-360 classifies authority *first*; once the level is settled, recon maps the readers, writers, and contracts the approved shape has to live with, and the plan is written against that map. A light audit-only or read-projection verdict stops spike-360 early but does not excuse the trace: recon still runs if the remaining implementation plan meets its trigger. Gate 3's surfaces pass is the classification-sized sample of that audit, not a replacement for it.
 - **phase-0-spike** (an external workflow in `~/.claude/workflows/`, not a skill in this repo) maps seams, contract owners, and rollout invariants *after* you have committed to the refactor — it already assumes a source of truth exists (it asks each analyzer for the "contract owner"). spike-360 runs upstream and decides whether a new source of truth should exist *at all*. Run spike-360 first; only a "source of truth — approved" verdict makes phase-0-spike's seam-mapping worth doing.
 
 ## When not to escalate
