@@ -30,10 +30,11 @@ Read the system before you plan a change to it. A plan written from the prompt p
 **Skip recon when** — the calibration counter-example, and it matters as much as the trigger:
 
 - **Greenfield** — there is no existing system to trace. Recon has nothing to read; go plan.
-- The change is confined to a file you have **already read in full**, and nothing in it is exported, routed to, or referenced by name elsewhere.
+- The change is confined to a file you have **already read in full** — and one lookup says so. Spend the single call (`search_graph`, or one grep for the symbol name) before claiming this skip; any external reference it returns and the skip does not apply. Asserting the negative without the lookup is the easiest dishonest exit in this list.
 - A typo, copy edit, comment, or formatting change.
 - The plan is not about code (a process, a doc, a rollout schedule).
 - A Recon Map for this subsystem exists and no relevant commit has landed since. Re-read it; do not re-run.
+- You traced this exact subsystem earlier in this session, nothing has landed since, and the edges are still in your context. Write the map from what you hold rather than re-running the fan-out.
 - The user hands you the edges. Skip the fan-out, not the map: fold their edges into the map, cite them to the user, and mark them `supplied` — unverified until read.
 
 Say "recon skipped — [one-line reason]" and go. A recon on a contained rename whose references are already enumerated is ceremony, and ceremony is how a gate gets ignored when it counts. A rename whose callers are *not* yet enumerated is exactly what recon is for.
@@ -42,7 +43,7 @@ Say "recon skipped — [one-line reason]" and go. A recon on a contained rename 
 
 Name the **subject** in one line: the function, module, table, endpoint, or feature the change lands on. Name the **change class**: local edit, cross-module change, contract change, state/authority change, or replacement. If the class is state/authority, run [spike-360](../spike-360/SKILL.md) first — it decides whether a new source of truth should exist at all; recon maps the system either way once that is settled.
 
-Ask at most one clarifying question. If the subject is ambiguous, pick the likeliest reading, state it, and trace that.
+Ask at most one clarifying question. If the subject is ambiguous, pick the likeliest reading, state it, and trace that — **unless the two readings sit on opposite sides of a boundary** (application versus infrastructure, this service versus another). There, guessing wrong spends the whole fan-out on the wrong system, so name both readings and ask.
 
 ## Step 2 — Seed from the knowledge graph if it is installed
 
@@ -71,9 +72,9 @@ Scale the lane count to the radius, and say which you ran: a two-file change wit
 | **C. Contracts & boundaries** | What crosses a line if this changes? | Public APIs, exported symbols with external consumers, events/queues, config keys, env vars, feature flags, cross-service and cross-repository consumers |
 | **D. Build, failure & operations** | How is this built, how does it fail, who notices? | Build/CI config and package metadata, generated code and its generator, IaC and deploy manifests, error paths, retries, timeouts, existing tests covering the subject, logs/metrics/traces, and the rollback path |
 
-Cap each lane: **read-only, no edits, 8 minutes, report what you found and what the cap cut off.** An empty lane is a finding, not a failure. Give every lane the same honesty instruction: *`file:line` for everything claimed; anything inferred, unverified, or graph-only is listed as an unknown, never smoothed into the findings.*
+Budget each lane: **read-only, no edits, roughly 8 minutes, report what you found and what the budget cut off.** The budget is a prompt instruction, not a timeout — which is exactly why the report-what-you-cut rule is the part that has to hold. An empty lane is a finding, not a failure. Give every lane the same honesty instruction: *`file:line` for everything claimed; anything inferred, unverified, or graph-only is listed as an unknown, never smoothed into the findings.*
 
-No Agent tool? Run the lanes serially in the main context, same caps, same schema — and name in the map which lanes you curtailed and where you stopped. Serial is not licence to go shallow; it is licence to record what you skipped.
+No Agent tool? Run the lanes serially in the main context, same budget, same schema — and name in the map which lanes you curtailed and where you stopped. Serial is not licence to go shallow; it is licence to record what you skipped.
 
 ## Step 4 — What each lane returns
 
@@ -83,8 +84,9 @@ A common envelope plus that lane's own fields from the table above:
 LANE: <A|B|C|D>
 FINDINGS:
   - <file:line> — <what it is> — <why it matters to the change> — [confirmed | graph-only | supplied]
+    confirmed = you read the file · graph-only = the index says so, nobody read it · supplied = the user gave it
 UNKNOWNS: <what could not be verified, and the one command or file that would settle it>
-CUT OFF AT: <where the cap stopped the lane, or "nothing">
+CUT OFF AT: <where the budget stopped the lane, or "nothing">
 ```
 
 ## Step 5 — Reconcile into the Recon Map
@@ -93,7 +95,7 @@ Merge the lanes yourself; do not paste them. Dedupe by `file:line`, resolve cont
 
 ```markdown
 # Recon Map — <subject>
-Traced: <YYYY-MM-DD, UTC> · Commit: <sha> · Mode: <graph+read | grep-only> · Lanes: <which ran>
+Commit: <sha> · Mode: <graph+read | grep-only> · Lanes: <which ran>
 
 ## Subject and change class
 ## The seams — where a change here escapes this file
