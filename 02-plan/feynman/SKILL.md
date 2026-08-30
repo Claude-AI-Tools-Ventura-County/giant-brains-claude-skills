@@ -64,7 +64,7 @@ instructional design. The set works; it is not a citation. Do not represent it a
 ## File delivery
 
 This skill is **file-first**: it always produces a saved file. It follows the same manifest convention as
-[shakedown](../../utils/shakedown/SKILL.md) — don't invent a third shape.
+shakedown (giant-brains-swe-skills) — don't invent a third shape.
 
 1. **Never modify the source.**
 2. **Write to the house default without asking** — `FEYNMAN/<YYYY-MM-DD>/<slug>-<HHMM>.md` at the repo

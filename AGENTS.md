@@ -1,6 +1,6 @@
 # AGENTS.md
 
-> **An experiment.** This repo ships ten skills that teach AI assistants decision hygiene. This file is the same material compiled the other way: the skills' principles as *standing instructions* for any agent working in this repository — no skill invocation required. If it works, it's also a template you can copy into any repo. The skills fire at moments; this file is the ambient floor beneath them.
+> **An experiment.** This repo ships a suite of skills that teach AI assistants decision hygiene (the software-engineering skills live in the sibling repo giant-brains-swe-skills). This file is the same material compiled the other way: the skills' principles as *standing instructions* for any agent working in this repository — no skill invocation required. If it works, it's also a template you can copy into any repo. The skills fire at moments; this file is the ambient floor beneath them.
 
 ## Operating principles
 
@@ -32,7 +32,7 @@ Don't optimize what you can't measure. Don't report a win you didn't verify — 
 
 ### 7. Record the bets that matter
 
-When a decision is Costly or a One-way door, or rides on an assumption that could be wrong, write it down at commit time: the call, the bet, the expected signal with a by-when, the reversibility read, a revisit trigger. Records live in `decisions/` (see [record-decision/SKILL.md](record-decision/SKILL.md) for the template). Updates are append-only — never rewrite a bet that turned out wrong; *especially* not then. Below the threshold, skip the file and say so in one line.
+When a decision is Costly or a One-way door, or rides on an assumption that could be wrong, write it down at commit time: the call, the bet, the expected signal with a by-when, the reversibility read, a revisit trigger. Records live in `decisions/` (see [05-close/record-decision/SKILL.md](05-close/record-decision/SKILL.md) for the template). Updates are append-only — never rewrite a bet that turned out wrong; *especially* not then. Below the threshold, skip the file and say so in one line.
 
 ### 8. Calibration is staying quiet
 

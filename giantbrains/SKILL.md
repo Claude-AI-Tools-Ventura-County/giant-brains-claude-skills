@@ -7,7 +7,7 @@ description: >-
   Triages in a single message (which doc, what stage), routes by stage —
   draft: take-a-step-back, iron-triangle, blast-radius; in progress:
   blast-radius, iron-triangle; complete: decision-record audit, bottom-line —
-  and never edits the doc: writers (phase-qa, record-decision, linear) are
+  and never edits the doc: writers (record-decision, linear; phase-qa when giant-brains-swe-skills is installed) are
   offered afterward as explicit opt-ins. Trigger when the user invokes /giantbrains,
   says "stress test this plan/doc", "pressure-test this", "run the battery",
   "run all the lenses/brains against this", or asks for a full multi-angle
@@ -152,7 +152,7 @@ Report shape:
 The battery never edits the doc; the report ends with at most the follow-ups the
 findings justify:
 
-- Phased plan that survived the battery → "/phase-qa to bake QA checklists into it?"
+- Phased plan that survived the battery → "/phase-qa to bake QA checklists into it?" (phase-qa lives in giant-brains-swe-skills; offer only if it is installed)
 - A Costly or One-way bet surfaced → "/record-decision to write it down?"
 - Steps scattered across the doc → "/linear for the execution sequence?"
 
@@ -213,7 +213,7 @@ rename is a find-and-replace, Easy, pick one and move.
 - **No doc.** A conversational question routes to a single skill or a plain answer.
 - **A single decision** → the one matching lens, not a battery.
 - **Line-by-line correctness or bug review** → /code-review; a QA-checklist diff
-  review of a completed phase → /phase-qa.
+  review of a completed phase → /phase-qa (giant-brains-swe-skills, if installed).
 - **The user wants the doc edited, reformatted, or rewritten** — this skill reads
   and reports; it never writes.
 - **The lenses already ran individually this conversation** — re-running them as

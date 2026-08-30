@@ -81,7 +81,7 @@ Work rarely ends where the request did. Two skills fire at the last moment — a
 | [loose-ends](05-close/loose-ends/SKILL.md) | "What did I forget?" / "Close loop" | **Sweep & Execute** — diff work against the ask, enumerate what's absent, run custom sequence scripts, execute final fixes, and commit/push |
 | [finish-line](05-close/finish-line/SKILL.md) | "Can we stop extending this finish line?" | **Close & Park** — narrow the relevant list, run a bounded evidence gate, report only Critical/High blockers, and park excluded findings locally |
 
-[loose-ends](05-close/loose-ends/SKILL.md) (alias "close-loop") is Act I's mirror image: the decision skills guard the moment *before committing*; this one guards the moment *before declaring done*. It reconstructs the contract (the original request, including the throwaway clauses), inventories what was actually delivered, and sweeps for the classic forgettables — the dropped requirement, the unrun test, the stale README, the leftover debug print. It also explicitly checks for a local or global `.claude/loose-ends-sequence.md` manifest to load and run project-specific custom end sequences. Crucially, it then actively offers to **close the loop**: executing the missing steps, running custom scripts and linters, auto-syncing the docs, and generating the final git commit and push. Findings come back blocking-first, each with an evidenced address and an offer to execute the fix. It is strictly post-work: "what am I missing?" asked *before* the work exists belongs to [take-a-step-back](01-decide/take-a-step-back/SKILL.md), gating the phases of a plan doc belongs to [phase-qa](02-plan/phase-qa/SKILL.md), and bugs in code that *is* present belong to a code review — this skill hunts the absent, not the wrong.
+[loose-ends](05-close/loose-ends/SKILL.md) (alias "close-loop") is Act I's mirror image: the decision skills guard the moment *before committing*; this one guards the moment *before declaring done*. It reconstructs the contract (the original request, including the throwaway clauses), inventories what was actually delivered, and sweeps for the classic forgettables — the dropped requirement, the unrun test, the stale README, the leftover debug print. It also explicitly checks for a local or global `.claude/loose-ends-sequence.md` manifest to load and run project-specific custom end sequences. Crucially, it then actively offers to **close the loop**: executing the missing steps, running custom scripts and linters, auto-syncing the docs, and generating the final git commit and push. Findings come back blocking-first, each with an evidenced address and an offer to execute the fix. It is strictly post-work: "what am I missing?" asked *before* the work exists belongs to [take-a-step-back](01-decide/take-a-step-back/SKILL.md), gating the phases of a plan doc belongs to [phase-qa](https://github.com/Claude-AI-Tools-Ventura-County/giant-brains-swe-skills/tree/main/01-plan/phase-qa), and bugs in code that *is* present belong to a code review — this skill hunts the absent, not the wrong.
 
 [finish-line](05-close/finish-line/SKILL.md) is the narrower terminal gate: it reuses the laundry list, checklist, or project artifact already in context — including an earlier assistant response or the relevant PRD, spec, plan, issue, or PR — and asks only when no authoritative source is available. It silently narrows that material to the smallest verifiable closure list, verifies it, reports objective Critical/High blockers with evidence, and parks every other finding in a local ignored `PARKED/` file. A reported HIGH can be explicitly deferred into that same run without another audit; its per-run PARKED record stays separate from other same-minute closures. Use it when the task is to end scope, not to discover more work; a request to finish active implementation still belongs to the implementation workflow.
 
@@ -105,7 +105,7 @@ When the input is a whole doc rather than a single decision, one skill picks the
 |---|---|---|
 | [giantbrains](giantbrains/SKILL.md) | "Stress-test this whole plan — which lenses should run?" | **Route** — triage once, run the 2–3 stage-matched lenses report-only, synthesize one verdict |
 
-[giantbrains](giantbrains/SKILL.md) is the suite's front door for docs. It triages in one message (which doc, what stage), then routes to at most three lenses — a draft gets frame/price/size, an in-progress plan gets a size-and-squeeze check, a retro gets the ledger audit and the outcome cut — runs them report-only, and dedupes the overlap into a single bottom-line-shaped verdict: one reversibility read, one do-next. It never edits the doc: writers ([phase-qa](02-plan/phase-qa/SKILL.md) for phased plans, [record-decision](05-close/record-decision/SKILL.md) for bets, [linear](02-plan/linear/SKILL.md) for scattered steps) are offered afterward as explicit opt-ins. And on a one-pager it refuses the battery and hands off to the single matching lens — running five lenses on one decision is ceremony, not hygiene.
+[giantbrains](giantbrains/SKILL.md) is the suite's front door for docs. It triages in one message (which doc, what stage), then routes to at most three lenses — a draft gets frame/price/size, an in-progress plan gets a size-and-squeeze check, a retro gets the ledger audit and the outcome cut — runs them report-only, and dedupes the overlap into a single bottom-line-shaped verdict: one reversibility read, one do-next. It never edits the doc: writers ([phase-qa](https://github.com/Claude-AI-Tools-Ventura-County/giant-brains-swe-skills/tree/main/01-plan/phase-qa) for phased plans, [record-decision](05-close/record-decision/SKILL.md) for bets, [linear](02-plan/linear/SKILL.md) for scattered steps) are offered afterward as explicit opt-ins. And on a one-pager it refuses the battery and hands off to the single matching lens — running five lenses on one decision is ceremony, not hygiene.
 
 ## More in the suite
 
@@ -114,29 +114,17 @@ The core above is the decision-and-improvement throughline. Around it sit skills
 | Skill | When it fires | Its job |
 |---|---|---|
 | [worth-it](01-decide/worth-it/SKILL.md) | "Is this feature/refactor even worth building?" | **Price the payoff** against the cost across every constituency a change serves, versus doing nothing |
-| [recon](02-plan/recon/SKILL.md) | About to write a plan, spec, or refactor that spans more than one file | **Trace the system first** — parallel subagents map call paths, state, contracts, and failure paths into a Recon Map, so the plan's blast radius is read, not invented |
-| [spike-360](02-plan/spike-360/SKILL.md) | A change might introduce, move, or replace a source of truth | **Interrogate authority** before planning anything that touches authoritative state |
-| [swe](02-plan/swe/SKILL.md) | Authoring or reviewing a v1.x build doc / spec / RFC | **Governance lens** — minimal scope, designed for diagnosis, verifiable before code |
-| [phase-qa](02-plan/phase-qa/SKILL.md) | A phased plan needs checks baked in, or completed phases reviewed | **Plan QA** — append phase-appropriate checklists, then diff-review the finished phases |
 | [feynman](02-plan/feynman/SKILL.md) | "Explain this simply", "ELI5 this doc", "translate this for execs" | **Translate, don't dilute** — a layered plain-English rebuild with analogies that name where they break, and an honest list of what the source left unclear |
-| [debug-mantra](04-build/debug-mantra/SKILL.md) | A bug, a stack trace, a "where is this coming from?" | **Debugging discipline** — reproduce, trace the fail path, falsify the hypothesis, cross-reference |
 | [rabbit-hole](04-build/rabbit-hole/SKILL.md) | An agent keeps surfacing one-more-thing on a simple task | **Stop the drip** — one end-to-end triage that puts every issue on the table at once. Optional [always-on guard](#beta--the-always-on-rabbit-hole-guard) *(beta)* |
 | [stay-focused](04-build/stay-focused/SKILL.md) | A long session keeps wandering off the task it started on | **Hold one anchor** — lead every reply with the original task's live status, in minimum-viable text. Optional [always-on guard](#the-always-on-stay-focused-anchor) |
-| [ponytail](04-build/ponytail-refined/SKILL.md) | Over-engineering, bloat, "what's the simplest version?" | **Force the laziest implementation** that works — YAGNI on code and abstractions, not on explicit feature requirements |
-| [honest](repo-health/honest/SKILL.md) | "What's the real state of this repo?" before a stakeholder update | **Ground-truth read** — how mature the codebase really is and what you can safely claim |
-| [front-door](repo-health/frontdoor/SKILL.md) | Auditing onboarding — "can a new user install this?" | **Walk the front door** — does clone-to-working actually work, and is a secret leaked? |
-| [readme-audit](repo-health/readme/SKILL.md) | "Is the README accurate / clear / still matching the code?" | **Audit the README** as artifact and as map — then follow its links as a doc-hygiene litmus |
-| [shakedown](repo-health/shakedown/SKILL.md) | A skill's bundled script runs in one session but is "not found" in another | **Shake out path bugs** — static path audit plus a live foreign-CWD / nested / spaces / install-mode matrix, then a graded report with the fix |
 | [snapshot](repo-health/snapshot/SKILL.md) | "Save this session" before signing off or a crash | **Checkpoint the session** to an additive `snapshot.md` you can resume from later |
 | [btw](repo-health/BTW/SKILL.md) | "Focus mode", declaring up to 3 tasks for a session, "no side quests" | **Session attention firewall** — anchor to declared focus, park off-task findings as Action / Review Later / Interesting instead of surfacing them |
 
-Standalone tooling that isn't part of the suite (read-only permission presets, recent-prompt allowlisting, gh/git auth repair, a time-boxed get-this-repo-building runner, per-repo VS Code window tinting, a daily Obsidian habit FSM, a dotfiles-sync kit) lives under [utils/](utils/README.md).
+The software-engineering skills — recon, swe, phase-qa, spike-360, debug-mantra, ponytail, relay, honest, front-door, readme-audit, shakedown — and the dev-environment tooling (read-only, rpr, github-auth-debug, install-improve-audit, vscode-color) moved to the sibling repo [giant-brains-swe-skills](https://github.com/Claude-AI-Tools-Ventura-County/giant-brains-swe-skills) on 2026-08-30. The two repos install side by side. Remaining standalone tooling lives in [utils/](utils/README.md).
 
 ## Beyond the suite — the relay
 
-A standalone collaboration tool, not one of the ten decision skills: [relay](04-build/relay/SKILL.md) runs a turn-based review loop between two Claude Code agents — a **Producer** who builds and a **Reviewer** who critiques and proposes fixes the author applies — entirely inside one dated Markdown file, so a human stops copy-pasting output between two windows. The file is the shared bus, the change-log, and the decision record at once: graded findings (`Blocker` / `Should` / `Nit` / `Pass`), a mandatory disposition on every proposal, an **evidence contract** per turn (the Producer logs what it *ran / skipped / couldn't run*; the Reviewer logs whether its verdict is `behaviorally proven` or `textual only`), and a clean exit on **Approved**. The protocol is model-agnostic — run a different model in the Reviewer window (Codex, Gemini, another Claude tier) for genuinely independent eyes. See the worked [sample thread](04-build/relay/RELAY-sample.md).
-
-**Optional automation add-on.** Relay is human-locked by default (one "your turn" nudge per handoff). A fuller, `tick`-backed automation engine lives in a sibling repo: [xyz-3-agents-swarm · relay-system](https://github.com/Claude-AI-Tools-Ventura-County/xyz-3-agents-swarm/tree/main/relay-system/2026-06-14). It turns the manual, human-nudged relay into a hands-free, self-healing loop — `tick` coordination primitives enforce strict Producer/Reviewer turn-taking, auto-detect and recover stalled turns, and gate termination on an LLM-written `Approved` with a clean tree. It ships as a sibling self-extracting skill powered by `tick`, leaving the portable `/relay` protocol completely untouched and dependency-free.
+[relay](https://github.com/Claude-AI-Tools-Ventura-County/giant-brains-swe-skills/tree/main/02-build/relay) — the two-agent Producer/Reviewer review loop — now lives in giant-brains-swe-skills alongside the other engineering skills.
 
 ## Beta — the always-on rabbit-hole guard
 
@@ -280,7 +268,7 @@ Lessons baked into these files. Keep them if you add more skills:
 
 ## Layout
 
-Abbreviated — skills and their entry points only. Repo meta (`AGENTS.md`, `CHANGELOG.md`, `CLAUDE.md`, `LICENSE`) and the dotfiles-sync kit's inner files (`INSTALL.md`, `HANDOFF.md`, `templates/`) are omitted; see [utils/README.md](utils/README.md) for the kit's contents.
+Abbreviated — skills and their entry points only. Forwarding stubs at the 16 old paths of the skills that moved to giant-brains-swe-skills are omitted (they exist for one release so existing symlinks keep resolving). Repo meta (`AGENTS.md`, `CHANGELOG.md`, `CLAUDE.md`, `LICENSE`) are omitted; see [utils/README.md](utils/README.md) for the kit's contents.
 
 The `0X-*/` folders group the skills by their place in the project lifecycle; the thematic sections above (Act I/II, the bridge, the sweep, the ledger) are the better map to *what each skill does*.
 
@@ -295,11 +283,7 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 │   └── worth-it/SKILL.md           # Value lens — is the payoff worth the cost
 ├── 02-plan/
 │   ├── feynman/SKILL.md            # Plain-English translation without dilution
-│   ├── linear/SKILL.md             # The bridge — decide → do
-│   ├── phase-qa/SKILL.md           # Plan QA checklists + phase diff review
-│   ├── recon/SKILL.md              # Trace the real system before any plan is written
-│   ├── spike-360/SKILL.md          # Classify authority before planning
-│   └── swe/SKILL.md                # Engineering-governance lens for build docs
+│   └── linear/SKILL.md             # The bridge — decide → do
 ├── 03-improve/
 │   ├── auto-improve/               # Act II — the executor (self-verifying loop)
 │   │   ├── SKILL.md
@@ -307,53 +291,29 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 │   │   └── FAQS.md
 │   └── baseline-spec/SKILL.md      # Act II — the definer (metric/oracle/budget)
 ├── 04-build/
-│   ├── debug-mantra/SKILL.md       # Four-step debugging discipline
-│   ├── ponytail-refined/SKILL.md   # Force the laziest implementation that works
 │   ├── rabbit-hole/                # Stop the one-more-thing drip; triage once
 │   │   ├── SKILL.md
 │   │   ├── HOOKS.md                # Beta — always-on guard (opt-in hooks)
 │   │   └── hooks/                  # SessionStart + UserPromptSubmit, install.sh
-│   ├── stay-focused/               # Lock a session to one anchor; status-first replies
-│   │   ├── SKILL.md
-│   │   ├── HOOKS.md                # Always-on anchor guard (opt-in hooks)
-│   │   └── hooks/                  # SessionStart + UserPromptSubmit, install.sh
-│   └── relay/                      # Two-agent review relay (one file, no copy-paste)
+│   └── stay-focused/               # Lock a session to one anchor; status-first replies
 │       ├── SKILL.md
-│       └── RELAY-sample.md
+│       ├── HOOKS.md                # Always-on anchor guard (opt-in hooks)
+│       └── hooks/                  # SessionStart + UserPromptSubmit, install.sh
 ├── 05-close/
 │   ├── finish-line/SKILL.md       # Bounded closure gate — report blockers, park the rest
 │   ├── loose-ends/SKILL.md         # The sweep — before "done"
 │   └── record-decision/SKILL.md    # The ledger — record → revisit
 ├── repo-health/
 │   ├── BTW/SKILL.md                # Session attention firewall — anchor to 1-3 tasks, park the rest
-│   ├── frontdoor/SKILL.md          # Audit onboarding — clone → working
-│   ├── honest/SKILL.md             # Ground-truth read of the repo
-│   ├── readme/SKILL.md             # Audit the README + doc-hygiene litmus
-│   ├── shakedown/                  # Harden a script-calling skill against path-discovery bugs
-│   │   ├── SKILL.md
-│   │   └── scripts/                # audit.sh (static), harness.sh (live matrix), lib.sh
 │   └── snapshot/SKILL.md           # Session recovery
 ├── giantbrains/SKILL.md            # The router — one door to the suite
 ├── utils/                          # Standalone tooling — not part of the suite
 │   ├── README.md
-│   ├── github-auth-debug/SKILL.md  # Fix the gh-vs-git auth split on macOS
-│   ├── install-improve-audit/SKILL.md  # Get an unfamiliar repo building (native or container), then PR the fixes
-│   ├── obsidian-habit/             # Daily one-tactic-a-day Obsidian habit FSM (adopt/decline/defer)
-│   │   ├── SKILL.md
-│   │   ├── scripts/                # habit.py (FSM), archive_stale_notes.py, streak_update.py
-│   │   ├── references/tactics.md
-│   │   └── templates/Today.md
-│   ├── read-only/SKILL.md          # Pre-approve read-only permissions
-│   ├── rpr/                        # React to recent permission prompts → narrow allowlist rules
-│   │   ├── SKILL.md
-│   │   ├── scan.py
-│   │   ├── write_rules.py
-│   │   └── tests/
-│   ├── skill-sync/                 # Keep installed skills in sync with this repo
-│   ├── vscode-color/               # Give each repo a stable, distinct VS Code background tint
-│   │   ├── SKILL.md
-│   │   └── vscode-color.py
-│   └── claude-code-dotfiles-fork/  # Kit: sync ~/.claude across machines (INSTALL.md + templates/)
+│   └── obsidian-habit/             # Daily one-tactic-a-day Obsidian habit FSM (adopt/decline/defer)
+│       ├── SKILL.md
+│       ├── scripts/                # habit.py (FSM), archive_stale_notes.py, streak_update.py
+│       ├── references/tactics.md
+│       └── templates/Today.md
 └── README.md
 ```
 
