@@ -233,7 +233,6 @@ The web app and desktop app share one flow: enable code execution, then upload e
    ROOT="$PWD"
    for d in 01-decide/*/ 02-plan/*/ 03-improve/*/ 04-build/*/ 05-close/*/ 06-session/*/ giantbrains/; do
      [ -f "$d/SKILL.md" ] || continue
-     grep -q "MOVED " "$d/SKILL.md" && continue   # skip forwarding stubs
      (cd "$d" && zip -rX "$ROOT/$(basename "$d").zip" . -x '.*')
    done
    ```
@@ -250,7 +249,6 @@ Put each skill directory where Claude Code looks for skills — **personal (all 
 mkdir -p "$HOME/.claude/skills"
 for d in "$PWD"/01-decide/*/ "$PWD"/02-plan/*/ "$PWD"/03-improve/*/ "$PWD"/04-build/*/ "$PWD"/05-close/*/ "$PWD"/06-session/*/ "$PWD"/giantbrains/; do
   [ -f "$d/SKILL.md" ] || continue
-  grep -q "MOVED " "$d/SKILL.md" && continue   # skip forwarding stubs
   ln -s "${d%/}" "$HOME/.claude/skills/$(basename "$d")"
 done
 ```
@@ -270,7 +268,7 @@ Lessons baked into these files. Keep them if you add more skills:
 
 ## Layout
 
-Abbreviated — skills and their entry points only. Forwarding stubs at the 22 old paths (16 skills that moved to giant-brains-swe-skills, 6 that moved within this repo) are omitted (they exist for one release so existing symlinks keep resolving). Repo meta (`AGENTS.md`, `CHANGELOG.md`, `CLAUDE.md`, `LICENSE`) are omitted.
+Abbreviated — skills and their entry points only. Repo meta (`AGENTS.md`, `CHANGELOG.md`, `CLAUDE.md`, `LICENSE`) are omitted.
 
 The `0X-*/` folders group the skills by their place in the project lifecycle; the thematic sections above (Act I/II, the bridge, the sweep, the ledger) are the better map to *what each skill does*.
 

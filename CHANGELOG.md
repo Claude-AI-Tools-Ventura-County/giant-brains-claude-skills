@@ -25,6 +25,7 @@ All notable changes to Giant Brains Claude Skills are documented here. This proj
 
 ### Removed
 
+- **The 22 forwarding stubs** left by the extraction and the in-core moves (v1.1.0) are gone, along with the now-empty `repo-health/` and `utils/` folders. Old symlinks at those names dangle; re-run the install loops in this README and in giant-brains-swe-skills.
 - **utils/obsidian-habit** -- a single-operator personal routine (needs `OBSIDIAN_VAULT_PATH` and rebalance-OS); moved out of the public repo to the maintainer's `~/.claude/skills`. No stub. `utils/README.md` retired with it.
 
 ### Changed
