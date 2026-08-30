@@ -2,7 +2,7 @@
 
 <img width="1941" height="1058" alt="giant-brains-02" src="https://github.com/user-attachments/assets/d5a0e02b-eec2-4026-b83e-cf725def5942" />
 
-A suite of Claude Code skills that catch you at the moment of a decision, again when you're improving something, and once more before you call it done — and force a short, honest answer you can act on in seconds. An eleven-skill decision-and-improvement core, plus a widening set for debugging, docs, repo, and session hygiene.
+A suite of Claude Code skills that catch you at the moment of a decision, again when you're improving something, and once more before you call it done — and force a short, honest answer you can act on in seconds. An eighteen-skill decision-and-improvement core, plus a widening set for debugging, docs, repo, and session hygiene.
 
 **New here?** Jump to [Install](#install) — a symlink loop puts the whole suite in Claude Code in under a minute.
 
@@ -23,10 +23,10 @@ A suite of skills for [Claude Code](https://claude.com/claude-code) that bring h
 
 - **An agent handed you a menu of options that all sound complicated** and you want to check it isn't hiding a false dilemma or bundling two problems into one — [better-options](01-decide/better-options/SKILL.md).
 - **You're about to commit to a plan or migration** and want to pressure-test the framing before you start — [take-a-step-back](01-decide/take-a-step-back/SKILL.md).
-- **You're unsure a feature or refactor is worth building** and want the payoff priced against the cost before you spend the effort — [worth-it](01-decide/worth-it/SKILL.md).
-- **A deadline is squeezing you** and you need to name which of speed, cost, or quality you're actually trading away — [iron-triangle](01-decide/iron-triangle/SKILL.md).
+- **You're unsure a feature or refactor is worth building** and want the payoff priced against the cost before you spend the effort — [worth-it](03-improve/worth-it/SKILL.md).
+- **A deadline is squeezing you** and you need to name which of speed, cost, or quality you're actually trading away — [iron-triangle](04-build/iron-triangle/SKILL.md).
 - **You're eyeing a refactor or schema change** and need to know how far it ripples and how hard it is to undo — [blast-radius](01-decide/blast-radius/SKILL.md).
-- **An agent handed you a wall of options** and you just need the call — [bottom-line](01-decide/bottom-line/SKILL.md).
+- **An agent handed you a wall of options** and you just need the call — [bottom-line](02-plan/bottom-line/SKILL.md).
 - **An agent gave you scattered steps or a verbose completion message** and you need the execution sequence — [linear](02-plan/linear/SKILL.md).
 - **An agent is about to write you a plan for a change that spans several files** and you want it traced against the real system first, not composed from three grepped files — [recon](02-plan/recon/SKILL.md).
 - **You told an agent "make this faster"** but can't tell whether it actually did — [baseline-spec](03-improve/baseline-spec/SKILL.md) to define what "better" means, then [auto-improve](03-improve/auto-improve/SKILL.md) to prove it.
@@ -43,9 +43,9 @@ Five skills that fire around a decision, each answering a different question at 
 |---|---|---|
 | [better-options](01-decide/better-options/SKILL.md) | "Is this menu itself honest — one problem or several, and is the simplest option even on it?" | **Scrub** — catch a conflated ask or a false dilemma before any option is chosen |
 | [take-a-step-back](01-decide/take-a-step-back/SKILL.md) | "Am I making the best decision possible?" | **Frame** — challenge the plan and the problem before committing |
-| [iron-triangle](01-decide/iron-triangle/SKILL.md) | "Which of speed, cost, or quality am I trading away?" | **Price** — make the implicit tradeoff explicit |
+| [iron-triangle](04-build/iron-triangle/SKILL.md) | "Which of speed, cost, or quality am I trading away?" | **Price** — make the implicit tradeoff explicit |
 | [blast-radius](01-decide/blast-radius/SKILL.md) | "How big is the path I chose, what breaks, how hard to undo?" | **Size** — measure cost and reversibility of a chosen path |
-| [bottom-line](01-decide/bottom-line/SKILL.md) | "There's too much here — what's the call?" | **Cut** — compress overload and analysis paralysis into a decision, with a brief anchor to where the work sits |
+| [bottom-line](02-plan/bottom-line/SKILL.md) | "There's too much here — what's the call?" | **Cut** — compress overload and analysis paralysis into a decision, with a brief anchor to where the work sits |
 
 They **chain** along the life of a decision: **scrub** the menu (is it even honest?), **frame** it (should I, and is this the right problem?), **price** the tradeoff (which corner gives?), **size** the chosen path (how big, what breaks?), then **cut** to the bottom line when the analysis balloons. The same situation can touch all five precisely because they answer different questions at different moments.
 
@@ -113,14 +113,14 @@ The core above is the decision-and-improvement throughline. Around it sit skills
 
 | Skill | When it fires | Its job |
 |---|---|---|
-| [worth-it](01-decide/worth-it/SKILL.md) | "Is this feature/refactor even worth building?" | **Price the payoff** against the cost across every constituency a change serves, versus doing nothing |
+| [worth-it](03-improve/worth-it/SKILL.md) | "Is this feature/refactor even worth building?" | **Price the payoff** against the cost across every constituency a change serves, versus doing nothing |
 | [feynman](02-plan/feynman/SKILL.md) | "Explain this simply", "ELI5 this doc", "translate this for execs" | **Translate, don't dilute** — a layered plain-English rebuild with analogies that name where they break, and an honest list of what the source left unclear |
 | [rabbit-hole](04-build/rabbit-hole/SKILL.md) | An agent keeps surfacing one-more-thing on a simple task | **Stop the drip** — one end-to-end triage that puts every issue on the table at once. Optional [always-on guard](#beta--the-always-on-rabbit-hole-guard) *(beta)* |
 | [stay-focused](04-build/stay-focused/SKILL.md) | A long session keeps wandering off the task it started on | **Hold one anchor** — lead every reply with the original task's live status, in minimum-viable text. Optional [always-on guard](#the-always-on-stay-focused-anchor) |
-| [snapshot](repo-health/snapshot/SKILL.md) | "Save this session" before signing off or a crash | **Checkpoint the session** to an additive `snapshot.md` you can resume from later |
-| [btw](repo-health/BTW/SKILL.md) | "Focus mode", declaring up to 3 tasks for a session, "no side quests" | **Session attention firewall** — anchor to declared focus, park off-task findings as Action / Review Later / Interesting instead of surfacing them |
+| [snapshot](06-session/snapshot/SKILL.md) | "Save this session" before signing off or a crash | **Checkpoint the session** to an additive `snapshot.md` you can resume from later |
+| [btw](06-session/BTW/SKILL.md) | "Focus mode", declaring up to 3 tasks for a session, "no side quests" | **Session attention firewall** — anchor to declared focus, park off-task findings as Action / Review Later / Interesting instead of surfacing them |
 
-The software-engineering skills — recon, swe, phase-qa, spike-360, debug-mantra, ponytail, relay, honest, front-door, readme-audit, shakedown — and the dev-environment tooling (read-only, rpr, github-auth-debug, install-improve-audit, vscode-color) moved to the sibling repo [giant-brains-swe-skills](https://github.com/Claude-AI-Tools-Ventura-County/giant-brains-swe-skills) on 2026-08-30. The two repos install side by side. Remaining standalone tooling lives in [utils/](utils/README.md).
+The software-engineering skills — recon, swe, phase-qa, spike-360, debug-mantra, ponytail, relay, honest, front-door, readme-audit, shakedown — and the dev-environment tooling (read-only, rpr, github-auth-debug, install-improve-audit, vscode-color) moved to the sibling repo [giant-brains-swe-skills](https://github.com/Claude-AI-Tools-Ventura-County/giant-brains-swe-skills) on 2026-08-30. The two repos install side by side.
 
 ## Beyond the suite — the relay
 
@@ -231,8 +231,9 @@ The web app and desktop app share one flow: enable code execution, then upload e
 2. **Zip each skill folder** — one ZIP per skill, each with a `SKILL.md` at its root. Run from the repo root:
    ```bash
    ROOT="$PWD"
-   for d in 01-decide/*/ 02-plan/*/ 03-improve/*/ 04-build/*/ 05-close/*/ repo-health/*/ giantbrains/; do
+   for d in 01-decide/*/ 02-plan/*/ 03-improve/*/ 04-build/*/ 05-close/*/ 06-session/*/ giantbrains/; do
      [ -f "$d/SKILL.md" ] || continue
+     grep -q "MOVED " "$d/SKILL.md" && continue   # skip forwarding stubs
      (cd "$d" && zip -rX "$ROOT/$(basename "$d").zip" . -x '.*')
    done
    ```
@@ -247,8 +248,9 @@ Put each skill directory where Claude Code looks for skills — **personal (all 
 
 ```bash
 mkdir -p "$HOME/.claude/skills"
-for d in "$PWD"/01-decide/*/ "$PWD"/02-plan/*/ "$PWD"/03-improve/*/ "$PWD"/04-build/*/ "$PWD"/05-close/*/ "$PWD"/repo-health/*/ "$PWD"/giantbrains/; do
+for d in "$PWD"/01-decide/*/ "$PWD"/02-plan/*/ "$PWD"/03-improve/*/ "$PWD"/04-build/*/ "$PWD"/05-close/*/ "$PWD"/06-session/*/ "$PWD"/giantbrains/; do
   [ -f "$d/SKILL.md" ] || continue
+  grep -q "MOVED " "$d/SKILL.md" && continue   # skip forwarding stubs
   ln -s "${d%/}" "$HOME/.claude/skills/$(basename "$d")"
 done
 ```
@@ -268,7 +270,7 @@ Lessons baked into these files. Keep them if you add more skills:
 
 ## Layout
 
-Abbreviated — skills and their entry points only. Forwarding stubs at the 16 old paths of the skills that moved to giant-brains-swe-skills are omitted (they exist for one release so existing symlinks keep resolving). Repo meta (`AGENTS.md`, `CHANGELOG.md`, `CLAUDE.md`, `LICENSE`) are omitted; see [utils/README.md](utils/README.md) for the kit's contents.
+Abbreviated — skills and their entry points only. Forwarding stubs at the 22 old paths (16 skills that moved to giant-brains-swe-skills, 6 that moved within this repo) are omitted (they exist for one release so existing symlinks keep resolving). Repo meta (`AGENTS.md`, `CHANGELOG.md`, `CLAUDE.md`, `LICENSE`) are omitted.
 
 The `0X-*/` folders group the skills by their place in the project lifecycle; the thematic sections above (Act I/II, the bridge, the sweep, the ledger) are the better map to *what each skill does*.
 
@@ -277,11 +279,9 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 ├── 01-decide/
 │   ├── better-options/SKILL.md     # Act I — scrub the menu before anything is chosen
 │   ├── blast-radius/SKILL.md       # Act I — size cost & reversibility
-│   ├── bottom-line/SKILL.md        # Act I — cut to the call
-│   ├── iron-triangle/SKILL.md      # Act I — price the tradeoff
-│   ├── take-a-step-back/SKILL.md   # Act I — frame the decision
-│   └── worth-it/SKILL.md           # Value lens — is the payoff worth the cost
+│   └── take-a-step-back/SKILL.md   # Act I — frame the decision
 ├── 02-plan/
+│   ├── bottom-line/SKILL.md        # Act I — cut to the call
 │   ├── feynman/SKILL.md            # Plain-English translation without dilution
 │   └── linear/SKILL.md             # The bridge — decide → do
 ├── 03-improve/
@@ -289,8 +289,10 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 │   │   ├── SKILL.md
 │   │   ├── README.md
 │   │   └── FAQS.md
-│   └── baseline-spec/SKILL.md      # Act II — the definer (metric/oracle/budget)
+│   ├── baseline-spec/SKILL.md      # Act II — the definer (metric/oracle/budget)
+│   └── worth-it/SKILL.md           # Value lens — is the payoff worth the cost (hands off to baseline-spec)
 ├── 04-build/
+│   ├── iron-triangle/SKILL.md      # Price the tradeoff once a path is chosen and the deadline squeezes
 │   ├── rabbit-hole/                # Stop the one-more-thing drip; triage once
 │   │   ├── SKILL.md
 │   │   ├── HOOKS.md                # Beta — always-on guard (opt-in hooks)
@@ -300,20 +302,14 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 │       ├── HOOKS.md                # Always-on anchor guard (opt-in hooks)
 │       └── hooks/                  # SessionStart + UserPromptSubmit, install.sh
 ├── 05-close/
-│   ├── finish-line/SKILL.md       # Bounded closure gate — report blockers, park the rest
+│   ├── finish-line/SKILL.md        # Bounded closure gate — report blockers, park the rest
 │   ├── loose-ends/SKILL.md         # The sweep — before "done"
 │   └── record-decision/SKILL.md    # The ledger — record → revisit
-├── repo-health/
+├── 06-session/
 │   ├── BTW/SKILL.md                # Session attention firewall — anchor to 1-3 tasks, park the rest
+│   ├── myriad/SKILL.md             # End-of-day triage of a messy completion message
 │   └── snapshot/SKILL.md           # Session recovery
 ├── giantbrains/SKILL.md            # The router — one door to the suite
-├── utils/                          # Standalone tooling — not part of the suite
-│   ├── README.md
-│   └── obsidian-habit/             # Daily one-tactic-a-day Obsidian habit FSM (adopt/decline/defer)
-│       ├── SKILL.md
-│       ├── scripts/                # habit.py (FSM), archive_stale_notes.py, streak_update.py
-│       ├── references/tactics.md
-│       └── templates/Today.md
 └── README.md
 ```
 
