@@ -4,6 +4,10 @@ All notable changes to Giant Brains Claude Skills are documented here. This proj
 
 ## [Unreleased]
 
+### Changed
+
+- **worth-it** adds a five-line continuation checkpoint: ignore sunk effort, compare remaining value with the best alternative, and choose Continue / Pivot / Park / Stop with at most one worthwhile bounded proof. Both modes suggest reusing durable results when meaningful, require posting approval, and respect capture declines. Initial-investment evaluation is preserved.
+
 ### Moved
 
 - **Six skills re-homed inside this repo so no folder holds more than three** (issue #14, Segment B): worth-it -> `03-improve/` (it hands off to baseline-spec), iron-triangle -> `04-build/` (it prices a path already chosen), bottom-line -> `02-plan/` (the shape-the-output family with linear and feynman), snapshot, BTW and myriad -> new `06-session/` (session-lifecycle skills). Forwarding stubs at the six old paths for this release, removed with the sixteen extraction stubs after v1.1.0. `repo-health/` and `utils/` now hold only stubs.
