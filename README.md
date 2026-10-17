@@ -23,7 +23,7 @@ A suite of skills for [Claude Code](https://claude.com/claude-code) that bring h
 
 - **An agent handed you a menu of options that all sound complicated** and you want to check it isn't hiding a false dilemma or bundling two problems into one — [better-options](01-decide/better-options/SKILL.md).
 - **You're about to commit to a plan or migration** and want to pressure-test the framing before you start — [take-a-step-back](01-decide/take-a-step-back/SKILL.md).
-- **You're unsure a feature or refactor is worth building** and want the payoff priced against the cost before you spend the effort — [worth-it](03-improve/worth-it/SKILL.md).
+- **You're unsure a feature or refactor is worth building** or whether an ongoing experiment still earns its remaining cost, and want the payoff compared with the next-best use of effort — [worth-it](03-improve/worth-it/SKILL.md).
 - **A deadline is squeezing you** and you need to name which of speed, cost, or quality you're actually trading away — [iron-triangle](04-build/iron-triangle/SKILL.md).
 - **You're eyeing a refactor or schema change** and need to know how far it ripples and how hard it is to undo — [blast-radius](01-decide/blast-radius/SKILL.md).
 - **An agent handed you a wall of options** and you just need the call — [bottom-line](02-plan/bottom-line/SKILL.md).
@@ -113,7 +113,7 @@ The core above is the decision-and-improvement throughline. Around it sit skills
 
 | Skill | When it fires | Its job |
 |---|---|---|
-| [worth-it](03-improve/worth-it/SKILL.md) | "Is this feature/refactor even worth building?" | **Price the payoff** against the cost across every constituency a change serves, versus doing nothing |
+| [worth-it](03-improve/worth-it/SKILL.md) | "Is this worth building — or still worth pursuing?" | **Price the payoff** against cost; `/worth-it continue` returns Call / Evidence / Tradeoff / Proof / Exit, with Continue / Pivot / Park / Stop and a soft, approval-gated results-capture guard |
 | [feynman](02-plan/feynman/SKILL.md) | "Explain this simply", "ELI5 this doc", "translate this for execs" | **Translate, don't dilute** — a layered plain-English rebuild with analogies that name where they break, and an honest list of what the source left unclear |
 | [rabbit-hole](04-build/rabbit-hole/SKILL.md) | An agent keeps surfacing one-more-thing on a simple task | **Stop the drip** — one end-to-end triage that puts every issue on the table at once. Optional [always-on guard](#beta--the-always-on-rabbit-hole-guard) *(beta)* |
 | [stay-focused](04-build/stay-focused/SKILL.md) | A long session keeps wandering off the task it started on | **Hold one anchor** — lead every reply with the original task's live status, in minimum-viable text. Optional [always-on guard](#the-always-on-stay-focused-anchor) |
@@ -288,7 +288,7 @@ The `0X-*/` folders group the skills by their place in the project lifecycle; th
 │   │   ├── README.md
 │   │   └── FAQS.md
 │   ├── baseline-spec/SKILL.md      # Act II — the definer (metric/oracle/budget)
-│   └── worth-it/SKILL.md           # Value lens — is the payoff worth the cost (hands off to baseline-spec)
+│   └── worth-it/SKILL.md           # Value lens — initial investment or continuation (bounded proof; soft results capture)
 ├── 04-build/
 │   ├── iron-triangle/SKILL.md      # Price the tradeoff once a path is chosen and the deadline squeezes
 │   ├── rabbit-hole/                # Stop the one-more-thing drip; triage once

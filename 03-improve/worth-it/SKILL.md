@@ -1,6 +1,7 @@
 ---
 name: worth-it
-description: Judge whether a planned feature or refactor is worth building — whether the payoff justifies the cost and actually moves a needle that matters. Judges benefit against cost across the constituencies a change can serve (end-user UX, human operator experience, codebase maintainability/durability, contributor velocity, business/strategic obligation), discounts benefit that is asserted but unmeasured, nets a gain on one front against the cost it adds on another, and weighs the whole thing against the do-nothing baseline, the timing window, and the next-best use of the same effort. Trigger when the user asks "is this worth doing/building," "is it worth it," "is this worthwhile," "does this move the needle," "what's the payoff/ROI," "should we even bother," is weighing whether a feature or refactor earns its place, or hands over a plan doc whose open question is its *value* rather than its engineering or its risk. Assumes the frame is already right (that is take-a-step-back); it leans on blast-radius and iron-triangle to price the cost and reversibility of a candidate path, then weighs that cost against the benefit it scores — the term those skills leave unscored. Skip when the change is obviously worth it and cheap, or when the open question is HOW to build it well (swe) rather than WHETHER to build it at all.
+description: >-
+  Judge whether a planned feature or refactor is worth building — whether the payoff justifies the cost and actually moves a needle that matters. Judges benefit against cost across the constituencies a change can serve (end-user UX, human operator experience, codebase maintainability/durability, contributor velocity, business/strategic obligation), discounts benefit that is asserted but unmeasured, nets a gain on one front against the cost it adds on another, and weighs the whole thing against the do-nothing baseline, the timing window, and the next-best use of the same effort. Also reassess in-flight work on `/worth-it continue`, "should we keep going," or "is this still worth pursuing": ignore sunk effort and recommend Continue, Pivot, Park or Stop against the next-best experiment. Trigger when the user asks "is this worth doing/building," "is it worth it," "is this worthwhile," "does this move the needle," "what's the payoff/ROI," "should we even bother," is weighing whether a feature or refactor earns its place, or hands over a plan doc whose open question is its *value* rather than its engineering or its risk. Assumes the frame is already right (that is take-a-step-back); it leans on blast-radius and iron-triangle to price the cost and reversibility of a candidate path, then weighs that cost against the benefit it scores — the term those skills leave unscored. Skip routine analysis when the change is obviously worth it and cheap (an explicit continuation request still gets the five-line checkpoint), or when the open question is HOW to build it well (swe) rather than WHETHER to build it at all.
 ---
 
 # Worth It
@@ -71,6 +72,35 @@ Each test is a lens on the change. A plan passes a test by answering it with a *
 ## The cheaper-version lever
 
 The most valuable output is rarely yes/no — it is **"the full thing isn't worth it, but the 20% that delivers 80% of the needle is."** Before any verdict, ask whether a smaller version captures most of the Impact x Reach at a fraction of the Cost. Scope is the release valve here exactly as it is in iron-triangle: the cheap slice that moves the needle usually beats the complete build that moves it slightly further for ten times the carrying cost.
+
+## Continuation mode — is the next increment still worth it?
+
+Use `/worth-it continue: <current experiment and evidence>` or a request to reassess ongoing work. Keep the initial-investment evaluation above for new proposals; here reuse its four tests, constituencies and cheaper-version lever on **remaining** benefit, effort, carrying cost and risk. Ignore time, money and polish already spent: they buy no preference. Count future integration, cleanup and safe-exit costs where real. `worth-it` owns the allocation call; this is one checkpoint, not another scoring framework or review loop.
+
+1. **Ground the premise.** Reuse current findings and decisions. Borrow `sanity-check`'s goal/dependency/consequence read and `ponytail`'s smallest valid approach, preserving requirements and safety. Resolve helpers by installed frontmatter `name` before invoking: the sibling source folder `ponytail-refined` declares `name: ponytail`, so do not assume `/ponytail-refined` is callable. Read available helpers; if absent, disclose that and apply the relevant reasoning directly. Do not launch their repair, issue-filing or review workflows from this checkpoint.
+2. **Price the next increment against the best alternative.** Name the user outcome, current baseline, strongest competing experiment (or doing nothing), remaining payoff, effort, maintenance/risk and Easy / Costly / One-way door reversibility. Separate observed, proxied and projected benefits; cite dated sources, revision/environment and sample limits where available. Keep skipped coverage, first-attempt failures and retry-rescued passes visible: final green is not clean first-pass equivalence. Overlapping gains are not additive; local percentages are not comparable end-to-end savings. Unknowns stay unknown.
+3. **Choose once.** **Continue** when the next increment beats the alternative on supported remaining value; **Pivot** when a smaller slice or different approach serves the goal better; **Park** when potentially useful work is blocked or outranked, with a concrete revisit trigger; **Stop** when evidence no longer justifies further effort. Mandatory obligations survive an unattractive implementation: pivot the mechanism, do not silently drop the requirement. Uncertainty alone never earns Continue.
+4. **Buy information only when it could change the call.** Propose at most one bounded proof step, only if its expected decision value warrants its cost versus the alternative. Reuse baseline-spec's metric, correctness oracle, baseline and fixed budget; use existing checks or manual evidence, without generating a harness or adding tests absent explicit approval. State the time/cost cap, success threshold and failure/early-stop criteria before running anything; never extend the cap to rescue a result. Otherwise say `Proof: None` with the reason. A recommendation authorizes no execution, publication or weakening of required coverage.
+
+### Soft durable-results guard (both modes)
+
+When meaningful findings or decisions could get lost, need comparison across alternatives, or are likely to be debated again, **first look for an existing relevant leaderboard/results issue** in current context and the target project's issues, including closed results where relevant. Reuse it rather than duplicate it. If lookup is unavailable, disclose that; absence of access is not evidence that no issue exists. Suggest creating one only after checking for prior results.
+
+**Ask the operator before creating or posting**, unless that exact action and destination are already authorized. Suggest the existing destination or a new results issue if absent; keep any approval question inside the existing output (in `Exit` for continuation). Never publish automatically or let a helper's broader filing authority bypass this guard. Approved capture retains the decision, dated source evidence, limitations, alternatives, closed versus open work, and the new evidence that would justify reopening; verify the write before claiming capture. After a decline, respect it for this scope and do not ask again unless the operator reopens capture. Pending or declined capture does not block useful work, but do not claim full loop closure while durable capture remains pending or was declined. New facts can still justify reassessment; unchanged facts do not justify endless review.
+
+**Counter-example:** A trivial, reversible typo correction with no reusable finding earns no results search or capture prompt. Keep the existing cheap initial-investment verdict brief.
+
+### Continuation output — exactly five short lines
+
+Use these instead of the initial-investment scorecard. Fit uncertainty, helper unavailability and capture status into the relevant line; do not append another report.
+
+```text
+Call: Continue / Pivot / Park / Stop — decisive remaining-value reason.
+Evidence: Observed versus projected payoff; dated source and material limits/retries.
+Tradeoff: Next increment's benefit/cost/risk and reversibility versus best alternative; overlap.
+Proof: One warranted step with baseline, metric/oracle, budget and success/stop criteria; or None — why.
+Exit: Stop/pivot condition; Park revisit trigger; capture status or one approval question if warranted.
+```
 
 ## How this differs from the sibling skills
 
